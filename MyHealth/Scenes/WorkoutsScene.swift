@@ -8,26 +8,43 @@
 import SwiftUI
 
 public struct WorkoutsScene: View {
-    @StateObject private var viewModel: WorkoutsViewModel
+    @StateObject private var viewModel: WorkoutsSceneViewModel
 
-    public init(service: WorkoutsServiceProtocol) {
-        _viewModel = StateObject(wrappedValue: WorkoutsViewModel(service: service))
+    private let workoutsService: WorkoutsServiceProtocol
+    private let workoutFlowService: WorkoutFlowServiceProtocol
+
+    public init(service: WorkoutsServiceProtocol, workoutFlowService: WorkoutFlowServiceProtocol) {
+        _viewModel = StateObject(wrappedValue: WorkoutsSceneViewModel(service: workoutFlowService))
+        self.workoutsService = service
+        self.workoutFlowService = workoutFlowService
     }
 
     public var body: some View {
         NavigationStack(path: $viewModel.path) {
-            VStack(spacing: 16) {
-                Text(viewModel.title)
-                    .font(.title)
-                Text("History and summaries")
-                    .foregroundStyle(.secondary)
+            Group {
+                if viewModel.currentSession == nil {
+                    WorkoutsView(service: workoutsService)
+                } else {
+                    CurrentWorkoutView(service: workoutFlowService)
+                }
             }
-            .padding()
             .navigationTitle("Workouts")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        viewModel.path.append(.newWorkout)
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    .accessibilityLabel("Start new workout")
+                }
+            }
             .navigationDestination(for: WorkoutsRoute.self) { route in
                 switch route {
                 case .workout(let value):
-                    Text("Workout: \(value)")
+                    Text("Workout: \(value.uuidString)")
+                case .newWorkout:
+                    WorkoutSelectionView(service: workoutFlowService)
                 }
             }
         }

@@ -1,5 +1,5 @@
 //
-//  WorkoutsViewModel.swift
+//  WorkoutsSceneViewModel.swift
 //  MyHealth
 //
 //  Created by Codex.
@@ -9,17 +9,17 @@ import Combine
 import Foundation
 
 @MainActor
-public final class WorkoutsViewModel: ObservableObject {
-    @Published public private(set) var title: String
-    @Published public private(set) var workouts: [WorkoutSummary]
+public final class WorkoutsSceneViewModel: ObservableObject {
+    @Published public var path: [WorkoutsRoute]
+    @Published public private(set) var currentSession: WorkoutSession?
 
-    private let service: WorkoutsServiceProtocol
+    private let service: WorkoutFlowServiceProtocol
     private var task: Task<Void, Never>?
 
-    public init(service: WorkoutsServiceProtocol) {
+    public init(service: WorkoutFlowServiceProtocol) {
         self.service = service
-        self.title = "Workouts"
-        self.workouts = []
+        self.path = []
+        self.currentSession = nil
     }
 
     public func start() {
@@ -28,8 +28,10 @@ public final class WorkoutsViewModel: ObservableObject {
             guard let service = self?.service else { return }
             for await update in service.updates() {
                 guard let self, !Task.isCancelled else { break }
-                self.title = update.title
-                self.workouts = update.workouts
+                self.currentSession = update.currentSession
+                if update.currentSession != nil {
+                    self.path = []
+                }
             }
         }
     }

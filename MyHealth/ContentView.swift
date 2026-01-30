@@ -18,7 +18,10 @@ public struct ContentView: View {
         TabView {
             DashboardScene(service: viewModel.dashboardService)
             MetricsScene(service: viewModel.metricsService)
-            WorkoutsScene(service: viewModel.workoutsService)
+            WorkoutsScene(
+                service: viewModel.workoutsService,
+                workoutFlowService: viewModel.workoutFlowService
+            )
             InsightsScene(service: viewModel.insightsService)
             SettingsScene(service: viewModel.settingsService)
         }

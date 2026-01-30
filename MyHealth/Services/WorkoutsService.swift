@@ -13,7 +13,7 @@ public final class WorkoutsService: WorkoutsServiceProtocol {
 
     public func updates() -> AsyncStream<WorkoutsUpdate> {
         AsyncStream { continuation in
-            continuation.yield(WorkoutsUpdate(title: "Workouts"))
+            continuation.yield(WorkoutsUpdate(title: "Workouts", workouts: []))
             continuation.finish()
         }
     }

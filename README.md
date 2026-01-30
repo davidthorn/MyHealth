@@ -13,10 +13,21 @@ MyHealth is a SwiftUI HealthKit app focused on a clean MVVM architecture. The UI
 
 See `ARCHITECTURE.md` for the full rules.
 
+## Features (current)
+- Dashboard summary screen
+- Metrics exploration screen
+- Workouts list screen
+- Current workout screen (active session)
+- Workout selection flow (start a workout)
+- Insights screen
+- Settings screen
+
 ## Structure
 - `MyHealth/Scenes` — SwiftUI scenes used in the TabView
+- `MyHealth/Views` — SwiftUI views used inside scenes
 - `MyHealth/ViewModels` — ViewModels for each scene and root content
-- `MyHealth/Services` — Service protocols and app-level implementations
+- `MyHealth/Services` — Service implementations
+- `MyHealth/Protocols` — Protocols (e.g., service protocols)
 - `MyHealth/Models` — Public models and route enums
 
 ## Build

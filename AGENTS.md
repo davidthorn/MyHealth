@@ -10,6 +10,7 @@
 
 ## Project Layout
 - `MyHealth/Scenes`
+- `MyHealth/Views`
 - `MyHealth/ViewModels`
 - `MyHealth/Services`
 - `MyHealth/Models`

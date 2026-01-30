@@ -19,6 +19,7 @@ public final class ContentViewModel: ObservableObject {
     public var dashboardService: DashboardServiceProtocol { services.dashboardService }
     public var metricsService: MetricsServiceProtocol { services.metricsService }
     public var workoutsService: WorkoutsServiceProtocol { services.workoutsService }
+    public var workoutFlowService: WorkoutFlowServiceProtocol { services.workoutFlowService }
     public var insightsService: InsightsServiceProtocol { services.insightsService }
     public var settingsService: SettingsServiceProtocol { services.settingsService }
 }
