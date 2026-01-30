@@ -8,10 +8,16 @@
 import SwiftUI
 
 @main
-struct MyHealthApp: App {
-    var body: some Scene {
+public struct MyHealthApp: App {
+    private let services: AppServicesProviding
+
+    public init() {
+        self.services = AppServices.live()
+    }
+
+    public var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(services: services)
         }
     }
 }

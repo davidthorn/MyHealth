@@ -7,18 +7,24 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+public struct ContentView: View {
+    @StateObject private var viewModel: ContentViewModel
+
+    public init(services: AppServicesProviding) {
+        _viewModel = StateObject(wrappedValue: ContentViewModel(services: services))
+    }
+
+    public var body: some View {
+        TabView {
+            DashboardScene(service: viewModel.dashboardService)
+            MetricsScene(service: viewModel.metricsService)
+            WorkoutsScene(service: viewModel.workoutsService)
+            InsightsScene(service: viewModel.insightsService)
+            SettingsScene(service: viewModel.settingsService)
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(services: AppServices.live())
 }
