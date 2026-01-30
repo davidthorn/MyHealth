@@ -21,7 +21,8 @@ public struct ContentView: View {
             WorkoutsScene(
                 service: viewModel.workoutsService,
                 workoutFlowService: viewModel.workoutFlowService,
-                workoutListItemService: viewModel.workoutListItemService
+                workoutListItemService: viewModel.workoutListItemService,
+                workoutDetailService: viewModel.workoutDetailService
             )
             InsightsScene(service: viewModel.insightsService)
             SettingsScene(service: viewModel.settingsService)

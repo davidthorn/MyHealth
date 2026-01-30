@@ -1,5 +1,5 @@
 //
-//  WorkoutsService.swift
+//  WorkoutDetailService.swift
 //  MyHealth
 //
 //  Created by Codex.
@@ -8,25 +8,30 @@
 import Foundation
 
 @MainActor
-public final class WorkoutsService: WorkoutsServiceProtocol {
+public final class WorkoutDetailService: WorkoutDetailServiceProtocol {
     private let store: WorkoutStore
 
     public init(store: WorkoutStore) {
         self.store = store
     }
 
-    public func updates() -> AsyncStream<WorkoutsUpdate> {
+    public func updates(for id: UUID) -> AsyncStream<WorkoutDetailUpdate> {
         AsyncStream { continuation in
             let task = Task { [store] in
                 let stream = await store.stream()
                 for await items in stream {
                     if Task.isCancelled { break }
-                    continuation.yield(WorkoutsUpdate(title: "Workouts", workouts: items))
+                    let workout = items.first { $0.id == id }
+                    continuation.yield(WorkoutDetailUpdate(workout: workout))
                 }
             }
             continuation.onTermination = { _ in
                 task.cancel()
             }
         }
+    }
+
+    public func delete(id: UUID) async throws {
+        try await store.delete(id: id)
     }
 }

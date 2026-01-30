@@ -13,6 +13,7 @@ public protocol AppServicesProviding {
     var workoutsService: WorkoutsServiceProtocol { get }
     var workoutFlowService: WorkoutFlowServiceProtocol { get }
     var workoutListItemService: WorkoutListItemServiceProtocol { get }
+    var workoutDetailService: WorkoutDetailServiceProtocol { get }
     var insightsService: InsightsServiceProtocol { get }
     var settingsService: SettingsServiceProtocol { get }
 

@@ -19,6 +19,7 @@ See `ARCHITECTURE.md` for the full rules.
 - Workouts list screen
 - Current workout screen (active session)
 - Workout selection flow (start a workout)
+- Workout detail screen with delete confirmation
 - Insights screen
 - Settings screen
 
@@ -29,6 +30,7 @@ See `ARCHITECTURE.md` for the full rules.
 - `MyHealth/Services` — Service implementations
 - `MyHealth/Protocols` — Protocols (e.g., service protocols)
 - `MyHealth/Models` — Public models and route enums
+- `MyHealth/Stores` — Persistent document stores
 
 ## Build
 Open `MyHealth.xcodeproj` and run the `MyHealth` target.

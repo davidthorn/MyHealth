@@ -22,7 +22,9 @@ public struct WorkoutsView: View {
                 ContentUnavailableView("No Workouts", systemImage: "figure.run", description: Text("Start a workout to see it here."))
             } else {
                 ForEach(viewModel.workouts) { workout in
-                    WorkoutListItemView(service: workoutListItemService, workout: workout)
+                    NavigationLink(value: WorkoutsRoute.workout(workout.id)) {
+                        WorkoutListItemView(service: workoutListItemService, workout: workout)
+                    }
                 }
             }
         }

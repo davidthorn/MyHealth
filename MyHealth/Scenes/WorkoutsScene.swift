@@ -13,16 +13,19 @@ public struct WorkoutsScene: View {
     private let workoutsService: WorkoutsServiceProtocol
     private let workoutFlowService: WorkoutFlowServiceProtocol
     private let workoutListItemService: WorkoutListItemServiceProtocol
+    private let workoutDetailService: WorkoutDetailServiceProtocol
 
     public init(
         service: WorkoutsServiceProtocol,
         workoutFlowService: WorkoutFlowServiceProtocol,
-        workoutListItemService: WorkoutListItemServiceProtocol
+        workoutListItemService: WorkoutListItemServiceProtocol,
+        workoutDetailService: WorkoutDetailServiceProtocol
     ) {
         _viewModel = StateObject(wrappedValue: WorkoutsSceneViewModel(service: workoutFlowService))
         self.workoutsService = service
         self.workoutFlowService = workoutFlowService
         self.workoutListItemService = workoutListItemService
+        self.workoutDetailService = workoutDetailService
     }
 
     public var body: some View {
@@ -48,7 +51,7 @@ public struct WorkoutsScene: View {
             .navigationDestination(for: WorkoutsRoute.self) { route in
                 switch route {
                 case .workout(let value):
-                    Text("Workout: \(value.uuidString)")
+                    WorkoutDetailView(service: workoutDetailService, id: value)
                 case .newWorkout:
                     WorkoutSelectionView(service: workoutFlowService)
                 }

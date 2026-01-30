@@ -15,6 +15,7 @@ public struct AppServices: AppServicesProviding {
     public let workoutsService: WorkoutsServiceProtocol
     public let workoutFlowService: WorkoutFlowServiceProtocol
     public let workoutListItemService: WorkoutListItemServiceProtocol
+    public let workoutDetailService: WorkoutDetailServiceProtocol
     public let insightsService: InsightsServiceProtocol
     public let settingsService: SettingsServiceProtocol
 
@@ -25,6 +26,7 @@ public struct AppServices: AppServicesProviding {
         workoutsService: WorkoutsServiceProtocol,
         workoutFlowService: WorkoutFlowServiceProtocol,
         workoutListItemService: WorkoutListItemServiceProtocol,
+        workoutDetailService: WorkoutDetailServiceProtocol,
         insightsService: InsightsServiceProtocol,
         settingsService: SettingsServiceProtocol
     ) {
@@ -34,6 +36,7 @@ public struct AppServices: AppServicesProviding {
         self.workoutsService = workoutsService
         self.workoutFlowService = workoutFlowService
         self.workoutListItemService = workoutListItemService
+        self.workoutDetailService = workoutDetailService
         self.insightsService = insightsService
         self.settingsService = settingsService
     }
@@ -47,6 +50,7 @@ public struct AppServices: AppServicesProviding {
             workoutsService: WorkoutsService(store: workoutStore),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),
+            workoutDetailService: WorkoutDetailService(store: workoutStore),
             insightsService: InsightsService(),
             settingsService: SettingsService()
         )
