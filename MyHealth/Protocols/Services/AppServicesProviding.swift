@@ -12,6 +12,9 @@ public protocol AppServicesProviding {
     var metricsService: MetricsServiceProtocol { get }
     var workoutsService: WorkoutsServiceProtocol { get }
     var workoutFlowService: WorkoutFlowServiceProtocol { get }
+    var workoutListItemService: WorkoutListItemServiceProtocol { get }
     var insightsService: InsightsServiceProtocol { get }
     var settingsService: SettingsServiceProtocol { get }
+
+    func loadStores() async
 }

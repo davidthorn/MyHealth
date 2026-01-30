@@ -11,6 +11,7 @@ import Foundation
 @MainActor
 public final class CurrentWorkoutViewModel: ObservableObject {
     @Published public private(set) var currentSession: WorkoutSession?
+    @Published public private(set) var errorMessage: String?
 
     private let service: WorkoutFlowServiceProtocol
     private var task: Task<Void, Never>?
@@ -18,6 +19,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
     public init(service: WorkoutFlowServiceProtocol) {
         self.service = service
         self.currentSession = nil
+        self.errorMessage = nil
     }
 
     public func start() {
@@ -36,7 +38,15 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         task = nil
     }
 
-    public func endWorkout() {
-        service.endWorkout()
+    public func endWorkout() async {
+        do {
+            try await service.endWorkout()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    public func clearError() {
+        errorMessage = nil
     }
 }

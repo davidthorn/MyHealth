@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum WorkoutType: String, CaseIterable, Hashable, Identifiable {
+public nonisolated enum WorkoutType: String, CaseIterable, Hashable, Identifiable, Codable, Sendable {
     case running
     case walking
     case cycling
@@ -16,10 +16,6 @@ public enum WorkoutType: String, CaseIterable, Hashable, Identifiable {
     case yoga
 
     public var id: String { rawValue }
-
-    public init(rawValue: String) {
-        self = WorkoutType(rawValue: rawValue) ?? .running
-    }
 
     public var displayName: String {
         switch self {

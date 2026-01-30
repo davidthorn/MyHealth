@@ -18,6 +18,9 @@ public struct MyHealthApp: App {
     public var body: some Scene {
         WindowGroup {
             ContentView(services: services)
+                .task {
+                    await services.loadStores()
+                }
         }
     }
 }

@@ -20,7 +20,8 @@ public struct ContentView: View {
             MetricsScene(service: viewModel.metricsService)
             WorkoutsScene(
                 service: viewModel.workoutsService,
-                workoutFlowService: viewModel.workoutFlowService
+                workoutFlowService: viewModel.workoutFlowService,
+                workoutListItemService: viewModel.workoutListItemService
             )
             InsightsScene(service: viewModel.insightsService)
             SettingsScene(service: viewModel.settingsService)
@@ -28,6 +29,8 @@ public struct ContentView: View {
     }
 }
 
+#if DEBUG
 #Preview {
-    ContentView(services: AppServices.live())
+    ContentView(services: AppServices.shared)
 }
+#endif

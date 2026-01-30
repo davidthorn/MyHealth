@@ -24,7 +24,9 @@ public struct CurrentWorkoutView: View {
                 Text("Started at \(session.startedAt.formatted(date: .abbreviated, time: .shortened))")
                     .foregroundStyle(.secondary)
                 Button(role: .destructive) {
-                    viewModel.endWorkout()
+                    Task {
+                        await viewModel.endWorkout()
+                    }
                 } label: {
                     Text("End Workout")
                 }
@@ -40,11 +42,27 @@ public struct CurrentWorkoutView: View {
         .onDisappear {
             viewModel.stop()
         }
+        .alert("Save Failed", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { isPresented in
+                if !isPresented {
+                    viewModel.clearError()
+                }
+            }
+        )) {
+            Button("OK") {
+                viewModel.clearError()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "Unable to save workout.")
+        }
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
-        CurrentWorkoutView(service: WorkoutFlowService())
+        CurrentWorkoutView(service: AppServices.shared.workoutFlowService)
     }
 }
+#endif

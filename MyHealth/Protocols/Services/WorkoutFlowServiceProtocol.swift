@@ -10,5 +10,5 @@ import Foundation
 public protocol WorkoutFlowServiceProtocol {
     func updates() -> AsyncStream<WorkoutFlowUpdate>
     func startWorkout(type: WorkoutType)
-    func endWorkout()
+    func endWorkout() async throws
 }

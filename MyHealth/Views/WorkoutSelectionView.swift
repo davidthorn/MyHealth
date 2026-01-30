@@ -32,8 +32,10 @@ public struct WorkoutSelectionView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
-        WorkoutSelectionView(service: WorkoutFlowService())
+        WorkoutSelectionView(service: AppServices.shared.workoutFlowService)
     }
 }
+#endif

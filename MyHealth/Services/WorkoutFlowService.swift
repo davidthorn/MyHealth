@@ -12,8 +12,10 @@ import Foundation
 public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
     private var currentSession: WorkoutSession?
     private let subject: CurrentValueSubject<WorkoutFlowUpdate, Never>
+    private let store: WorkoutStore
 
-    public init() {
+    public init(store: WorkoutStore) {
+        self.store = store
         self.currentSession = nil
         self.subject = CurrentValueSubject(
             WorkoutFlowUpdate(availableTypes: WorkoutType.allCases, currentSession: nil)
@@ -36,9 +38,21 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
         subject.send(currentUpdate())
     }
 
-    public func endWorkout() {
+    public func endWorkout() async throws {
+        guard let session = currentSession else {
+            subject.send(currentUpdate())
+            return
+        }
         currentSession = nil
         subject.send(currentUpdate())
+        let workout = Workout(
+            id: UUID(),
+            title: session.type.displayName,
+            type: session.type,
+            startedAt: session.startedAt,
+            endedAt: Date()
+        )
+        try await store.create(workout)
     }
 
     private func currentUpdate() -> WorkoutFlowUpdate {

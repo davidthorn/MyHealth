@@ -9,9 +9,11 @@ import SwiftUI
 
 public struct WorkoutsView: View {
     @StateObject private var viewModel: WorkoutsViewModel
+    private let workoutListItemService: WorkoutListItemServiceProtocol
 
-    public init(service: WorkoutsServiceProtocol) {
+    public init(service: WorkoutsServiceProtocol, workoutListItemService: WorkoutListItemServiceProtocol) {
         _viewModel = StateObject(wrappedValue: WorkoutsViewModel(service: service))
+        self.workoutListItemService = workoutListItemService
     }
 
     public var body: some View {
@@ -20,12 +22,7 @@ public struct WorkoutsView: View {
                 ContentUnavailableView("No Workouts", systemImage: "figure.run", description: Text("Start a workout to see it here."))
             } else {
                 ForEach(viewModel.workouts) { workout in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(workout.title)
-                            .font(.headline)
-                        Text(workout.type.displayName)
-                            .foregroundStyle(.secondary)
-                    }
+                    WorkoutListItemView(service: workoutListItemService, workout: workout)
                 }
             }
         }
@@ -39,8 +36,13 @@ public struct WorkoutsView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
-        WorkoutsView(service: WorkoutsService())
+        WorkoutsView(
+            service: AppServices.shared.workoutsService,
+            workoutListItemService: AppServices.shared.workoutListItemService
+        )
     }
 }
+#endif

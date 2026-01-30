@@ -12,18 +12,24 @@ public struct WorkoutsScene: View {
 
     private let workoutsService: WorkoutsServiceProtocol
     private let workoutFlowService: WorkoutFlowServiceProtocol
+    private let workoutListItemService: WorkoutListItemServiceProtocol
 
-    public init(service: WorkoutsServiceProtocol, workoutFlowService: WorkoutFlowServiceProtocol) {
+    public init(
+        service: WorkoutsServiceProtocol,
+        workoutFlowService: WorkoutFlowServiceProtocol,
+        workoutListItemService: WorkoutListItemServiceProtocol
+    ) {
         _viewModel = StateObject(wrappedValue: WorkoutsSceneViewModel(service: workoutFlowService))
         self.workoutsService = service
         self.workoutFlowService = workoutFlowService
+        self.workoutListItemService = workoutListItemService
     }
 
     public var body: some View {
         NavigationStack(path: $viewModel.path) {
             Group {
                 if viewModel.currentSession == nil {
-                    WorkoutsView(service: workoutsService)
+                    WorkoutsView(service: workoutsService, workoutListItemService: workoutListItemService)
                 } else {
                     CurrentWorkoutView(service: workoutFlowService)
                 }
