@@ -12,14 +12,17 @@ import Foundation
 public final class CurrentWorkoutViewModel: ObservableObject {
     @Published public private(set) var currentSession: WorkoutSession?
     @Published public private(set) var errorMessage: String?
+    @Published public private(set) var elapsedText: String?
 
     private let service: WorkoutFlowServiceProtocol
     private var task: Task<Void, Never>?
+    private var timerCancellable: AnyCancellable?
 
     public init(service: WorkoutFlowServiceProtocol) {
         self.service = service
         self.currentSession = nil
         self.errorMessage = nil
+        self.elapsedText = nil
     }
 
     public func start() {
@@ -29,6 +32,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
             for await update in service.updates() {
                 guard let self, !Task.isCancelled else { break }
                 self.currentSession = update.currentSession
+                self.configureTimer(for: update.currentSession)
             }
         }
     }
@@ -36,6 +40,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
     public func stop() {
         task?.cancel()
         task = nil
+        stopTimer()
     }
 
     public func endWorkout() async {
@@ -48,5 +53,32 @@ public final class CurrentWorkoutViewModel: ObservableObject {
 
     public func clearError() {
         errorMessage = nil
+    }
+
+    private func configureTimer(for session: WorkoutSession?) {
+        guard let session else {
+            stopTimer()
+            elapsedText = nil
+            return
+        }
+
+        updateElapsedText(startedAt: session.startedAt)
+        if timerCancellable == nil {
+            timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
+                .autoconnect()
+                .sink { [weak self] _ in
+                    guard let self, !Task.isCancelled else { return }
+                    self.updateElapsedText(startedAt: session.startedAt)
+                }
+        }
+    }
+
+    private func stopTimer() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
+    }
+
+    private func updateElapsedText(startedAt: Date) {
+        elapsedText = startedAt.elapsedText()
     }
 }

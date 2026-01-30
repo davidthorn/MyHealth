@@ -23,6 +23,10 @@ public struct CurrentWorkoutView: View {
                     .font(.headline)
                 Text("Started at \(session.startedAt.formatted(date: .abbreviated, time: .shortened))")
                     .foregroundStyle(.secondary)
+                if let elapsedText = viewModel.elapsedText {
+                    Text(elapsedText)
+                        .font(.headline)
+                }
                 Button(role: .destructive) {
                     Task {
                         await viewModel.endWorkout()
