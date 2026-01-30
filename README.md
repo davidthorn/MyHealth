@@ -26,6 +26,7 @@ See `ARCHITECTURE.md` for the full rules.
 ## Structure
 - `MyHealth/Scenes` — SwiftUI scenes used in the TabView
 - `MyHealth/Views` — SwiftUI views used inside scenes
+- `MyHealth/Components` — Reusable view components
 - `MyHealth/ViewModels` — ViewModels for each scene and root content
 - `MyHealth/Services` — Service implementations
 - `MyHealth/Protocols` — Protocols (e.g., service protocols)

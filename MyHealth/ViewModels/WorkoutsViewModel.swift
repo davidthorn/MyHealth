@@ -12,6 +12,8 @@ import Foundation
 public final class WorkoutsViewModel: ObservableObject {
     @Published public private(set) var title: String
     @Published public private(set) var workouts: [Workout]
+    @Published public private(set) var availableTypes: [WorkoutType]
+    @Published public var selectedType: WorkoutType?
 
     private let service: WorkoutsServiceProtocol
     private var task: Task<Void, Never>?
@@ -20,6 +22,8 @@ public final class WorkoutsViewModel: ObservableObject {
         self.service = service
         self.title = "Workouts"
         self.workouts = []
+        self.availableTypes = []
+        self.selectedType = nil
     }
 
     public func start() {
@@ -29,7 +33,9 @@ public final class WorkoutsViewModel: ObservableObject {
             for await update in service.updates() {
                 guard let self, !Task.isCancelled else { break }
                 self.title = update.title
-                self.workouts = update.workouts.sorted { $0.startedAt > $1.startedAt }
+                let sortedWorkouts = update.workouts.sorted { $0.startedAt > $1.startedAt }
+                self.workouts = sortedWorkouts
+                self.availableTypes = Self.types(from: sortedWorkouts)
             }
         }
     }
@@ -37,5 +43,19 @@ public final class WorkoutsViewModel: ObservableObject {
     public func stop() {
         task?.cancel()
         task = nil
+    }
+
+    public var filteredWorkouts: [Workout] {
+        guard let selectedType else { return workouts }
+        return workouts.filter { $0.type == selectedType }
+    }
+
+    public func select(type: WorkoutType?) {
+        selectedType = type
+    }
+
+    private static func types(from workouts: [Workout]) -> [WorkoutType] {
+        let unique = Set(workouts.map(\.type))
+        return unique.sorted { $0.displayName < $1.displayName }
     }
 }
