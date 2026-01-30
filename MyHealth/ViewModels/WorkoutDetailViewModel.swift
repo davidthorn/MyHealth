@@ -33,7 +33,7 @@ public final class WorkoutDetailViewModel: ObservableObject {
             let service = self.service
             for await update in service.updates(for: id) {
                 guard !Task.isCancelled else { break }
-                self.workout = update.workout
+                self.workout = update
             }
         }
     }
@@ -55,5 +55,14 @@ public final class WorkoutDetailViewModel: ObservableObject {
             errorMessage = error.localizedDescription
             return false
         }
+    }
+
+    public var durationText: String? {
+        guard let workout else { return nil }
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.unitsStyle = .positional
+        formatter.zeroFormattingBehavior = [.pad]
+        return formatter.string(from: workout.startedAt, to: workout.endedAt)
     }
 }

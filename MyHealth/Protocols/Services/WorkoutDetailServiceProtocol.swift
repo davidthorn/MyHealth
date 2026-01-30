@@ -8,6 +8,6 @@
 import Foundation
 
 public protocol WorkoutDetailServiceProtocol {
-    func updates(for id: UUID) -> AsyncStream<WorkoutDetailUpdate>
+    func updates(for id: UUID) -> AsyncStream<Workout?>
     func delete(id: UUID) async throws
 }

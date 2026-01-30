@@ -15,14 +15,14 @@ public final class WorkoutDetailService: WorkoutDetailServiceProtocol {
         self.store = store
     }
 
-    public func updates(for id: UUID) -> AsyncStream<WorkoutDetailUpdate> {
+    public func updates(for id: UUID) -> AsyncStream<Workout?> {
         AsyncStream { continuation in
             let task = Task { [store] in
                 let stream = await store.stream()
                 for await items in stream {
                     if Task.isCancelled { break }
                     let workout = items.first { $0.id == id }
-                    continuation.yield(WorkoutDetailUpdate(workout: workout))
+                    continuation.yield(workout)
                 }
             }
             continuation.onTermination = { _ in

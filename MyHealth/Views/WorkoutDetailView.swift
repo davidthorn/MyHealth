@@ -26,6 +26,7 @@ public struct WorkoutDetailView: View {
                     Section("Timing") {
                         LabeledContent("Start", value: workout.startedAt.formatted(date: .abbreviated, time: .shortened))
                         LabeledContent("End", value: workout.endedAt.formatted(date: .abbreviated, time: .shortened))
+                        LabeledContent("Duration", value: viewModel.durationText ?? "—")
                     }
                 }
             } else {
