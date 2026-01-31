@@ -37,6 +37,9 @@ public final class ContentViewModel: ObservableObject {
     public var activityRingsDetailService: ActivityRingsDetailServiceProtocol { services.activityRingsDetailService }
     public var activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol { services.activityRingsDayDetailService }
     public var activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol { services.activityRingsMetricDayDetailService }
+    public var restingHeartRateSummaryService: RestingHeartRateSummaryServiceProtocol { services.restingHeartRateSummaryService }
+    public var restingHeartRateHistoryService: RestingHeartRateHistoryServiceProtocol { services.restingHeartRateHistoryService }
+    public var restingHeartRateDayDetailService: RestingHeartRateDayDetailServiceProtocol { services.restingHeartRateDayDetailService }
     public var workoutsService: WorkoutsServiceProtocol { services.workoutsService }
     public var workoutFlowService: WorkoutFlowServiceProtocol { services.workoutFlowService }
     public var workoutListItemService: WorkoutListItemServiceProtocol { services.workoutListItemService }

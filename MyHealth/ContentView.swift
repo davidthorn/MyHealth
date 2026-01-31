@@ -35,7 +35,10 @@ public struct ContentView: View {
                 activityRingsSummaryService: viewModel.activityRingsSummaryService,
                 activityRingsDetailService: viewModel.activityRingsDetailService,
                 activityRingsDayDetailService: viewModel.activityRingsDayDetailService,
-                activityRingsMetricDayDetailService: viewModel.activityRingsMetricDayDetailService
+                activityRingsMetricDayDetailService: viewModel.activityRingsMetricDayDetailService,
+                restingHeartRateSummaryService: viewModel.restingHeartRateSummaryService,
+                restingHeartRateHistoryService: viewModel.restingHeartRateHistoryService,
+                restingHeartRateDayDetailService: viewModel.restingHeartRateDayDetailService
             )
             WorkoutsScene(
                 service: viewModel.workoutsService,

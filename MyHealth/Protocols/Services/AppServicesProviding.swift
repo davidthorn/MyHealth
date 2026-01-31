@@ -27,6 +27,9 @@ public protocol AppServicesProviding {
     var activityRingsDetailService: ActivityRingsDetailServiceProtocol { get }
     var activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol { get }
     var activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol { get }
+    var restingHeartRateSummaryService: RestingHeartRateSummaryServiceProtocol { get }
+    var restingHeartRateHistoryService: RestingHeartRateHistoryServiceProtocol { get }
+    var restingHeartRateDayDetailService: RestingHeartRateDayDetailServiceProtocol { get }
     var workoutsService: WorkoutsServiceProtocol { get }
     var workoutFlowService: WorkoutFlowServiceProtocol { get }
     var workoutListItemService: WorkoutListItemServiceProtocol { get }

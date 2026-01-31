@@ -43,4 +43,8 @@ public final class HealthKitHeartRateAdapter: HealthKitHeartRateAdapterProtocol 
     public func heartRateReading(id: UUID) async throws -> HeartRateReading {
         try await storeAdaptor.fetchHeartRateReading(id: id)
     }
+
+    public func heartRateReadings(start: Date, end: Date) async -> [HeartRateReading] {
+        await storeAdaptor.fetchHeartRateReadings(start: start, end: end)
+    }
 }

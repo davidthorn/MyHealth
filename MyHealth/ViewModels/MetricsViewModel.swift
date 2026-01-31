@@ -32,6 +32,7 @@ public final class MetricsViewModel: ObservableObject {
         self.selectedMetric = .heartRate
         self.summaryCards = [
             (.heartRate, "72 bpm", "Avg today", "▼ 3 bpm"),
+            (.restingHeartRate, "58 bpm", "Today", "▼ 2 bpm"),
             (.steps, "8,420", "Today", "▲ 6%"),
             (.flights, "12", "Today", "▲ 2%"),
             (.standHours, "8", "Today", "▲ 1"),

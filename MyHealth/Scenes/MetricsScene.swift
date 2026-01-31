@@ -27,6 +27,9 @@ public struct MetricsScene: View {
     private let activityRingsDetailService: ActivityRingsDetailServiceProtocol
     private let activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol
     private let activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol
+    private let restingHeartRateSummaryService: RestingHeartRateSummaryServiceProtocol
+    private let restingHeartRateHistoryService: RestingHeartRateHistoryServiceProtocol
+    private let restingHeartRateDayDetailService: RestingHeartRateDayDetailServiceProtocol
     
     public init(
         service: MetricsServiceProtocol,
@@ -46,7 +49,10 @@ public struct MetricsScene: View {
         activityRingsSummaryService: ActivityRingsSummaryServiceProtocol,
         activityRingsDetailService: ActivityRingsDetailServiceProtocol,
         activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol,
-        activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol
+        activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol,
+        restingHeartRateSummaryService: RestingHeartRateSummaryServiceProtocol,
+        restingHeartRateHistoryService: RestingHeartRateHistoryServiceProtocol,
+        restingHeartRateDayDetailService: RestingHeartRateDayDetailServiceProtocol
     ) {
         self.service = service
         self.heartRateSummaryService = heartRateSummaryService
@@ -66,6 +72,9 @@ public struct MetricsScene: View {
         self.activityRingsDetailService = activityRingsDetailService
         self.activityRingsDayDetailService = activityRingsDayDetailService
         self.activityRingsMetricDayDetailService = activityRingsMetricDayDetailService
+        self.restingHeartRateSummaryService = restingHeartRateSummaryService
+        self.restingHeartRateHistoryService = restingHeartRateHistoryService
+        self.restingHeartRateDayDetailService = restingHeartRateDayDetailService
         self._path = State(initialValue: NavigationPath())
     }
     
@@ -91,6 +100,8 @@ public struct MetricsScene: View {
                             SleepSummaryView(service: sleepSummaryService)
                         case .activityRings:
                             ActivityRingsSummaryView(service: activityRingsSummaryService)
+                        case .restingHeartRate:
+                            RestingHeartRateSummaryView(service: restingHeartRateSummaryService)
                         }
                     }
                 }
@@ -151,6 +162,17 @@ public struct MetricsScene: View {
                         ActivityRingsListView(service: activityRingsDetailService)
                     }
                 }
+                .navigationDestination(for: RestingHeartRateRoute.self) { route in
+                    switch route {
+                    case .history:
+                        RestingHeartRateHistoryView(service: restingHeartRateHistoryService)
+                    case .day(let date):
+                        RestingHeartRateDayDetailView(
+                            service: restingHeartRateDayDetailService,
+                            date: date
+                        )
+                    }
+                }
         }
         .tabItem {
             Label("Metrics", systemImage: "chart.bar")
@@ -178,7 +200,10 @@ public struct MetricsScene: View {
         activityRingsSummaryService: AppServices.shared.activityRingsSummaryService,
         activityRingsDetailService: AppServices.shared.activityRingsDetailService,
         activityRingsDayDetailService: AppServices.shared.activityRingsDayDetailService,
-        activityRingsMetricDayDetailService: AppServices.shared.activityRingsMetricDayDetailService
+        activityRingsMetricDayDetailService: AppServices.shared.activityRingsMetricDayDetailService,
+        restingHeartRateSummaryService: AppServices.shared.restingHeartRateSummaryService,
+        restingHeartRateHistoryService: AppServices.shared.restingHeartRateHistoryService,
+        restingHeartRateDayDetailService: AppServices.shared.restingHeartRateDayDetailService
     )
 }
 #endif

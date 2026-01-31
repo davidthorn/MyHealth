@@ -17,6 +17,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let standHours: HealthKitStandHoursAdapterProtocol
     private let activeEnergy: HealthKitActiveEnergyAdapterProtocol
     private let activitySummary: HealthKitActivitySummaryAdapterProtocol
+    private let restingHeartRate: HealthKitRestingHeartRateAdapterProtocol
     private let sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
     
     public init(
@@ -27,6 +28,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         standHours: HealthKitStandHoursAdapterProtocol,
         activeEnergy: HealthKitActiveEnergyAdapterProtocol,
         activitySummary: HealthKitActivitySummaryAdapterProtocol,
+        restingHeartRate: HealthKitRestingHeartRateAdapterProtocol,
         sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
     ) {
         self.workouts = workouts
@@ -36,6 +38,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         self.standHours = standHours
         self.activeEnergy = activeEnergy
         self.activitySummary = activitySummary
+        self.restingHeartRate = restingHeartRate
         self.sleepAnalysis = sleepAnalysis
     }
 
@@ -49,6 +52,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
             standHours: HealthKitStandHoursAdapter(storeAdaptor: storeAdaptor),
             activeEnergy: HealthKitActiveEnergyAdapter(storeAdaptor: storeAdaptor),
             activitySummary: HealthKitActivitySummaryAdapter(storeAdaptor: storeAdaptor),
+            restingHeartRate: HealthKitRestingHeartRateAdapter(storeAdaptor: storeAdaptor),
             sleepAnalysis: HealthKitSleepAnalysisAdapter(storeAdaptor: storeAdaptor)
         )
     }
@@ -81,6 +85,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         await activitySummary.requestAuthorization()
     }
 
+    public func requestRestingHeartRateAuthorization() async -> Bool {
+        await restingHeartRate.requestAuthorization()
+    }
+
     public func requestSleepAnalysisAuthorization() async -> Bool {
         await sleepAnalysis.requestAuthorization()
     }
@@ -105,6 +113,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         try await heartRates.heartRateReading(id: id)
     }
 
+    public func heartRateReadings(from start: Date, to end: Date) async -> [HeartRateReading] {
+        await heartRates.heartRateReadings(start: start, end: end)
+    }
+
     public func stepsSummaryStream(days: Int) -> AsyncStream<StepsSummary> {
         steps.stepsSummaryStream(days: days)
     }
@@ -119,6 +131,14 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func activeEnergySummaryStream(days: Int) -> AsyncStream<CaloriesSummary> {
         activeEnergy.activeEnergySummaryStream(days: days)
+    }
+
+    public func restingHeartRateSummaryStream(days: Int) -> AsyncStream<RestingHeartRateSummary> {
+        restingHeartRate.restingHeartRateSummaryStream(days: days)
+    }
+
+    public func restingHeartRateReadings(on date: Date) async -> [RestingHeartRateReading] {
+        await restingHeartRate.restingHeartRateReadings(on: date)
     }
 
     public func activitySummaryStream(days: Int) -> AsyncStream<ActivityRingsSummary> {

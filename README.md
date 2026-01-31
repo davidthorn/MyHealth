@@ -17,6 +17,7 @@ See `ARCHITECTURE.md` for the full rules.
 - Dashboard summary screen
 - Metrics exploration screen
 - Activity Rings summary and history
+- Resting heart rate summary, history, and daily samples
 - Workouts list screen
 - Current workout screen (active session)
 - Workout selection flow (start a workout)
