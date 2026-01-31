@@ -41,18 +41,23 @@ public struct WorkoutsView: View {
                     .padding(.top, 4)
                 }
 
-                List {
+                ScrollView {
                     if viewModel.filteredWorkouts.isEmpty {
                         ContentUnavailableView("No Workouts", systemImage: "figure.run", description: Text("Start a workout to see it here."))
+                            .padding(.top, 24)
                     } else {
-                        ForEach(viewModel.filteredWorkouts) { workout in
-                            NavigationLink(value: WorkoutsRoute.workout(workout.id)) {
-                                WorkoutListItemView(service: workoutListItemService, workout: workout)
+                        LazyVStack(spacing: 12) {
+                            ForEach(viewModel.filteredWorkouts) { workout in
+                                NavigationLink(value: WorkoutsRoute.workout(workout.id)) {
+                                    WorkoutListItemView(service: workoutListItemService, workout: workout)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
+                        .padding(.horizontal)
+                        .padding(.top, 8)
                     }
                 }
-                .listStyle(.plain)
             } else {
                 VStack(spacing: 12) {
                     ContentUnavailableView(

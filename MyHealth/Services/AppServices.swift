@@ -137,7 +137,7 @@ public struct AppServices: AppServicesProviding {
             restingHeartRateDayDetailService: RestingHeartRateDayDetailService(healthKitAdapter: healthKitAdapter),
             workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
-            workoutListItemService: WorkoutListItemService(),
+            workoutListItemService: WorkoutListItemService(workoutSource: workoutSource, heartRateSource: heartRateSource),
             workoutDetailService: WorkoutDetailService(source: workoutSource, heartRateSource: heartRateSource),
             insightsService: InsightsService(),
             settingsService: SettingsService()
