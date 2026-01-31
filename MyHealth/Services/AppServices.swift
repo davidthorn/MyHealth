@@ -10,7 +10,7 @@ import HealthKitAdaptor
 
 @MainActor
 public struct AppServices: AppServicesProviding {
-    private let workoutStore: WorkoutStore
+    private let workoutStore: WorkoutStoreProtocol
     public let dashboardService: DashboardServiceProtocol
     public let metricsService: MetricsServiceProtocol
     public let workoutsService: WorkoutsServiceProtocol
@@ -21,7 +21,7 @@ public struct AppServices: AppServicesProviding {
     public let settingsService: SettingsServiceProtocol
 
     public init(
-        workoutStore: WorkoutStore,
+        workoutStore: WorkoutStoreProtocol,
         dashboardService: DashboardServiceProtocol,
         metricsService: MetricsServiceProtocol,
         workoutsService: WorkoutsServiceProtocol,

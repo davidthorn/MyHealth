@@ -80,7 +80,7 @@ public struct WorkoutDetailView: View {
 #if DEBUG
 #Preview {
     NavigationStack {
-        WorkoutDetailView(service: WorkoutDetailService(store: WorkoutStore()), id: UUID())
+        WorkoutDetailView(service: AppServices.shared.workoutDetailService, id: UUID())
     }
 }
 #endif

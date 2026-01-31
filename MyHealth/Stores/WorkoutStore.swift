@@ -8,7 +8,7 @@
 import Foundation
 import Models
 
-public actor WorkoutStore: Sendable {
+public actor WorkoutStore: WorkoutStoreProtocol {
     private let store: DocumentStore<Workout>
 
     @MainActor

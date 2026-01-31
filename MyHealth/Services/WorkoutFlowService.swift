@@ -13,9 +13,9 @@ import Models
 public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
     private var currentSession: WorkoutSession?
     private let subject: CurrentValueSubject<WorkoutFlowUpdate, Never>
-    private let store: WorkoutStore
+    private let store: WorkoutStoreProtocol
 
-    public init(store: WorkoutStore) {
+    public init(store: WorkoutStoreProtocol) {
         self.store = store
         self.currentSession = nil
         self.subject = CurrentValueSubject(

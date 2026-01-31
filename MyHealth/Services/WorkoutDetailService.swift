@@ -10,9 +10,9 @@ import Models
 
 @MainActor
 public final class WorkoutDetailService: WorkoutDetailServiceProtocol {
-    private let store: WorkoutStore
+    private let store: WorkoutStoreProtocol
 
-    public init(store: WorkoutStore) {
+    public init(store: WorkoutStoreProtocol) {
         self.store = store
     }
 
