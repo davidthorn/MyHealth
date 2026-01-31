@@ -35,7 +35,8 @@ public final class MetricsViewModel: ObservableObject {
             (.steps, "8,420", "Today", "▲ 6%"),
             (.flights, "12", "Today", "▲ 2%"),
             (.standHours, "8", "Today", "▲ 1"),
-            (.calories, "520", "Active", "▲ 4%")
+            (.calories, "520", "Active", "▲ 4%"),
+            (.sleep, "7h 42m", "Last night", "▲ 12m")
         ]
         self.statItems = [
             ("Average", "72 bpm"),

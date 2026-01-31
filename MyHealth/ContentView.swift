@@ -28,7 +28,10 @@ public struct ContentView: View {
                 standHoursSummaryService: viewModel.standHoursSummaryService,
                 standHoursDetailService: viewModel.standHoursDetailService,
                 caloriesSummaryService: viewModel.caloriesSummaryService,
-                caloriesDetailService: viewModel.caloriesDetailService
+                caloriesDetailService: viewModel.caloriesDetailService,
+                sleepSummaryService: viewModel.sleepSummaryService,
+                sleepDetailService: viewModel.sleepDetailService,
+                sleepReadingDetailService: viewModel.sleepReadingDetailService
             )
             WorkoutsScene(
                 service: viewModel.workoutsService,

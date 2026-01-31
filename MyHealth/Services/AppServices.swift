@@ -23,6 +23,9 @@ public struct AppServices: AppServicesProviding {
     public let standHoursDetailService: StandHoursDetailServiceProtocol
     public let caloriesSummaryService: CaloriesSummaryServiceProtocol
     public let caloriesDetailService: CaloriesDetailServiceProtocol
+    public let sleepSummaryService: SleepSummaryServiceProtocol
+    public let sleepDetailService: SleepDetailServiceProtocol
+    public let sleepReadingDetailService: SleepReadingDetailServiceProtocol
     public let workoutsService: WorkoutsServiceProtocol
     public let workoutFlowService: WorkoutFlowServiceProtocol
     public let workoutListItemService: WorkoutListItemServiceProtocol
@@ -44,6 +47,9 @@ public struct AppServices: AppServicesProviding {
         standHoursDetailService: StandHoursDetailServiceProtocol,
         caloriesSummaryService: CaloriesSummaryServiceProtocol,
         caloriesDetailService: CaloriesDetailServiceProtocol,
+        sleepSummaryService: SleepSummaryServiceProtocol,
+        sleepDetailService: SleepDetailServiceProtocol,
+        sleepReadingDetailService: SleepReadingDetailServiceProtocol,
         workoutsService: WorkoutsServiceProtocol,
         workoutFlowService: WorkoutFlowServiceProtocol,
         workoutListItemService: WorkoutListItemServiceProtocol,
@@ -64,6 +70,9 @@ public struct AppServices: AppServicesProviding {
         self.standHoursDetailService = standHoursDetailService
         self.caloriesSummaryService = caloriesSummaryService
         self.caloriesDetailService = caloriesDetailService
+        self.sleepSummaryService = sleepSummaryService
+        self.sleepDetailService = sleepDetailService
+        self.sleepReadingDetailService = sleepReadingDetailService
         self.workoutsService = workoutsService
         self.workoutFlowService = workoutFlowService
         self.workoutListItemService = workoutListItemService
@@ -90,6 +99,9 @@ public struct AppServices: AppServicesProviding {
             standHoursDetailService: StandHoursDetailService(healthKitAdapter: healthKitAdapter),
             caloriesSummaryService: CaloriesSummaryService(healthKitAdapter: healthKitAdapter),
             caloriesDetailService: CaloriesDetailService(healthKitAdapter: healthKitAdapter),
+            sleepSummaryService: SleepSummaryService(healthKitAdapter: healthKitAdapter),
+            sleepDetailService: SleepDetailService(healthKitAdapter: healthKitAdapter),
+            sleepReadingDetailService: SleepReadingDetailService(healthKitAdapter: healthKitAdapter),
             workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),

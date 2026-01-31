@@ -20,6 +20,9 @@ public struct MetricsScene: View {
     private let standHoursDetailService: StandHoursDetailServiceProtocol
     private let caloriesSummaryService: CaloriesSummaryServiceProtocol
     private let caloriesDetailService: CaloriesDetailServiceProtocol
+    private let sleepSummaryService: SleepSummaryServiceProtocol
+    private let sleepDetailService: SleepDetailServiceProtocol
+    private let sleepReadingDetailService: SleepReadingDetailServiceProtocol
     
     public init(
         service: MetricsServiceProtocol,
@@ -32,7 +35,10 @@ public struct MetricsScene: View {
         standHoursSummaryService: StandHoursSummaryServiceProtocol,
         standHoursDetailService: StandHoursDetailServiceProtocol,
         caloriesSummaryService: CaloriesSummaryServiceProtocol,
-        caloriesDetailService: CaloriesDetailServiceProtocol
+        caloriesDetailService: CaloriesDetailServiceProtocol,
+        sleepSummaryService: SleepSummaryServiceProtocol,
+        sleepDetailService: SleepDetailServiceProtocol,
+        sleepReadingDetailService: SleepReadingDetailServiceProtocol
     ) {
         self.service = service
         self.heartRateSummaryService = heartRateSummaryService
@@ -45,6 +51,9 @@ public struct MetricsScene: View {
         self.standHoursDetailService = standHoursDetailService
         self.caloriesSummaryService = caloriesSummaryService
         self.caloriesDetailService = caloriesDetailService
+        self.sleepSummaryService = sleepSummaryService
+        self.sleepDetailService = sleepDetailService
+        self.sleepReadingDetailService = sleepReadingDetailService
         self._path = State(initialValue: NavigationPath())
     }
     
@@ -66,14 +75,8 @@ public struct MetricsScene: View {
                             StandHoursSummaryView(service: standHoursSummaryService)
                         case .calories:
                             CaloriesSummaryView(service: caloriesSummaryService)
-                        default:
-                            VStack(spacing: 12) {
-                                Text(category.title)
-                                    .font(.title2.weight(.bold))
-                                Text("Detailed insights coming soon.")
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding()
+                        case .sleep:
+                            SleepSummaryView(service: sleepSummaryService)
                         }
                     }
                 }
@@ -110,6 +113,14 @@ public struct MetricsScene: View {
                         CaloriesDetailView(service: caloriesDetailService)
                     }
                 }
+                .navigationDestination(for: SleepRoute.self) { route in
+                    switch route {
+                    case .detail:
+                        SleepDetailView(service: sleepDetailService)
+                    case .reading(let date):
+                        SleepReadingDetailView(service: sleepReadingDetailService, date: date)
+                    }
+                }
         }
         .tabItem {
             Label("Metrics", systemImage: "chart.bar")
@@ -130,7 +141,10 @@ public struct MetricsScene: View {
         standHoursSummaryService: AppServices.shared.standHoursSummaryService,
         standHoursDetailService: AppServices.shared.standHoursDetailService,
         caloriesSummaryService: AppServices.shared.caloriesSummaryService,
-        caloriesDetailService: AppServices.shared.caloriesDetailService
+        caloriesDetailService: AppServices.shared.caloriesDetailService,
+        sleepSummaryService: AppServices.shared.sleepSummaryService,
+        sleepDetailService: AppServices.shared.sleepDetailService,
+        sleepReadingDetailService: AppServices.shared.sleepReadingDetailService
     )
 }
 #endif

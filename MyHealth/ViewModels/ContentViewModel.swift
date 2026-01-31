@@ -30,6 +30,9 @@ public final class ContentViewModel: ObservableObject {
     public var standHoursDetailService: StandHoursDetailServiceProtocol { services.standHoursDetailService }
     public var caloriesSummaryService: CaloriesSummaryServiceProtocol { services.caloriesSummaryService }
     public var caloriesDetailService: CaloriesDetailServiceProtocol { services.caloriesDetailService }
+    public var sleepSummaryService: SleepSummaryServiceProtocol { services.sleepSummaryService }
+    public var sleepDetailService: SleepDetailServiceProtocol { services.sleepDetailService }
+    public var sleepReadingDetailService: SleepReadingDetailServiceProtocol { services.sleepReadingDetailService }
     public var workoutsService: WorkoutsServiceProtocol { services.workoutsService }
     public var workoutFlowService: WorkoutFlowServiceProtocol { services.workoutFlowService }
     public var workoutListItemService: WorkoutListItemServiceProtocol { services.workoutListItemService }

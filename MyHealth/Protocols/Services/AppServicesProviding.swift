@@ -20,6 +20,9 @@ public protocol AppServicesProviding {
     var standHoursDetailService: StandHoursDetailServiceProtocol { get }
     var caloriesSummaryService: CaloriesSummaryServiceProtocol { get }
     var caloriesDetailService: CaloriesDetailServiceProtocol { get }
+    var sleepSummaryService: SleepSummaryServiceProtocol { get }
+    var sleepDetailService: SleepDetailServiceProtocol { get }
+    var sleepReadingDetailService: SleepReadingDetailServiceProtocol { get }
     var workoutsService: WorkoutsServiceProtocol { get }
     var workoutFlowService: WorkoutFlowServiceProtocol { get }
     var workoutListItemService: WorkoutListItemServiceProtocol { get }
