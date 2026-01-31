@@ -23,6 +23,10 @@ public struct MetricsScene: View {
     private let sleepSummaryService: SleepSummaryServiceProtocol
     private let sleepDetailService: SleepDetailServiceProtocol
     private let sleepReadingDetailService: SleepReadingDetailServiceProtocol
+    private let activityRingsSummaryService: ActivityRingsSummaryServiceProtocol
+    private let activityRingsDetailService: ActivityRingsDetailServiceProtocol
+    private let activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol
+    private let activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol
     
     public init(
         service: MetricsServiceProtocol,
@@ -38,7 +42,11 @@ public struct MetricsScene: View {
         caloriesDetailService: CaloriesDetailServiceProtocol,
         sleepSummaryService: SleepSummaryServiceProtocol,
         sleepDetailService: SleepDetailServiceProtocol,
-        sleepReadingDetailService: SleepReadingDetailServiceProtocol
+        sleepReadingDetailService: SleepReadingDetailServiceProtocol,
+        activityRingsSummaryService: ActivityRingsSummaryServiceProtocol,
+        activityRingsDetailService: ActivityRingsDetailServiceProtocol,
+        activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol,
+        activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol
     ) {
         self.service = service
         self.heartRateSummaryService = heartRateSummaryService
@@ -54,6 +62,10 @@ public struct MetricsScene: View {
         self.sleepSummaryService = sleepSummaryService
         self.sleepDetailService = sleepDetailService
         self.sleepReadingDetailService = sleepReadingDetailService
+        self.activityRingsSummaryService = activityRingsSummaryService
+        self.activityRingsDetailService = activityRingsDetailService
+        self.activityRingsDayDetailService = activityRingsDayDetailService
+        self.activityRingsMetricDayDetailService = activityRingsMetricDayDetailService
         self._path = State(initialValue: NavigationPath())
     }
     
@@ -77,6 +89,8 @@ public struct MetricsScene: View {
                             CaloriesSummaryView(service: caloriesSummaryService)
                         case .sleep:
                             SleepSummaryView(service: sleepSummaryService)
+                        case .activityRings:
+                            ActivityRingsSummaryView(service: activityRingsSummaryService)
                         }
                     }
                 }
@@ -121,6 +135,22 @@ public struct MetricsScene: View {
                         SleepReadingDetailView(service: sleepReadingDetailService, date: date)
                     }
                 }
+                .navigationDestination(for: ActivityRingsRoute.self) { route in
+                    switch route {
+                    case .detail(let date):
+                        ActivityRingsDayDetailView(service: activityRingsDayDetailService, date: date)
+                    case .day(let date):
+                        ActivityRingsDayDetailView(service: activityRingsDayDetailService, date: date)
+                    case .metric(let metric, let date):
+                        ActivityRingsMetricDayDetailView(
+                            service: activityRingsMetricDayDetailService,
+                            metric: metric,
+                            date: date
+                        )
+                    case .history:
+                        ActivityRingsListView(service: activityRingsDetailService)
+                    }
+                }
         }
         .tabItem {
             Label("Metrics", systemImage: "chart.bar")
@@ -144,7 +174,11 @@ public struct MetricsScene: View {
         caloriesDetailService: AppServices.shared.caloriesDetailService,
         sleepSummaryService: AppServices.shared.sleepSummaryService,
         sleepDetailService: AppServices.shared.sleepDetailService,
-        sleepReadingDetailService: AppServices.shared.sleepReadingDetailService
+        sleepReadingDetailService: AppServices.shared.sleepReadingDetailService,
+        activityRingsSummaryService: AppServices.shared.activityRingsSummaryService,
+        activityRingsDetailService: AppServices.shared.activityRingsDetailService,
+        activityRingsDayDetailService: AppServices.shared.activityRingsDayDetailService,
+        activityRingsMetricDayDetailService: AppServices.shared.activityRingsMetricDayDetailService
     )
 }
 #endif

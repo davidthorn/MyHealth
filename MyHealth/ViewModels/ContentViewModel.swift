@@ -33,6 +33,10 @@ public final class ContentViewModel: ObservableObject {
     public var sleepSummaryService: SleepSummaryServiceProtocol { services.sleepSummaryService }
     public var sleepDetailService: SleepDetailServiceProtocol { services.sleepDetailService }
     public var sleepReadingDetailService: SleepReadingDetailServiceProtocol { services.sleepReadingDetailService }
+    public var activityRingsSummaryService: ActivityRingsSummaryServiceProtocol { services.activityRingsSummaryService }
+    public var activityRingsDetailService: ActivityRingsDetailServiceProtocol { services.activityRingsDetailService }
+    public var activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol { services.activityRingsDayDetailService }
+    public var activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol { services.activityRingsMetricDayDetailService }
     public var workoutsService: WorkoutsServiceProtocol { services.workoutsService }
     public var workoutFlowService: WorkoutFlowServiceProtocol { services.workoutFlowService }
     public var workoutListItemService: WorkoutListItemServiceProtocol { services.workoutListItemService }

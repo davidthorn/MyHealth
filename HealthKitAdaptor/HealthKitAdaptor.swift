@@ -16,6 +16,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let flights: HealthKitFlightsAdapterProtocol
     private let standHours: HealthKitStandHoursAdapterProtocol
     private let activeEnergy: HealthKitActiveEnergyAdapterProtocol
+    private let activitySummary: HealthKitActivitySummaryAdapterProtocol
     private let sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
     
     public init(
@@ -25,6 +26,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         flights: HealthKitFlightsAdapterProtocol,
         standHours: HealthKitStandHoursAdapterProtocol,
         activeEnergy: HealthKitActiveEnergyAdapterProtocol,
+        activitySummary: HealthKitActivitySummaryAdapterProtocol,
         sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
     ) {
         self.workouts = workouts
@@ -33,6 +35,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         self.flights = flights
         self.standHours = standHours
         self.activeEnergy = activeEnergy
+        self.activitySummary = activitySummary
         self.sleepAnalysis = sleepAnalysis
     }
 
@@ -45,6 +48,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
             flights: HealthKitFlightsAdapter(storeAdaptor: storeAdaptor),
             standHours: HealthKitStandHoursAdapter(storeAdaptor: storeAdaptor),
             activeEnergy: HealthKitActiveEnergyAdapter(storeAdaptor: storeAdaptor),
+            activitySummary: HealthKitActivitySummaryAdapter(storeAdaptor: storeAdaptor),
             sleepAnalysis: HealthKitSleepAnalysisAdapter(storeAdaptor: storeAdaptor)
         )
     }
@@ -71,6 +75,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func requestActiveEnergyAuthorization() async -> Bool {
         await activeEnergy.requestAuthorization()
+    }
+
+    public func requestActivitySummaryAuthorization() async -> Bool {
+        await activitySummary.requestAuthorization()
     }
 
     public func requestSleepAnalysisAuthorization() async -> Bool {
@@ -113,11 +121,19 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         activeEnergy.activeEnergySummaryStream(days: days)
     }
 
+    public func activitySummaryStream(days: Int) -> AsyncStream<ActivityRingsSummary> {
+        activitySummary.activitySummaryStream(days: days)
+    }
+
     public func sleepAnalysisSummaryStream(days: Int) -> AsyncStream<SleepSummary> {
         sleepAnalysis.sleepAnalysisSummaryStream(days: days)
     }
 
     public func sleepAnalysisDay(date: Date) async -> SleepDay {
         await sleepAnalysis.sleepAnalysisDay(date: date)
+    }
+
+    public func activitySummaryDay(date: Date) async -> ActivityRingsDay {
+        await activitySummary.activitySummaryDay(date: date)
     }
 }

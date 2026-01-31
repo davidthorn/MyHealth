@@ -26,6 +26,10 @@ public struct AppServices: AppServicesProviding {
     public let sleepSummaryService: SleepSummaryServiceProtocol
     public let sleepDetailService: SleepDetailServiceProtocol
     public let sleepReadingDetailService: SleepReadingDetailServiceProtocol
+    public let activityRingsSummaryService: ActivityRingsSummaryServiceProtocol
+    public let activityRingsDetailService: ActivityRingsDetailServiceProtocol
+    public let activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol
+    public let activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol
     public let workoutsService: WorkoutsServiceProtocol
     public let workoutFlowService: WorkoutFlowServiceProtocol
     public let workoutListItemService: WorkoutListItemServiceProtocol
@@ -50,6 +54,10 @@ public struct AppServices: AppServicesProviding {
         sleepSummaryService: SleepSummaryServiceProtocol,
         sleepDetailService: SleepDetailServiceProtocol,
         sleepReadingDetailService: SleepReadingDetailServiceProtocol,
+        activityRingsSummaryService: ActivityRingsSummaryServiceProtocol,
+        activityRingsDetailService: ActivityRingsDetailServiceProtocol,
+        activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol,
+        activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol,
         workoutsService: WorkoutsServiceProtocol,
         workoutFlowService: WorkoutFlowServiceProtocol,
         workoutListItemService: WorkoutListItemServiceProtocol,
@@ -73,6 +81,10 @@ public struct AppServices: AppServicesProviding {
         self.sleepSummaryService = sleepSummaryService
         self.sleepDetailService = sleepDetailService
         self.sleepReadingDetailService = sleepReadingDetailService
+        self.activityRingsSummaryService = activityRingsSummaryService
+        self.activityRingsDetailService = activityRingsDetailService
+        self.activityRingsDayDetailService = activityRingsDayDetailService
+        self.activityRingsMetricDayDetailService = activityRingsMetricDayDetailService
         self.workoutsService = workoutsService
         self.workoutFlowService = workoutFlowService
         self.workoutListItemService = workoutListItemService
@@ -102,6 +114,10 @@ public struct AppServices: AppServicesProviding {
             sleepSummaryService: SleepSummaryService(healthKitAdapter: healthKitAdapter),
             sleepDetailService: SleepDetailService(healthKitAdapter: healthKitAdapter),
             sleepReadingDetailService: SleepReadingDetailService(healthKitAdapter: healthKitAdapter),
+            activityRingsSummaryService: ActivityRingsSummaryService(healthKitAdapter: healthKitAdapter),
+            activityRingsDetailService: ActivityRingsDetailService(healthKitAdapter: healthKitAdapter),
+            activityRingsDayDetailService: ActivityRingsDayDetailService(healthKitAdapter: healthKitAdapter),
+            activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailService(healthKitAdapter: healthKitAdapter),
             workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),

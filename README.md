@@ -16,6 +16,7 @@ See `ARCHITECTURE.md` for the full rules.
 ## Features (current)
 - Dashboard summary screen
 - Metrics exploration screen
+- Activity Rings summary and history
 - Workouts list screen
 - Current workout screen (active session)
 - Workout selection flow (start a workout)

@@ -23,6 +23,10 @@ public protocol AppServicesProviding {
     var sleepSummaryService: SleepSummaryServiceProtocol { get }
     var sleepDetailService: SleepDetailServiceProtocol { get }
     var sleepReadingDetailService: SleepReadingDetailServiceProtocol { get }
+    var activityRingsSummaryService: ActivityRingsSummaryServiceProtocol { get }
+    var activityRingsDetailService: ActivityRingsDetailServiceProtocol { get }
+    var activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol { get }
+    var activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol { get }
     var workoutsService: WorkoutsServiceProtocol { get }
     var workoutFlowService: WorkoutFlowServiceProtocol { get }
     var workoutListItemService: WorkoutListItemServiceProtocol { get }

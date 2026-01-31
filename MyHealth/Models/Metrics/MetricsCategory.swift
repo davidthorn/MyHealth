@@ -14,6 +14,7 @@ public enum MetricsCategory: String, CaseIterable, Hashable, Sendable {
     case standHours
     case calories
     case sleep
+    case activityRings
 
     public var title: String {
         switch self {
@@ -29,6 +30,8 @@ public enum MetricsCategory: String, CaseIterable, Hashable, Sendable {
             return "Calories"
         case .sleep:
             return "Sleep"
+        case .activityRings:
+            return "Activity Rings"
         }
     }
 }
