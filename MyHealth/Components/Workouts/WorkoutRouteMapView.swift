@@ -19,9 +19,9 @@ public struct WorkoutRouteMapView: View {
     }
 
     public var body: some View {
-        if let region = region {
+        if let region = points.routeRegion {
             Map(position: .constant(.region(region))) {
-                MapPolyline(coordinates: coordinates)
+                MapPolyline(coordinates: points.routeCoordinates)
                     .stroke(Color.blue, lineWidth: 4)
             }
             .frame(maxWidth: .infinity)
@@ -31,32 +31,6 @@ public struct WorkoutRouteMapView: View {
         } else {
             ContentUnavailableView("No Route", systemImage: "map", description: Text("No GPS route was recorded for this workout."))
         }
-    }
-
-    private var coordinates: [CLLocationCoordinate2D] {
-        points.map { CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude) }
-    }
-
-    private var region: MKCoordinateRegion? {
-        guard !points.isEmpty else { return nil }
-        let latitudes = points.map(\.latitude)
-        let longitudes = points.map(\.longitude)
-        guard let minLat = latitudes.min(),
-              let maxLat = latitudes.max(),
-              let minLon = longitudes.min(),
-              let maxLon = longitudes.max()
-        else { return nil }
-
-        let center = CLLocationCoordinate2D(
-            latitude: (minLat + maxLat) / 2,
-            longitude: (minLon + maxLon) / 2
-        )
-        let latDelta = max((maxLat - minLat) * 1.2, 0.005)
-        let lonDelta = max((maxLon - minLon) * 1.2, 0.005)
-        return MKCoordinateRegion(
-            center: center,
-            span: MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
-        )
     }
 }
 

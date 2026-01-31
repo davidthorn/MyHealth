@@ -50,25 +50,7 @@ public struct WorkoutDetailView: View {
                                     .font(.footnote)
                                     .foregroundStyle(.secondary)
                             } else {
-                                HStack(spacing: 0) {
-                                    Text("KM")
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundStyle(.secondary)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    Text("Time")
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundStyle(.secondary)
-                                        .frame(maxWidth: .infinity, alignment: .center)
-                                    Text("Pace")
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundStyle(.secondary)
-                                        .frame(maxWidth: .infinity, alignment: .center)
-                                    Text("HR")
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundStyle(.secondary)
-                                        .frame(maxWidth: .infinity, alignment: .trailing)
-                                }
-                                .textCase(nil)
+                                WorkoutSplitsHeaderView()
                                 ForEach(viewModel.splits) { split in
                                     WorkoutSplitRowView(
                                         index: split.index,
