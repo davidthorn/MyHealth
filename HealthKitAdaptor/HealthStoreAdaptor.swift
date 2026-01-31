@@ -37,6 +37,16 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
         }
     }
 
+    public func requestStepsAuthorization() async -> Bool {
+        guard HKHealthStore.isHealthDataAvailable() else { return false }
+        guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return false }
+        return await withCheckedContinuation { continuation in
+            healthStore.requestAuthorization(toShare: [], read: [stepType]) { success, _ in
+                continuation.resume(returning: success)
+            }
+        }
+    }
+
     public func fetchWorkouts() async -> [Workout] {
         return await withCheckedContinuation { continuation in
             let sampleType = HKObjectType.workoutType()
@@ -147,4 +157,37 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
         }
     }
 
+    public func fetchStepCounts(days: Int) async -> [StepsDay] {
+        guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return [] }
+        let safeDays = max(days, 1)
+        let calendar = Calendar.current
+        let endDate = Date()
+        let anchorDate = calendar.startOfDay(for: endDate)
+        guard let startDate = calendar.date(byAdding: .day, value: -(safeDays - 1), to: anchorDate) else {
+            return []
+        }
+        let interval = DateComponents(day: 1)
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsCollectionQuery(
+                quantityType: stepType,
+                quantitySamplePredicate: predicate,
+                options: .cumulativeSum,
+                anchorDate: anchorDate,
+                intervalComponents: interval
+            )
+            query.initialResultsHandler = { _, results, _ in
+                var days: [StepsDay] = []
+                if let results {
+                    results.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
+                        let count = statistics.sumQuantity()?.doubleValue(for: .count()) ?? 0
+                        days.append(StepsDay(date: statistics.startDate, count: Int(count.rounded())))
+                    }
+                }
+                let sorted = days.sorted { $0.date > $1.date }
+                continuation.resume(returning: sorted)
+            }
+            healthStore.execute(query)
+        }
+    }
 }

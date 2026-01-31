@@ -15,6 +15,8 @@ public struct AppServices: AppServicesProviding {
     public let metricsService: MetricsServiceProtocol
     public let heartRateSummaryService: HeartRateSummaryServiceProtocol
     public let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
+    public let stepsSummaryService: StepsSummaryServiceProtocol
+    public let stepsDetailService: StepsDetailServiceProtocol
     public let workoutsService: WorkoutsServiceProtocol
     public let workoutFlowService: WorkoutFlowServiceProtocol
     public let workoutListItemService: WorkoutListItemServiceProtocol
@@ -28,6 +30,8 @@ public struct AppServices: AppServicesProviding {
         metricsService: MetricsServiceProtocol,
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
+        stepsSummaryService: StepsSummaryServiceProtocol,
+        stepsDetailService: StepsDetailServiceProtocol,
         workoutsService: WorkoutsServiceProtocol,
         workoutFlowService: WorkoutFlowServiceProtocol,
         workoutListItemService: WorkoutListItemServiceProtocol,
@@ -40,6 +44,8 @@ public struct AppServices: AppServicesProviding {
         self.metricsService = metricsService
         self.heartRateSummaryService = heartRateSummaryService
         self.heartRateReadingDetailService = heartRateReadingDetailService
+        self.stepsSummaryService = stepsSummaryService
+        self.stepsDetailService = stepsDetailService
         self.workoutsService = workoutsService
         self.workoutFlowService = workoutFlowService
         self.workoutListItemService = workoutListItemService
@@ -58,6 +64,8 @@ public struct AppServices: AppServicesProviding {
             metricsService: MetricsService(),
             heartRateSummaryService: HeartRateSummaryService(healthKitAdapter: healthKitAdapter),
             heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),
+            stepsSummaryService: StepsSummaryService(healthKitAdapter: healthKitAdapter),
+            stepsDetailService: StepsDetailService(healthKitAdapter: healthKitAdapter),
             workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),

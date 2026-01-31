@@ -6,27 +6,30 @@
 //
 
 import Foundation
-import Foundation
 import Models
 
 @MainActor
 public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let workouts: HealthKitWorkoutAdapterProtocol
     private let heartRates: HealthKitHeartRateAdapterProtocol
+    private let steps: HealthKitStepsAdapterProtocol
     
     public init(
         workouts: HealthKitWorkoutAdapterProtocol,
-        heartRates: HealthKitHeartRateAdapterProtocol
+        heartRates: HealthKitHeartRateAdapterProtocol,
+        steps: HealthKitStepsAdapterProtocol
     ) {
         self.workouts = workouts
         self.heartRates = heartRates
+        self.steps = steps
     }
 
     public static func live() -> HealthKitAdapter {
         let storeAdaptor = HealthStoreAdaptor()
         return HealthKitAdapter(
             workouts: HealthKitWorkoutAdapter(storeAdaptor: storeAdaptor),
-            heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor)
+            heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor),
+            steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor)
         )
     }
     
@@ -36,6 +39,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func requestHeartRateAuthorization() async -> Bool {
         await heartRates.requestAuthorization()
+    }
+
+    public func requestStepsAuthorization() async -> Bool {
+        await steps.requestAuthorization()
     }
     
     public func workoutsStream() -> AsyncStream<[Workout]> {
@@ -56,5 +63,9 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func heartRateReading(id: UUID) async throws -> HeartRateReading {
         try await heartRates.heartRateReading(id: id)
+    }
+
+    public func stepsSummaryStream(days: Int) -> AsyncStream<StepsSummary> {
+        steps.stepsSummaryStream(days: days)
     }
 }
