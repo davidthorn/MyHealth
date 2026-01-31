@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Models
 
 public actor WorkoutStore: Sendable {
     private let store: DocumentStore<Workout>

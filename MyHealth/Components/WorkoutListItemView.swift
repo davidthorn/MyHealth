@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Models
 
 public struct WorkoutListItemView: View {
     @StateObject private var viewModel: WorkoutListItemViewModel

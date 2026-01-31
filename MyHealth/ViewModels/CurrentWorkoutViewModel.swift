@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import Models
 
 @MainActor
 public final class CurrentWorkoutViewModel: ObservableObject {

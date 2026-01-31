@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Models
 
 public protocol WorkoutFlowServiceProtocol {
     func updates() -> AsyncStream<WorkoutFlowUpdate>

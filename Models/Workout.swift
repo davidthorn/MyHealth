@@ -7,7 +7,7 @@
 
 import Foundation
 
-public nonisolated struct Workout: Hashable, Identifiable, Sendable, Codable {
+public struct Workout: Hashable, Identifiable, Sendable, Codable {
     public let id: UUID
     public let title: String
     public let type: WorkoutType

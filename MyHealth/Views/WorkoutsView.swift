@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Models
 
 public struct WorkoutsView: View {
     @StateObject private var viewModel: WorkoutsViewModel

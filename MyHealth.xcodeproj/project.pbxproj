@@ -6,8 +6,57 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		44AD76FE2F2DE70200385A6C /* HealthKitAdaptor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44AD76F82F2DE70200385A6C /* HealthKitAdaptor.framework */; };
+		44AD76FF2F2DE70200385A6C /* HealthKitAdaptor.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 44AD76F82F2DE70200385A6C /* HealthKitAdaptor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		44AD770F2F2DE75000385A6C /* Models.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44AD77092F2DE75000385A6C /* Models.framework */; };
+		44AD77102F2DE75000385A6C /* Models.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 44AD77092F2DE75000385A6C /* Models.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		44AD77152F2DE75900385A6C /* Models.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44AD77092F2DE75000385A6C /* Models.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		44AD76FC2F2DE70200385A6C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 442440F42F2CC6FD005456F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44AD76F72F2DE70200385A6C;
+			remoteInfo = HealthKitAdaptor;
+		};
+		44AD770D2F2DE75000385A6C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 442440F42F2CC6FD005456F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44AD77082F2DE75000385A6C;
+			remoteInfo = Models;
+		};
+		44AD77172F2DE75900385A6C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 442440F42F2CC6FD005456F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44AD77082F2DE75000385A6C;
+			remoteInfo = Models;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		44AD77032F2DE70200385A6C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				44AD77102F2DE75000385A6C /* Models.framework in Embed Frameworks */,
+				44AD76FF2F2DE70200385A6C /* HealthKitAdaptor.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		442440FC2F2CC6FD005456F5 /* MyHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		44AD76F82F2DE70200385A6C /* HealthKitAdaptor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HealthKitAdaptor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		44AD77092F2DE75000385A6C /* Models.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Models.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +65,37 @@
 			path = MyHealth;
 			sourceTree = "<group>";
 		};
+		44AD76F92F2DE70200385A6C /* HealthKitAdaptor */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HealthKitAdaptor;
+			sourceTree = "<group>";
+		};
+		44AD770A2F2DE75000385A6C /* Models */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Models;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		442440F92F2CC6FD005456F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44AD770F2F2DE75000385A6C /* Models.framework in Frameworks */,
+				44AD76FE2F2DE70200385A6C /* HealthKitAdaptor.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44AD76F52F2DE70200385A6C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44AD77152F2DE75900385A6C /* Models.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44AD77062F2DE75000385A6C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +109,9 @@
 			isa = PBXGroup;
 			children = (
 				442440FE2F2CC6FD005456F5 /* MyHealth */,
+				44AD76F92F2DE70200385A6C /* HealthKitAdaptor */,
+				44AD770A2F2DE75000385A6C /* Models */,
+				44AD77142F2DE75900385A6C /* Frameworks */,
 				442440FD2F2CC6FD005456F5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,11 +120,37 @@
 			isa = PBXGroup;
 			children = (
 				442440FC2F2CC6FD005456F5 /* MyHealth.app */,
+				44AD76F82F2DE70200385A6C /* HealthKitAdaptor.framework */,
+				44AD77092F2DE75000385A6C /* Models.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
+		44AD77142F2DE75900385A6C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		44AD76F32F2DE70200385A6C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44AD77042F2DE75000385A6C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		442440FB2F2CC6FD005456F5 /* MyHealth */ = {
@@ -55,10 +160,13 @@
 				442440F82F2CC6FD005456F5 /* Sources */,
 				442440F92F2CC6FD005456F5 /* Frameworks */,
 				442440FA2F2CC6FD005456F5 /* Resources */,
+				44AD77032F2DE70200385A6C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				44AD76FD2F2DE70200385A6C /* PBXTargetDependency */,
+				44AD770E2F2DE75000385A6C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				442440FE2F2CC6FD005456F5 /* MyHealth */,
@@ -69,6 +177,53 @@
 			productName = MyHealth;
 			productReference = 442440FC2F2CC6FD005456F5 /* MyHealth.app */;
 			productType = "com.apple.product-type.application";
+		};
+		44AD76F72F2DE70200385A6C /* HealthKitAdaptor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44AD77002F2DE70200385A6C /* Build configuration list for PBXNativeTarget "HealthKitAdaptor" */;
+			buildPhases = (
+				44AD76F32F2DE70200385A6C /* Headers */,
+				44AD76F42F2DE70200385A6C /* Sources */,
+				44AD76F52F2DE70200385A6C /* Frameworks */,
+				44AD76F62F2DE70200385A6C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44AD77182F2DE75900385A6C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				44AD76F92F2DE70200385A6C /* HealthKitAdaptor */,
+			);
+			name = HealthKitAdaptor;
+			packageProductDependencies = (
+			);
+			productName = HealthKitAdaptor;
+			productReference = 44AD76F82F2DE70200385A6C /* HealthKitAdaptor.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		44AD77082F2DE75000385A6C /* Models */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44AD77112F2DE75000385A6C /* Build configuration list for PBXNativeTarget "Models" */;
+			buildPhases = (
+				44AD77042F2DE75000385A6C /* Headers */,
+				44AD77052F2DE75000385A6C /* Sources */,
+				44AD77062F2DE75000385A6C /* Frameworks */,
+				44AD77072F2DE75000385A6C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				44AD770A2F2DE75000385A6C /* Models */,
+			);
+			name = Models;
+			packageProductDependencies = (
+			);
+			productName = Models;
+			productReference = 44AD77092F2DE75000385A6C /* Models.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -81,6 +236,12 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					442440FB2F2CC6FD005456F5 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					44AD76F72F2DE70200385A6C = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					44AD77082F2DE75000385A6C = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
@@ -100,12 +261,28 @@
 			projectRoot = "";
 			targets = (
 				442440FB2F2CC6FD005456F5 /* MyHealth */,
+				44AD76F72F2DE70200385A6C /* HealthKitAdaptor */,
+				44AD77082F2DE75000385A6C /* Models */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		442440FA2F2CC6FD005456F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44AD76F62F2DE70200385A6C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44AD77072F2DE75000385A6C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +299,39 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		44AD76F42F2DE70200385A6C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44AD77052F2DE75000385A6C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		44AD76FD2F2DE70200385A6C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44AD76F72F2DE70200385A6C /* HealthKitAdaptor */;
+			targetProxy = 44AD76FC2F2DE70200385A6C /* PBXContainerItemProxy */;
+		};
+		44AD770E2F2DE75000385A6C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44AD77082F2DE75000385A6C /* Models */;
+			targetProxy = 44AD770D2F2DE75000385A6C /* PBXContainerItemProxy */;
+		};
+		44AD77182F2DE75900385A6C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44AD77082F2DE75000385A6C /* Models */;
+			targetProxy = 44AD77172F2DE75900385A6C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		442441052F2CC6FF005456F5 /* Debug */ = {
@@ -265,6 +474,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -301,6 +511,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -315,6 +526,162 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		44AD77012F2DE70200385A6C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z5L45HU7SA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = solutions.thorn.ios.lib.HealthKitAdaptor;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		44AD77022F2DE70200385A6C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z5L45HU7SA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = solutions.thorn.ios.lib.HealthKitAdaptor;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		44AD77122F2DE75000385A6C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z5L45HU7SA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = solutions.thorn.ios.apps.MyHealthKit.Models;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		44AD77132F2DE75000385A6C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z5L45HU7SA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = solutions.thorn.ios.apps.MyHealthKit.Models;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -335,6 +702,24 @@
 			buildConfigurations = (
 				442441082F2CC6FF005456F5 /* Debug */,
 				442441092F2CC6FF005456F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		44AD77002F2DE70200385A6C /* Build configuration list for PBXNativeTarget "HealthKitAdaptor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44AD77012F2DE70200385A6C /* Debug */,
+				44AD77022F2DE70200385A6C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		44AD77112F2DE75000385A6C /* Build configuration list for PBXNativeTarget "Models" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44AD77122F2DE75000385A6C /* Debug */,
+				44AD77132F2DE75000385A6C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

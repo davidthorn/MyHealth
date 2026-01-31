@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Models
 
 public struct WorkoutFlowUpdate: Sendable {
     public let availableTypes: [WorkoutType]

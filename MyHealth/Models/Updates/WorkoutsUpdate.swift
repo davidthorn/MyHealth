@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Models
 
 public struct WorkoutsUpdate: Sendable {
     public let title: String

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Models
 
 public protocol WorkoutDetailServiceProtocol {
     func updates(for id: UUID) -> AsyncStream<Workout?>

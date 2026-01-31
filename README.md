@@ -23,6 +23,20 @@ See `ARCHITECTURE.md` for the full rules.
 - Insights screen
 - Settings screen
 
+## HealthKit adapter (planned)
+HealthKit access is abstracted behind a single `HealthKitAdapter` facade so the app never talks to HealthKit APIs directly. The adapter is intentionally thin: it does not implement business logic. It only bridges HealthKit query/delegate plumbing into simple async/stream APIs that services consume.
+
+Planned access pattern:
+- `HealthKitAdapter` is the entry point. It owns internal sub-adapters and returns `AsyncStream` updates.
+- Feature-specific sub-adapters wrap HealthKit query/delegate APIs.
+- The rest of the app depends only on service protocols and model types.
+
+Planned feature mapping:
+- Workouts → `WorkoutsService` uses a `WorkoutDataSourceProtocol` implementation backed by `HealthKitAdapter`.
+- Metrics (e.g., heart rate, calories) → `MetricsService` consumes `HealthKitAdapter` metric streams.
+- Activity/rings summary → `DashboardService` consumes `HealthKitAdapter` summaries.
+- Insights → `InsightsService` consumes aggregated streams from the adapter.
+
 ## Structure
 - `MyHealth/Scenes` — SwiftUI scenes used in the TabView
 - `MyHealth/Views` — SwiftUI views used inside scenes

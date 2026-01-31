@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import HealthKitAdaptor
 
 @MainActor
 public struct AppServices: AppServicesProviding {
@@ -43,7 +44,8 @@ public struct AppServices: AppServicesProviding {
 
     public static func live() -> AppServices {
         let workoutStore = WorkoutStore()
-        let workoutSource = WorkoutStoreSource(store: workoutStore)
+        let healthKitAdapter = HealthKitAdapter()
+        let workoutSource = WorkoutStoreSource(healthKitAdapter: healthKitAdapter)
         return AppServices(
             workoutStore: workoutStore,
             dashboardService: DashboardService(),

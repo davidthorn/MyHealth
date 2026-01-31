@@ -7,7 +7,7 @@
 
 import Foundation
 
-public nonisolated enum WorkoutType: String, CaseIterable, Hashable, Identifiable, Codable, Sendable {
+public enum WorkoutType: String, CaseIterable, Hashable, Identifiable, Codable, Sendable {
     case running
     case walking
     case cycling

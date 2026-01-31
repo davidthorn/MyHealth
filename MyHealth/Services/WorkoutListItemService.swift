@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Models
 
 @MainActor
 public final class WorkoutListItemService: WorkoutListItemServiceProtocol {
