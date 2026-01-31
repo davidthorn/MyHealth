@@ -16,6 +16,7 @@ public struct ContentView: View {
 
     public var body: some View {
         TabView {
+            
             DashboardScene(service: viewModel.dashboardService)
             MetricsScene(service: viewModel.metricsService)
             WorkoutsScene(

@@ -28,7 +28,7 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
     }
 
     public func fetchWorkouts() async -> [Workout] {
-        await withCheckedContinuation { continuation in
+        return await withCheckedContinuation { continuation in
             let sampleType = HKObjectType.workoutType()
             let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
             let query = HKSampleQuery(
@@ -70,7 +70,7 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
     }
 
     private func fetchHealthKitWorkout(id: UUID) async throws -> HKWorkout {
-        try await withCheckedThrowingContinuation { continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             let sampleType = HKObjectType.workoutType()
             let predicate = HKQuery.predicateForObject(with: id)
             let query = HKSampleQuery(

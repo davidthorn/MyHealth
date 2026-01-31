@@ -8,37 +8,39 @@
 import SwiftUI
 
 public struct MetricsScene: View {
-    @StateObject private var viewModel: MetricsViewModel
-
+    @State private var path: [MetricsRoute]
+    private let service: MetricsServiceProtocol
+    
     public init(service: MetricsServiceProtocol) {
-        _viewModel = StateObject(wrappedValue: MetricsViewModel(service: service))
+        self.service = service
+        self._path = State(initialValue: [])
     }
-
+    
     public var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            VStack(spacing: 16) {
-                Text(viewModel.title)
-                    .font(.title)
-                Text("Explore your metrics")
-                    .foregroundStyle(.secondary)
-            }
-            .padding()
-            .navigationTitle("Metrics")
-            .navigationDestination(for: MetricsRoute.self) { route in
-                switch route {
-                case .metric(let value):
-                    Text("Metric: \(value)")
+        NavigationStack(path: $path) {
+            MetricsView(service: service)
+                .navigationTitle("Metrics")
+                .navigationDestination(for: MetricsRoute.self) { route in
+                    switch route {
+                    case .metric(let value):
+                        VStack(spacing: 12) {
+                            Text(value)
+                                .font(.title2.weight(.bold))
+                            Text("Detailed insights coming soon.")
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding()
+                    }
                 }
-            }
-        }
-        .task {
-            viewModel.start()
-        }
-        .onDisappear {
-            viewModel.stop()
         }
         .tabItem {
             Label("Metrics", systemImage: "chart.bar")
         }
     }
 }
+
+#if DEBUG
+#Preview("Metrics") {
+    MetricsScene(service: AppServices.shared.metricsService)
+}
+#endif
