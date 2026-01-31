@@ -10,16 +10,16 @@ import Models
 
 @MainActor
 public final class WorkoutDetailService: WorkoutDetailServiceProtocol {
-    private let store: WorkoutStoreProtocol
+    private let source: WorkoutDataSourceProtocol
 
-    public init(store: WorkoutStoreProtocol) {
-        self.store = store
+    public init(source: WorkoutDataSourceProtocol) {
+        self.source = source
     }
 
     public func updates(for id: UUID) -> AsyncStream<Workout?> {
         AsyncStream { continuation in
-            let task = Task { [store] in
-                let stream = await store.stream()
+            let task = Task { [source] in
+                let stream = source.workoutsStream()
                 for await items in stream {
                     if Task.isCancelled { break }
                     let workout = items.first { $0.id == id }
@@ -33,6 +33,6 @@ public final class WorkoutDetailService: WorkoutDetailServiceProtocol {
     }
 
     public func delete(id: UUID) async throws {
-        try await store.delete(id: id)
+        try await source.deleteWorkout(id: id)
     }
 }

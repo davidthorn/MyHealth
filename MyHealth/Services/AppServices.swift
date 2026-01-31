@@ -44,7 +44,7 @@ public struct AppServices: AppServicesProviding {
 
     public static func live() -> AppServices {
         let workoutStore = WorkoutStore()
-        let healthKitAdapter = HealthKitAdapter()
+        let healthKitAdapter = HealthKitAdapter.live()
         let workoutSource = WorkoutStoreSource(healthKitAdapter: healthKitAdapter)
         return AppServices(
             workoutStore: workoutStore,
@@ -53,7 +53,7 @@ public struct AppServices: AppServicesProviding {
             workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),
-            workoutDetailService: WorkoutDetailService(store: workoutStore),
+            workoutDetailService: WorkoutDetailService(source: workoutSource),
             insightsService: InsightsService(),
             settingsService: SettingsService()
         )

@@ -6,53 +6,40 @@
 //
 
 import Foundation
-import HealthKit
+import Foundation
 import Models
 
 @MainActor
 public final class HealthKitAdapter: HealthKitAdapterProtocol {
-    private let healthStore: HKHealthStore
+    private let workouts: HealthKitWorkoutAdapterProtocol
     
-    public init(healthStore: HKHealthStore = HKHealthStore()) {
-        self.healthStore = healthStore
+    public init(workouts: HealthKitWorkoutAdapterProtocol) {
+        self.workouts = workouts
+    }
+
+    public static func live() -> HealthKitAdapter {
+        HealthKitAdapter(workouts: HealthKitWorkoutAdapter())
     }
     
     public func requestAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        let workoutType = HKObjectType.workoutType()
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [workoutType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
+        await workouts.requestAuthorization()
     }
     
     public func workoutsStream() -> AsyncStream<[Workout]> {
-        AsyncStream { continuation in
-            let task = Task { [healthStore] in
-                let workouts = await HealthKitAdapter.fetchWorkouts(from: healthStore)
-                continuation.yield(workouts)
-            }
-            continuation.onTermination = { _ in
-                task.cancel()
-            }
-        }
+        workouts.workoutsStream()
     }
-    
-    private static func fetchWorkouts(from healthStore: HKHealthStore) async -> [Workout] {
-        await withCheckedContinuation { continuation in
-            let sampleType = HKObjectType.workoutType()
-            let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-            let query = HKSampleQuery(
-                sampleType: sampleType,
-                predicate: nil,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let workouts = (samples as? [HKWorkout])?.compactMap(Workout.init(healthKitWorkout:)) ?? []
-                continuation.resume(returning: workouts)
-            }
-            healthStore.execute(query)
-        }
+
+    public func workout(id: UUID) async throws -> Workout? {
+        try await workouts.workout(id: id)
     }
+
+    public func deleteWorkout(id: UUID) async throws {
+        try await workouts.deleteWorkout(id: id)
+    }
+}
+
+public enum HealthKitAdapterError: Error {
+    case deleteFailed
+    case workoutNotFound
+    case unmappedWorkoutType
 }
