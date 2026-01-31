@@ -11,26 +11,24 @@ import Models
 
 @MainActor
 public final class HealthKitWorkoutAdapter: HealthKitWorkoutAdapterProtocol {
-    private let healthStore: HKHealthStore
+    private let storeAdaptor: HealthStoreAdaptorProtocol
 
-    public init(healthStore: HKHealthStore = HKHealthStore()) {
-        self.healthStore = healthStore
+    public init(storeAdaptor: HealthStoreAdaptorProtocol) {
+        self.storeAdaptor = storeAdaptor
+    }
+
+    public static func live() -> HealthKitWorkoutAdapter {
+        HealthKitWorkoutAdapter(storeAdaptor: HealthStoreAdaptor())
     }
 
     public func requestAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        let workoutType = HKObjectType.workoutType()
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [workoutType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
+        await storeAdaptor.requestWorkoutAuthorization()
     }
 
     public func workoutsStream() -> AsyncStream<[Workout]> {
         AsyncStream { continuation in
-            let task = Task { [healthStore] in
-                let workouts = await HealthKitWorkoutAdapter.fetchWorkouts(from: healthStore)
+            let task = Task { [storeAdaptor] in
+                let workouts = await storeAdaptor.fetchWorkouts()
                 continuation.yield(workouts)
             }
             continuation.onTermination = { _ in
@@ -40,72 +38,10 @@ public final class HealthKitWorkoutAdapter: HealthKitWorkoutAdapterProtocol {
     }
 
     public func workout(id: UUID) async throws -> Workout {
-        try await HealthKitWorkoutAdapter.fetchWorkout(from: healthStore, matching: id)
+        try await storeAdaptor.fetchWorkout(id: id)
     }
 
     public func deleteWorkout(id: UUID) async throws {
-        let workout = try await HealthKitWorkoutAdapter.fetchHealthKitWorkout(from: healthStore, matching: id)
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            healthStore.delete([workout]) { success, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                if success {
-                    continuation.resume(returning: ())
-                } else {
-                    continuation.resume(throwing: HealthKitAdapterError.deleteFailed)
-                }
-            }
-        }
-    }
-
-    private static func fetchWorkouts(from healthStore: HKHealthStore) async -> [Workout] {
-        await withCheckedContinuation { continuation in
-            let sampleType = HKObjectType.workoutType()
-            let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-            let query = HKSampleQuery(
-                sampleType: sampleType,
-                predicate: nil,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let workouts = (samples as? [HKWorkout])?.compactMap(Workout.init(healthKitWorkout:)) ?? []
-                continuation.resume(returning: workouts)
-            }
-            healthStore.execute(query)
-        }
-    }
-
-    private static func fetchWorkout(from healthStore: HKHealthStore, matching id: UUID) async throws -> Workout {
-        let workout = try await fetchHealthKitWorkout(from: healthStore, matching: id)
-        guard let model = Workout(healthKitWorkout: workout) else {
-            throw HealthKitAdapterError.unmappedWorkoutType
-        }
-        return model
-    }
-
-    private static func fetchHealthKitWorkout(from healthStore: HKHealthStore, matching id: UUID) async throws -> HKWorkout {
-        try await withCheckedThrowingContinuation { continuation in
-            let sampleType = HKObjectType.workoutType()
-            let predicate = HKQuery.predicateForObject(with: id)
-            let query = HKSampleQuery(
-                sampleType: sampleType,
-                predicate: predicate,
-                limit: 1,
-                sortDescriptors: nil
-            ) { _, samples, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                guard let workout = (samples as? [HKWorkout])?.first else {
-                    continuation.resume(throwing: HealthKitAdapterError.workoutNotFound)
-                    return
-                }
-                continuation.resume(returning: workout)
-            }
-            healthStore.execute(query)
-        }
+        try await storeAdaptor.deleteWorkout(id: id)
     }
 }

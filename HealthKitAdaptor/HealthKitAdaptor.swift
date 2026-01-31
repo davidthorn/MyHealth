@@ -18,7 +18,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     }
 
     public static func live() -> HealthKitAdapter {
-        HealthKitAdapter(workouts: HealthKitWorkoutAdapter())
+        HealthKitAdapter(workouts: HealthKitWorkoutAdapter.live())
     }
     
     public func requestAuthorization() async -> Bool {
