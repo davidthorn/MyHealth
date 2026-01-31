@@ -26,6 +26,8 @@ public final class ContentViewModel: ObservableObject {
     public var stepsDetailService: StepsDetailServiceProtocol { services.stepsDetailService }
     public var flightsSummaryService: FlightsSummaryServiceProtocol { services.flightsSummaryService }
     public var flightsDetailService: FlightsDetailServiceProtocol { services.flightsDetailService }
+    public var standHoursSummaryService: StandHoursSummaryServiceProtocol { services.standHoursSummaryService }
+    public var standHoursDetailService: StandHoursDetailServiceProtocol { services.standHoursDetailService }
     public var workoutsService: WorkoutsServiceProtocol { services.workoutsService }
     public var workoutFlowService: WorkoutFlowServiceProtocol { services.workoutFlowService }
     public var workoutListItemService: WorkoutListItemServiceProtocol { services.workoutListItemService }

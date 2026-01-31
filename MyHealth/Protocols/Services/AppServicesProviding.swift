@@ -16,6 +16,8 @@ public protocol AppServicesProviding {
     var stepsDetailService: StepsDetailServiceProtocol { get }
     var flightsSummaryService: FlightsSummaryServiceProtocol { get }
     var flightsDetailService: FlightsDetailServiceProtocol { get }
+    var standHoursSummaryService: StandHoursSummaryServiceProtocol { get }
+    var standHoursDetailService: StandHoursDetailServiceProtocol { get }
     var workoutsService: WorkoutsServiceProtocol { get }
     var workoutFlowService: WorkoutFlowServiceProtocol { get }
     var workoutListItemService: WorkoutListItemServiceProtocol { get }

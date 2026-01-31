@@ -14,17 +14,20 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let heartRates: HealthKitHeartRateAdapterProtocol
     private let steps: HealthKitStepsAdapterProtocol
     private let flights: HealthKitFlightsAdapterProtocol
+    private let standHours: HealthKitStandHoursAdapterProtocol
     
     public init(
         workouts: HealthKitWorkoutAdapterProtocol,
         heartRates: HealthKitHeartRateAdapterProtocol,
         steps: HealthKitStepsAdapterProtocol,
-        flights: HealthKitFlightsAdapterProtocol
+        flights: HealthKitFlightsAdapterProtocol,
+        standHours: HealthKitStandHoursAdapterProtocol
     ) {
         self.workouts = workouts
         self.heartRates = heartRates
         self.steps = steps
         self.flights = flights
+        self.standHours = standHours
     }
 
     public static func live() -> HealthKitAdapter {
@@ -33,7 +36,8 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
             workouts: HealthKitWorkoutAdapter(storeAdaptor: storeAdaptor),
             heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor),
             steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor),
-            flights: HealthKitFlightsAdapter(storeAdaptor: storeAdaptor)
+            flights: HealthKitFlightsAdapter(storeAdaptor: storeAdaptor),
+            standHours: HealthKitStandHoursAdapter(storeAdaptor: storeAdaptor)
         )
     }
     
@@ -51,6 +55,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func requestFlightsAuthorization() async -> Bool {
         await flights.requestAuthorization()
+    }
+
+    public func requestStandHoursAuthorization() async -> Bool {
+        await standHours.requestAuthorization()
     }
 
     public func workoutsStream() -> AsyncStream<[Workout]> {
@@ -79,5 +87,9 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func flightsSummaryStream(days: Int) -> AsyncStream<FlightsSummary> {
         flights.flightsSummaryStream(days: days)
+    }
+
+    public func standHoursSummaryStream(days: Int) -> AsyncStream<StandHoursSummary> {
+        standHours.standHoursSummaryStream(days: days)
     }
 }
