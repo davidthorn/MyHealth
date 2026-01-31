@@ -14,6 +14,7 @@ public struct AppServices: AppServicesProviding {
     public let dashboardService: DashboardServiceProtocol
     public let metricsService: MetricsServiceProtocol
     public let heartRateSummaryService: HeartRateSummaryServiceProtocol
+    public let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
     public let workoutsService: WorkoutsServiceProtocol
     public let workoutFlowService: WorkoutFlowServiceProtocol
     public let workoutListItemService: WorkoutListItemServiceProtocol
@@ -26,6 +27,7 @@ public struct AppServices: AppServicesProviding {
         dashboardService: DashboardServiceProtocol,
         metricsService: MetricsServiceProtocol,
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
+        heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
         workoutsService: WorkoutsServiceProtocol,
         workoutFlowService: WorkoutFlowServiceProtocol,
         workoutListItemService: WorkoutListItemServiceProtocol,
@@ -37,6 +39,7 @@ public struct AppServices: AppServicesProviding {
         self.dashboardService = dashboardService
         self.metricsService = metricsService
         self.heartRateSummaryService = heartRateSummaryService
+        self.heartRateReadingDetailService = heartRateReadingDetailService
         self.workoutsService = workoutsService
         self.workoutFlowService = workoutFlowService
         self.workoutListItemService = workoutListItemService
@@ -54,6 +57,7 @@ public struct AppServices: AppServicesProviding {
             dashboardService: DashboardService(),
             metricsService: MetricsService(),
             heartRateSummaryService: HeartRateSummaryService(healthKitAdapter: healthKitAdapter),
+            heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),
             workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),

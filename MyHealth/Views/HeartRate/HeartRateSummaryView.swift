@@ -45,13 +45,15 @@ public struct HeartRateSummaryView: View {
                                 )
                             } else {
                                 ForEach(summary.previous) { reading in
-                                    HStack {
-                                        Text("\(Int(reading.bpm.rounded())) bpm")
-                                            .font(.subheadline.weight(.semibold))
-                                        Spacer()
-                                        Text(reading.date.formatted(date: .abbreviated, time: .shortened))
-                                            .font(.footnote)
-                                            .foregroundStyle(.secondary)
+                                    NavigationLink(value: HeartRateRoute.reading(reading.id)) {
+                                        HStack {
+                                            Text("\(Int(reading.bpm.rounded())) bpm")
+                                                .font(.subheadline.weight(.semibold))
+                                            Spacer()
+                                            Text(reading.date.formatted(date: .abbreviated, time: .shortened))
+                                                .font(.footnote)
+                                                .foregroundStyle(.secondary)
+                                        }
                                     }
                                 }
                             }

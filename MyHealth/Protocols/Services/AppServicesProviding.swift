@@ -11,6 +11,7 @@ public protocol AppServicesProviding {
     var dashboardService: DashboardServiceProtocol { get }
     var metricsService: MetricsServiceProtocol { get }
     var heartRateSummaryService: HeartRateSummaryServiceProtocol { get }
+    var heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol { get }
     var workoutsService: WorkoutsServiceProtocol { get }
     var workoutFlowService: WorkoutFlowServiceProtocol { get }
     var workoutListItemService: WorkoutListItemServiceProtocol { get }

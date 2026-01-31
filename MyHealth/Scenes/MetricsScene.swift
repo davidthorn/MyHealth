@@ -8,17 +8,20 @@
 import SwiftUI
 
 public struct MetricsScene: View {
-    @State private var path: [MetricsRoute]
+    @State private var path: NavigationPath
     private let service: MetricsServiceProtocol
     private let heartRateSummaryService: HeartRateSummaryServiceProtocol
+    private let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
     
     public init(
         service: MetricsServiceProtocol,
-        heartRateSummaryService: HeartRateSummaryServiceProtocol
+        heartRateSummaryService: HeartRateSummaryServiceProtocol,
+        heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
     ) {
         self.service = service
         self.heartRateSummaryService = heartRateSummaryService
-        self._path = State(initialValue: [])
+        self.heartRateReadingDetailService = heartRateReadingDetailService
+        self._path = State(initialValue: NavigationPath())
     }
     
     public var body: some View {
@@ -42,6 +45,15 @@ public struct MetricsScene: View {
                         }
                     }
                 }
+                .navigationDestination(for: HeartRateRoute.self) { route in
+                    switch route {
+                    case .reading(let id):
+                        HeartRateReadingDetailView(
+                            service: heartRateReadingDetailService,
+                            id: id
+                        )
+                    }
+                }
         }
         .tabItem {
             Label("Metrics", systemImage: "chart.bar")
@@ -53,7 +65,8 @@ public struct MetricsScene: View {
 #Preview("Metrics") {
     MetricsScene(
         service: AppServices.shared.metricsService,
-        heartRateSummaryService: AppServices.shared.heartRateSummaryService
+        heartRateSummaryService: AppServices.shared.heartRateSummaryService,
+        heartRateReadingDetailService: AppServices.shared.heartRateReadingDetailService
     )
 }
 #endif

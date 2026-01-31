@@ -113,13 +113,38 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
                 limit: limit,
                 sortDescriptors: [sortDescriptor]
             ) { _, samples, _ in
-                let unit = HKUnit.count().unitDivided(by: .minute())
-                let readings = (samples as? [HKQuantitySample])?.map { sample in
-                    HeartRateReading(bpm: sample.quantity.doubleValue(for: unit), date: sample.endDate)
-                } ?? []
+                let readings: [HeartRateReading] = (samples as? [HKQuantitySample])?.map(HeartRateReading.init) ?? []
                 continuation.resume(returning: readings)
             }
             healthStore.execute(query)
         }
     }
+
+    public func fetchHeartRateReading(id: UUID) async throws -> HeartRateReading {
+        guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else {
+            throw HealthKitAdapterError.heartRateReadingNotFound
+        }
+        return try await withCheckedThrowingContinuation { continuation in
+            let predicate = HKQuery.predicateForObject(with: id)
+            let query = HKSampleQuery(
+                sampleType: heartRateType,
+                predicate: predicate,
+                limit: 1,
+                sortDescriptors: nil
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let sample = (samples as? [HKQuantitySample])?.first else {
+                    continuation.resume(throwing: HealthKitAdapterError.heartRateReadingNotFound)
+                    return
+                }
+                let reading = HeartRateReading(sample: sample)
+                continuation.resume(returning: reading)
+            }
+            healthStore.execute(query)
+        }
+    }
+
 }

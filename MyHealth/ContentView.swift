@@ -19,7 +19,8 @@ public struct ContentView: View {
             DashboardScene(service: viewModel.dashboardService)
             MetricsScene(
                 service: viewModel.metricsService,
-                heartRateSummaryService: viewModel.heartRateSummaryService
+                heartRateSummaryService: viewModel.heartRateSummaryService,
+                heartRateReadingDetailService: viewModel.heartRateReadingDetailService
             )
             WorkoutsScene(
                 service: viewModel.workoutsService,

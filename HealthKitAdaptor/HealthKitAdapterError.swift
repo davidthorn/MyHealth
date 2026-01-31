@@ -11,4 +11,5 @@ public enum HealthKitAdapterError: Error {
     case deleteFailed
     case workoutNotFound
     case unmappedWorkoutType
+    case heartRateReadingNotFound
 }

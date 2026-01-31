@@ -53,4 +53,8 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     public func heartRateSummaryStream() -> AsyncStream<HeartRateSummary> {
         heartRates.heartRateSummaryStream()
     }
+
+    public func heartRateReading(id: UUID) async throws -> HeartRateReading {
+        try await heartRates.heartRateReading(id: id)
+    }
 }
