@@ -27,9 +27,9 @@ public struct MetricsView: View {
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                     ForEach(Array(viewModel.summaryCards.enumerated()), id: \.offset) { _, card in
-                        NavigationLink(value: MetricsRoute.metric(card.title)) {
+                        NavigationLink(value: viewModel.route(for: card.category)) {
                             MetricSummaryCardView(
-                                title: card.title,
+                                title: card.category.title,
                                 value: card.value,
                                 subtitle: card.subtitle,
                                 trend: card.trend
@@ -37,7 +37,7 @@ public struct MetricsView: View {
                         }
                         .buttonStyle(.plain)
                         .simultaneousGesture(TapGesture().onEnded {
-                            viewModel.selectMetric(card.title)
+                            viewModel.selectMetric(card.category)
                         })
                     }
                 }
@@ -57,7 +57,7 @@ public struct MetricsView: View {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 8)], alignment: .leading, spacing: 8) {
                         ForEach(viewModel.metrics, id: \.self) { metric in
                             MetricFilterChipView(
-                                title: metric,
+                                title: metric.title,
                                 isSelected: viewModel.selectedMetric == metric
                             ) {
                                 viewModel.selectMetric(metric)
@@ -67,10 +67,10 @@ public struct MetricsView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text(viewModel.selectedMetric)
-                            .font(.headline)
-                        Spacer()
+                        HStack {
+                            Text(viewModel.selectedMetric.title)
+                                .font(.headline)
+                            Spacer()
                         NavigationLink("Details", value: viewModel.metricRoute())
                             .font(.subheadline.weight(.semibold))
                     }

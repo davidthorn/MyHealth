@@ -27,6 +27,16 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
         }
     }
 
+    public func requestHeartRateAuthorization() async -> Bool {
+        guard HKHealthStore.isHealthDataAvailable() else { return false }
+        guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return false }
+        return await withCheckedContinuation { continuation in
+            healthStore.requestAuthorization(toShare: [], read: [heartRateType]) { success, _ in
+                continuation.resume(returning: success)
+            }
+        }
+    }
+
     public func fetchWorkouts() async -> [Workout] {
         return await withCheckedContinuation { continuation in
             let sampleType = HKObjectType.workoutType()
@@ -88,6 +98,26 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
                     return
                 }
                 continuation.resume(returning: workout)
+            }
+            healthStore.execute(query)
+        }
+    }
+
+    public func fetchHeartRateReadings(limit: Int) async -> [HeartRateReading] {
+        guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return [] }
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        return await withCheckedContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: heartRateType,
+                predicate: nil,
+                limit: limit,
+                sortDescriptors: [sortDescriptor]
+            ) { _, samples, _ in
+                let unit = HKUnit.count().unitDivided(by: .minute())
+                let readings = (samples as? [HKQuantitySample])?.map { sample in
+                    HeartRateReading(bpm: sample.quantity.doubleValue(for: unit), date: sample.endDate)
+                } ?? []
+                continuation.resume(returning: readings)
             }
             healthStore.execute(query)
         }

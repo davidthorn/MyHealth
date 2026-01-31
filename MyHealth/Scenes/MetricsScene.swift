@@ -10,9 +10,14 @@ import SwiftUI
 public struct MetricsScene: View {
     @State private var path: [MetricsRoute]
     private let service: MetricsServiceProtocol
+    private let heartRateSummaryService: HeartRateSummaryServiceProtocol
     
-    public init(service: MetricsServiceProtocol) {
+    public init(
+        service: MetricsServiceProtocol,
+        heartRateSummaryService: HeartRateSummaryServiceProtocol
+    ) {
         self.service = service
+        self.heartRateSummaryService = heartRateSummaryService
         self._path = State(initialValue: [])
     }
     
@@ -22,14 +27,19 @@ public struct MetricsScene: View {
                 .navigationTitle("Metrics")
                 .navigationDestination(for: MetricsRoute.self) { route in
                     switch route {
-                    case .metric(let value):
-                        VStack(spacing: 12) {
-                            Text(value)
-                                .font(.title2.weight(.bold))
-                            Text("Detailed insights coming soon.")
-                                .foregroundStyle(.secondary)
+                    case .metric(let category):
+                        switch category {
+                        case .heartRate:
+                            HeartRateSummaryView(service: heartRateSummaryService)
+                        default:
+                            VStack(spacing: 12) {
+                                Text(category.title)
+                                    .font(.title2.weight(.bold))
+                                Text("Detailed insights coming soon.")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
                 }
         }
@@ -41,6 +51,9 @@ public struct MetricsScene: View {
 
 #if DEBUG
 #Preview("Metrics") {
-    MetricsScene(service: AppServices.shared.metricsService)
+    MetricsScene(
+        service: AppServices.shared.metricsService,
+        heartRateSummaryService: AppServices.shared.heartRateSummaryService
+    )
 }
 #endif

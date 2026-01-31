@@ -12,17 +12,30 @@ import Models
 @MainActor
 public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let workouts: HealthKitWorkoutAdapterProtocol
+    private let heartRates: HealthKitHeartRateAdapterProtocol
     
-    public init(workouts: HealthKitWorkoutAdapterProtocol) {
+    public init(
+        workouts: HealthKitWorkoutAdapterProtocol,
+        heartRates: HealthKitHeartRateAdapterProtocol
+    ) {
         self.workouts = workouts
+        self.heartRates = heartRates
     }
 
     public static func live() -> HealthKitAdapter {
-        HealthKitAdapter(workouts: HealthKitWorkoutAdapter.live())
+        let storeAdaptor = HealthStoreAdaptor()
+        return HealthKitAdapter(
+            workouts: HealthKitWorkoutAdapter(storeAdaptor: storeAdaptor),
+            heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor)
+        )
     }
     
     public func requestAuthorization() async -> Bool {
         await workouts.requestAuthorization()
+    }
+
+    public func requestHeartRateAuthorization() async -> Bool {
+        await heartRates.requestAuthorization()
     }
     
     public func workoutsStream() -> AsyncStream<[Workout]> {
@@ -36,10 +49,8 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     public func deleteWorkout(id: UUID) async throws {
         try await workouts.deleteWorkout(id: id)
     }
-}
 
-public enum HealthKitAdapterError: Error {
-    case deleteFailed
-    case workoutNotFound
-    case unmappedWorkoutType
+    public func heartRateSummaryStream() -> AsyncStream<HeartRateSummary> {
+        heartRates.heartRateSummaryStream()
+    }
 }

@@ -1,0 +1,14 @@
+//
+//  HealthKitHeartRateAdapterProtocol.swift
+//  MyHealth
+//
+//  Created by Codex.
+//
+
+import Foundation
+import Models
+
+public protocol HealthKitHeartRateAdapterProtocol {
+    func requestAuthorization() async -> Bool
+    func heartRateSummaryStream() -> AsyncStream<HeartRateSummary>
+}

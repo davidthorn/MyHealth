@@ -8,9 +8,9 @@
 import Foundation
 
 public enum MetricsRoute: Hashable {
-    case metric(String)
+    case metric(MetricsCategory)
 
-    public init(metric: String) {
+    public init(metric: MetricsCategory) {
         self = .metric(metric)
     }
 }

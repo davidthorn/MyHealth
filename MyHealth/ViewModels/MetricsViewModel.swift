@@ -12,14 +12,14 @@ import Foundation
 public final class MetricsViewModel: ObservableObject {
     @Published public private(set) var title: String
     @Published public var selectedRange: String
-    @Published public var selectedMetric: String
+    @Published public var selectedMetric: MetricsCategory
 
     private let service: MetricsServiceProtocol
     private var task: Task<Void, Never>?
 
     public let ranges: [String]
-    public let metrics: [String]
-    public let summaryCards: [(title: String, value: String, subtitle: String, trend: String)]
+    public let metrics: [MetricsCategory]
+    public let summaryCards: [(category: MetricsCategory, value: String, subtitle: String, trend: String)]
     public let statItems: [(title: String, value: String)]
     public let insights: [(title: String, detail: String)]
 
@@ -27,13 +27,13 @@ public final class MetricsViewModel: ObservableObject {
         self.service = service
         self.title = "Metrics"
         self.ranges = ["Day", "Week", "Month"]
-        self.metrics = ["Heart Rate", "Steps", "Calories", "Sleep"]
+        self.metrics = MetricsCategory.allCases
         self.selectedRange = "Day"
-        self.selectedMetric = "Heart Rate"
+        self.selectedMetric = .heartRate
         self.summaryCards = [
-            ("Heart Rate", "72 bpm", "Avg today", "▼ 3 bpm"),
-            ("Steps", "8,420", "Today", "▲ 6%"),
-            ("Calories", "520", "Active", "▲ 4%")
+            (.heartRate, "72 bpm", "Avg today", "▼ 3 bpm"),
+            (.steps, "8,420", "Today", "▲ 6%"),
+            (.calories, "520", "Active", "▲ 4%")
         ]
         self.statItems = [
             ("Average", "72 bpm"),
@@ -68,11 +68,15 @@ public final class MetricsViewModel: ObservableObject {
         selectedRange = range
     }
 
-    public func selectMetric(_ metric: String) {
+    public func selectMetric(_ metric: MetricsCategory) {
         selectedMetric = metric
     }
 
     public func metricRoute() -> MetricsRoute {
-        MetricsRoute.metric(selectedMetric)
+        .metric(selectedMetric)
+    }
+
+    public func route(for category: MetricsCategory) -> MetricsRoute {
+        .metric(category)
     }
 }
