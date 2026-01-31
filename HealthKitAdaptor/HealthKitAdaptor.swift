@@ -13,15 +13,18 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let workouts: HealthKitWorkoutAdapterProtocol
     private let heartRates: HealthKitHeartRateAdapterProtocol
     private let steps: HealthKitStepsAdapterProtocol
+    private let flights: HealthKitFlightsAdapterProtocol
     
     public init(
         workouts: HealthKitWorkoutAdapterProtocol,
         heartRates: HealthKitHeartRateAdapterProtocol,
-        steps: HealthKitStepsAdapterProtocol
+        steps: HealthKitStepsAdapterProtocol,
+        flights: HealthKitFlightsAdapterProtocol
     ) {
         self.workouts = workouts
         self.heartRates = heartRates
         self.steps = steps
+        self.flights = flights
     }
 
     public static func live() -> HealthKitAdapter {
@@ -29,7 +32,8 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         return HealthKitAdapter(
             workouts: HealthKitWorkoutAdapter(storeAdaptor: storeAdaptor),
             heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor),
-            steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor)
+            steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor),
+            flights: HealthKitFlightsAdapter(storeAdaptor: storeAdaptor)
         )
     }
     
@@ -44,7 +48,11 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     public func requestStepsAuthorization() async -> Bool {
         await steps.requestAuthorization()
     }
-    
+
+    public func requestFlightsAuthorization() async -> Bool {
+        await flights.requestAuthorization()
+    }
+
     public func workoutsStream() -> AsyncStream<[Workout]> {
         workouts.workoutsStream()
     }
@@ -67,5 +75,9 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func stepsSummaryStream(days: Int) -> AsyncStream<StepsSummary> {
         steps.stepsSummaryStream(days: days)
+    }
+
+    public func flightsSummaryStream(days: Int) -> AsyncStream<FlightsSummary> {
+        flights.flightsSummaryStream(days: days)
     }
 }

@@ -14,19 +14,25 @@ public struct MetricsScene: View {
     private let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
     private let stepsSummaryService: StepsSummaryServiceProtocol
     private let stepsDetailService: StepsDetailServiceProtocol
+    private let flightsSummaryService: FlightsSummaryServiceProtocol
+    private let flightsDetailService: FlightsDetailServiceProtocol
     
     public init(
         service: MetricsServiceProtocol,
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
         stepsSummaryService: StepsSummaryServiceProtocol,
-        stepsDetailService: StepsDetailServiceProtocol
+        stepsDetailService: StepsDetailServiceProtocol,
+        flightsSummaryService: FlightsSummaryServiceProtocol,
+        flightsDetailService: FlightsDetailServiceProtocol
     ) {
         self.service = service
         self.heartRateSummaryService = heartRateSummaryService
         self.heartRateReadingDetailService = heartRateReadingDetailService
         self.stepsSummaryService = stepsSummaryService
         self.stepsDetailService = stepsDetailService
+        self.flightsSummaryService = flightsSummaryService
+        self.flightsDetailService = flightsDetailService
         self._path = State(initialValue: NavigationPath())
     }
     
@@ -42,6 +48,8 @@ public struct MetricsScene: View {
                             HeartRateSummaryView(service: heartRateSummaryService)
                         case .steps:
                             StepsSummaryView(service: stepsSummaryService)
+                        case .flights:
+                            FlightsSummaryView(service: flightsSummaryService)
                         default:
                             VStack(spacing: 12) {
                                 Text(category.title)
@@ -68,6 +76,12 @@ public struct MetricsScene: View {
                         StepsDetailView(service: stepsDetailService)
                     }
                 }
+                .navigationDestination(for: FlightsRoute.self) { route in
+                    switch route {
+                    case .detail:
+                        FlightsDetailView(service: flightsDetailService)
+                    }
+                }
         }
         .tabItem {
             Label("Metrics", systemImage: "chart.bar")
@@ -82,7 +96,9 @@ public struct MetricsScene: View {
         heartRateSummaryService: AppServices.shared.heartRateSummaryService,
         heartRateReadingDetailService: AppServices.shared.heartRateReadingDetailService,
         stepsSummaryService: AppServices.shared.stepsSummaryService,
-        stepsDetailService: AppServices.shared.stepsDetailService
+        stepsDetailService: AppServices.shared.stepsDetailService,
+        flightsSummaryService: AppServices.shared.flightsSummaryService,
+        flightsDetailService: AppServices.shared.flightsDetailService
     )
 }
 #endif

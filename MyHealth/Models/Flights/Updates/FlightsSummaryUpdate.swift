@@ -1,0 +1,17 @@
+//
+//  FlightsSummaryUpdate.swift
+//  MyHealth
+//
+//  Created by Codex.
+//
+
+import Foundation
+import Models
+
+public struct FlightsSummaryUpdate: Sendable {
+    public let summary: FlightsSummary
+
+    public init(summary: FlightsSummary) {
+        self.summary = summary
+    }
+}

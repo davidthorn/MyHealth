@@ -12,10 +12,12 @@ public protocol HealthKitAdapterProtocol {
     func requestAuthorization() async -> Bool
     func requestHeartRateAuthorization() async -> Bool
     func requestStepsAuthorization() async -> Bool
+    func requestFlightsAuthorization() async -> Bool
     func workoutsStream() -> AsyncStream<[Workout]>
     func workout(id: UUID) async throws -> Workout?
     func deleteWorkout(id: UUID) async throws
     func heartRateSummaryStream() -> AsyncStream<HeartRateSummary>
     func heartRateReading(id: UUID) async throws -> HeartRateReading
     func stepsSummaryStream(days: Int) -> AsyncStream<StepsSummary>
+    func flightsSummaryStream(days: Int) -> AsyncStream<FlightsSummary>
 }

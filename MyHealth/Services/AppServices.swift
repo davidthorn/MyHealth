@@ -17,6 +17,8 @@ public struct AppServices: AppServicesProviding {
     public let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
     public let stepsSummaryService: StepsSummaryServiceProtocol
     public let stepsDetailService: StepsDetailServiceProtocol
+    public let flightsSummaryService: FlightsSummaryServiceProtocol
+    public let flightsDetailService: FlightsDetailServiceProtocol
     public let workoutsService: WorkoutsServiceProtocol
     public let workoutFlowService: WorkoutFlowServiceProtocol
     public let workoutListItemService: WorkoutListItemServiceProtocol
@@ -32,6 +34,8 @@ public struct AppServices: AppServicesProviding {
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
         stepsSummaryService: StepsSummaryServiceProtocol,
         stepsDetailService: StepsDetailServiceProtocol,
+        flightsSummaryService: FlightsSummaryServiceProtocol,
+        flightsDetailService: FlightsDetailServiceProtocol,
         workoutsService: WorkoutsServiceProtocol,
         workoutFlowService: WorkoutFlowServiceProtocol,
         workoutListItemService: WorkoutListItemServiceProtocol,
@@ -46,6 +50,8 @@ public struct AppServices: AppServicesProviding {
         self.heartRateReadingDetailService = heartRateReadingDetailService
         self.stepsSummaryService = stepsSummaryService
         self.stepsDetailService = stepsDetailService
+        self.flightsSummaryService = flightsSummaryService
+        self.flightsDetailService = flightsDetailService
         self.workoutsService = workoutsService
         self.workoutFlowService = workoutFlowService
         self.workoutListItemService = workoutListItemService
@@ -66,6 +72,8 @@ public struct AppServices: AppServicesProviding {
             heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),
             stepsSummaryService: StepsSummaryService(healthKitAdapter: healthKitAdapter),
             stepsDetailService: StepsDetailService(healthKitAdapter: healthKitAdapter),
+            flightsSummaryService: FlightsSummaryService(healthKitAdapter: healthKitAdapter),
+            flightsDetailService: FlightsDetailService(healthKitAdapter: healthKitAdapter),
             workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),

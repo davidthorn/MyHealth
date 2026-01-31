@@ -22,7 +22,9 @@ public struct ContentView: View {
                 heartRateSummaryService: viewModel.heartRateSummaryService,
                 heartRateReadingDetailService: viewModel.heartRateReadingDetailService,
                 stepsSummaryService: viewModel.stepsSummaryService,
-                stepsDetailService: viewModel.stepsDetailService
+                stepsDetailService: viewModel.stepsDetailService,
+                flightsSummaryService: viewModel.flightsSummaryService,
+                flightsDetailService: viewModel.flightsDetailService
             )
             WorkoutsScene(
                 service: viewModel.workoutsService,
