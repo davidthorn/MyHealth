@@ -10,6 +10,7 @@ import Models
 
 @MainActor
 public final class HealthKitAdapter: HealthKitAdapterProtocol {
+    private let storeAdaptor: HealthStoreAdaptorProtocol
     private let workouts: HealthKitWorkoutAdapterProtocol
     private let heartRates: HealthKitHeartRateAdapterProtocol
     private let steps: HealthKitStepsAdapterProtocol
@@ -21,6 +22,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
     
     public init(
+        storeAdaptor: HealthStoreAdaptorProtocol,
         workouts: HealthKitWorkoutAdapterProtocol,
         heartRates: HealthKitHeartRateAdapterProtocol,
         steps: HealthKitStepsAdapterProtocol,
@@ -31,6 +33,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         restingHeartRate: HealthKitRestingHeartRateAdapterProtocol,
         sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
     ) {
+        self.storeAdaptor = storeAdaptor
         self.workouts = workouts
         self.heartRates = heartRates
         self.steps = steps
@@ -45,6 +48,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     public static func live() -> HealthKitAdapter {
         let storeAdaptor = HealthStoreAdaptor()
         return HealthKitAdapter(
+            storeAdaptor: storeAdaptor,
             workouts: HealthKitWorkoutAdapter(storeAdaptor: storeAdaptor),
             heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor),
             steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor),
@@ -58,7 +62,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     }
     
     public func requestAuthorization() async -> Bool {
-        await workouts.requestAuthorization()
+        await storeAdaptor.requestAllAuthorization()
     }
 
     public func requestHeartRateAuthorization() async -> Bool {

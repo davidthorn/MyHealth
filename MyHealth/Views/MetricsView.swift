@@ -21,9 +21,11 @@ public struct MetricsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Today")
                         .font(.headline)
-                    Text("Last updated 2 min ago")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                    if let lastUpdated = viewModel.lastUpdated {
+                        Text("Last updated \(lastUpdated, format: .relative(presentation: .named))")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
