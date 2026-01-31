@@ -27,6 +27,7 @@ public struct WorkoutRouteMapView: View {
             .frame(maxWidth: .infinity)
             .frame(height: height)
             .frame(maxHeight: height == nil ? .infinity : nil)
+            .allowsHitTesting(false)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         } else {
             ContentUnavailableView("No Route", systemImage: "map", description: Text("No GPS route was recorded for this workout."))

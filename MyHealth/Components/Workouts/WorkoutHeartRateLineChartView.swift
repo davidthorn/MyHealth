@@ -25,7 +25,9 @@ public struct WorkoutHeartRateLineChartView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
                 let maxBpm = points.map(\.bpm).max() ?? 0
+                let minBpm = points.map(\.bpm).min() ?? 0
                 let upperBound = max(maxBpm * 1.1, 1)
+                let lowerBound = max(minBpm * 0.9, 0)
                 Chart(points) { point in
                     LineMark(
                         x: .value("Time", point.date),
@@ -34,7 +36,7 @@ public struct WorkoutHeartRateLineChartView: View {
                     .foregroundStyle(Color.red.gradient)
                     .interpolationMethod(.catmullRom)
                 }
-                .chartYScale(domain: 0...upperBound)
+                .chartYScale(domain: lowerBound...upperBound)
                 .chartXAxis {
                     AxisMarks(values: .automatic(desiredCount: 4)) { value in
                         AxisGridLine()

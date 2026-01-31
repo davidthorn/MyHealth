@@ -7,11 +7,14 @@
 
 import Combine
 import Foundation
+import Models
 
 @MainActor
 public final class DashboardViewModel: ObservableObject {
     @Published public private(set) var title: String
     @Published public var path: [DashboardRoute]
+    @Published public private(set) var latestWorkout: DashboardLatestWorkout?
+    @Published public private(set) var activityRingsDay: ActivityRingsDay?
 
     private let service: DashboardServiceProtocol
     private var task: Task<Void, Never>?
@@ -20,6 +23,8 @@ public final class DashboardViewModel: ObservableObject {
         self.service = service
         self.title = "Dashboard"
         self.path = []
+        self.latestWorkout = nil
+        self.activityRingsDay = nil
 
     }
 
@@ -30,6 +35,8 @@ public final class DashboardViewModel: ObservableObject {
             for await update in service.updates() {
                 guard let self, !Task.isCancelled else { break }
                 self.title = update.title
+                self.latestWorkout = update.latestWorkout
+                self.activityRingsDay = update.activityRingsDay
             }
         }
     }

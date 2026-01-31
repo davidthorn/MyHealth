@@ -10,6 +10,7 @@ import HealthKitAdaptor
 
 @MainActor
 public struct AppServices: AppServicesProviding {
+    private let healthKitAdapter: HealthKitAdapterProtocol
     private let workoutStore: WorkoutStoreProtocol
     public let dashboardService: DashboardServiceProtocol
     public let metricsService: MetricsServiceProtocol
@@ -41,6 +42,7 @@ public struct AppServices: AppServicesProviding {
     public let settingsService: SettingsServiceProtocol
 
     public init(
+        healthKitAdapter: HealthKitAdapterProtocol,
         workoutStore: WorkoutStoreProtocol,
         dashboardService: DashboardServiceProtocol,
         metricsService: MetricsServiceProtocol,
@@ -71,6 +73,7 @@ public struct AppServices: AppServicesProviding {
         insightsService: InsightsServiceProtocol,
         settingsService: SettingsServiceProtocol
     ) {
+        self.healthKitAdapter = healthKitAdapter
         self.workoutStore = workoutStore
         self.dashboardService = dashboardService
         self.metricsService = metricsService
@@ -108,8 +111,9 @@ public struct AppServices: AppServicesProviding {
         let workoutSource = WorkoutStoreSource(healthKitAdapter: healthKitAdapter)
         let heartRateSource = HeartRateStoreSource(healthKitAdapter: healthKitAdapter)
         return AppServices(
+            healthKitAdapter: healthKitAdapter,
             workoutStore: workoutStore,
-            dashboardService: DashboardService(),
+            dashboardService: DashboardService(healthKitAdapter: healthKitAdapter),
             metricsService: MetricsService(healthKitAdapter: healthKitAdapter),
             heartRateSummaryService: HeartRateSummaryService(healthKitAdapter: healthKitAdapter),
             heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),
@@ -144,5 +148,9 @@ public struct AppServices: AppServicesProviding {
 
     public func loadStores() async {
         try? await workoutStore.loadAll()
+    }
+
+    public func requestAuthorization() async -> Bool {
+        await healthKitAdapter.requestAuthorization()
     }
 }

@@ -20,6 +20,7 @@ public struct MyHealthApp: App {
             ContentView(services: services)
                 .task {
                     await services.loadStores()
+                    _ = await services.requestAuthorization()
                 }
         }
     }

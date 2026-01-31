@@ -38,4 +38,5 @@ public protocol AppServicesProviding {
     var settingsService: SettingsServiceProtocol { get }
 
     func loadStores() async
+    func requestAuthorization() async -> Bool
 }
