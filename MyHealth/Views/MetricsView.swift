@@ -5,6 +5,7 @@
 //  Created by Codex.
 //
 
+import Models
 import SwiftUI
 
 public struct MetricsView: View {
@@ -64,6 +65,20 @@ public struct MetricsView: View {
                             }
                         }
                     }
+                }
+                // codex this is the place I want it.
+                if let latest = viewModel.restingHeartRateSummary?.latest {
+                    MetricsRestingHeartRateLatestCardView(
+                        latest: latest,
+                        chartPoints: viewModel.latestRestingHeartRatePoints()
+                    )
+                } else {
+                    ContentUnavailableView(
+                        "No Resting Heart Rate",
+                        systemImage: "heart",
+                        description: Text("Resting heart rate will appear once recorded.")
+                    )
+                    .frame(maxWidth: .infinity)
                 }
 
                 VStack(alignment: .leading, spacing: 12) {

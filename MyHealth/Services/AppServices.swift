@@ -109,7 +109,7 @@ public struct AppServices: AppServicesProviding {
         return AppServices(
             workoutStore: workoutStore,
             dashboardService: DashboardService(),
-            metricsService: MetricsService(),
+            metricsService: MetricsService(healthKitAdapter: healthKitAdapter),
             heartRateSummaryService: HeartRateSummaryService(healthKitAdapter: healthKitAdapter),
             heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),
             stepsSummaryService: StepsSummaryService(healthKitAdapter: healthKitAdapter),

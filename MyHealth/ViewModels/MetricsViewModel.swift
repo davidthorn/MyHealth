@@ -7,12 +7,14 @@
 
 import Combine
 import Foundation
+import Models
 
 @MainActor
 public final class MetricsViewModel: ObservableObject {
     @Published public private(set) var title: String
     @Published public var selectedRange: String
     @Published public var selectedMetric: MetricsCategory
+    @Published public private(set) var restingHeartRateSummary: RestingHeartRateSummary?
 
     private let service: MetricsServiceProtocol
     private var task: Task<Void, Never>?
@@ -30,6 +32,7 @@ public final class MetricsViewModel: ObservableObject {
         self.metrics = MetricsCategory.allCases
         self.selectedRange = "Day"
         self.selectedMetric = .heartRate
+        self.restingHeartRateSummary = nil
         self.summaryCards = [
             (.heartRate, "72 bpm", "Avg today", "▼ 3 bpm"),
             (.restingHeartRate, "58 bpm", "Today", "▼ 2 bpm"),
@@ -60,6 +63,7 @@ public final class MetricsViewModel: ObservableObject {
             for await update in service.updates() {
                 guard let self, !Task.isCancelled else { break }
                 self.title = update.title
+                self.restingHeartRateSummary = update.restingHeartRateSummary
             }
         }
     }
@@ -83,5 +87,13 @@ public final class MetricsViewModel: ObservableObject {
 
     public func route(for category: MetricsCategory) -> MetricsRoute {
         .metric(category)
+    }
+
+    public func latestRestingHeartRatePoints() -> [HeartRateRangePoint] {
+        guard let summary = restingHeartRateSummary else { return [] }
+        let days = summary.previous + (summary.latest.map { [$0] } ?? [])
+        return days.sorted { $0.date < $1.date }.map { day in
+            HeartRateRangePoint(date: day.date, bpm: day.averageBpm)
+        }
     }
 }
