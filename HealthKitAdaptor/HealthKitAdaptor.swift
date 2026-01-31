@@ -15,19 +15,22 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let steps: HealthKitStepsAdapterProtocol
     private let flights: HealthKitFlightsAdapterProtocol
     private let standHours: HealthKitStandHoursAdapterProtocol
+    private let activeEnergy: HealthKitActiveEnergyAdapterProtocol
     
     public init(
         workouts: HealthKitWorkoutAdapterProtocol,
         heartRates: HealthKitHeartRateAdapterProtocol,
         steps: HealthKitStepsAdapterProtocol,
         flights: HealthKitFlightsAdapterProtocol,
-        standHours: HealthKitStandHoursAdapterProtocol
+        standHours: HealthKitStandHoursAdapterProtocol,
+        activeEnergy: HealthKitActiveEnergyAdapterProtocol
     ) {
         self.workouts = workouts
         self.heartRates = heartRates
         self.steps = steps
         self.flights = flights
         self.standHours = standHours
+        self.activeEnergy = activeEnergy
     }
 
     public static func live() -> HealthKitAdapter {
@@ -37,7 +40,8 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
             heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor),
             steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor),
             flights: HealthKitFlightsAdapter(storeAdaptor: storeAdaptor),
-            standHours: HealthKitStandHoursAdapter(storeAdaptor: storeAdaptor)
+            standHours: HealthKitStandHoursAdapter(storeAdaptor: storeAdaptor),
+            activeEnergy: HealthKitActiveEnergyAdapter(storeAdaptor: storeAdaptor)
         )
     }
     
@@ -59,6 +63,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func requestStandHoursAuthorization() async -> Bool {
         await standHours.requestAuthorization()
+    }
+
+    public func requestActiveEnergyAuthorization() async -> Bool {
+        await activeEnergy.requestAuthorization()
     }
 
     public func workoutsStream() -> AsyncStream<[Workout]> {
@@ -91,5 +99,9 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func standHoursSummaryStream(days: Int) -> AsyncStream<StandHoursSummary> {
         standHours.standHoursSummaryStream(days: days)
+    }
+
+    public func activeEnergySummaryStream(days: Int) -> AsyncStream<CaloriesSummary> {
+        activeEnergy.activeEnergySummaryStream(days: days)
     }
 }

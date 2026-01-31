@@ -14,6 +14,7 @@ public protocol HealthStoreAdaptorProtocol {
     func requestStepsAuthorization() async -> Bool
     func requestFlightsAuthorization() async -> Bool
     func requestStandHoursAuthorization() async -> Bool
+    func requestActiveEnergyAuthorization() async -> Bool
     func fetchWorkouts() async -> [Workout]
     func fetchWorkout(id: UUID) async throws -> Workout
     func deleteWorkout(id: UUID) async throws
@@ -22,4 +23,5 @@ public protocol HealthStoreAdaptorProtocol {
     func fetchStepCounts(days: Int) async -> [StepsDay]
     func fetchFlightCounts(days: Int) async -> [FlightsDay]
     func fetchStandHourCounts(days: Int) async -> [StandHourDay]
+    func fetchActiveEnergy(days: Int) async -> [CaloriesDay]
 }

@@ -26,7 +26,9 @@ public struct ContentView: View {
                 flightsSummaryService: viewModel.flightsSummaryService,
                 flightsDetailService: viewModel.flightsDetailService,
                 standHoursSummaryService: viewModel.standHoursSummaryService,
-                standHoursDetailService: viewModel.standHoursDetailService
+                standHoursDetailService: viewModel.standHoursDetailService,
+                caloriesSummaryService: viewModel.caloriesSummaryService,
+                caloriesDetailService: viewModel.caloriesDetailService
             )
             WorkoutsScene(
                 service: viewModel.workoutsService,
