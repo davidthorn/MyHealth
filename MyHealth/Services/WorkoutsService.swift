@@ -9,16 +9,20 @@ import Foundation
 
 @MainActor
 public final class WorkoutsService: WorkoutsServiceProtocol {
-    private let store: WorkoutStore
+    private let source: WorkoutDataSourceProtocol
 
-    public init(store: WorkoutStore) {
-        self.store = store
+    public init(source: WorkoutDataSourceProtocol) {
+        self.source = source
+    }
+
+    public func requestAuthorization() async -> Bool {
+        await source.requestAuthorization()
     }
 
     public func updates() -> AsyncStream<WorkoutsUpdate> {
         AsyncStream { continuation in
-            let task = Task { [store] in
-                let stream = await store.stream()
+            let task = Task { [source] in
+                let stream = source.workoutsStream()
                 for await items in stream {
                     if Task.isCancelled { break }
                     continuation.yield(WorkoutsUpdate(title: "Workouts", workouts: items))

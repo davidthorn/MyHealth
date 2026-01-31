@@ -43,11 +43,12 @@ public struct AppServices: AppServicesProviding {
 
     public static func live() -> AppServices {
         let workoutStore = WorkoutStore()
+        let workoutSource = WorkoutStoreSource(store: workoutStore)
         return AppServices(
             workoutStore: workoutStore,
             dashboardService: DashboardService(),
             metricsService: MetricsService(),
-            workoutsService: WorkoutsService(store: workoutStore),
+            workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),
             workoutDetailService: WorkoutDetailService(store: workoutStore),
