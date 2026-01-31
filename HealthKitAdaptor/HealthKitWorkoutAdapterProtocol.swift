@@ -12,5 +12,6 @@ public protocol HealthKitWorkoutAdapterProtocol {
     func requestAuthorization() async -> Bool
     func workoutsStream() -> AsyncStream<[Workout]>
     func workout(id: UUID) async throws -> Workout
+    func workoutRoute(id: UUID) async throws -> [WorkoutRoutePoint]
     func deleteWorkout(id: UUID) async throws
 }

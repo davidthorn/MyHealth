@@ -25,6 +25,10 @@ public final class WorkoutStoreSource: WorkoutDataSourceProtocol {
         healthKitAdapter.workoutsStream()
     }
 
+    public func workoutRoute(id: UUID) async throws -> [WorkoutRoutePoint] {
+        try await healthKitAdapter.workoutRoute(id: id)
+    }
+
     public func deleteWorkout(id: UUID) async throws {
         try await healthKitAdapter.deleteWorkout(id: id)
     }

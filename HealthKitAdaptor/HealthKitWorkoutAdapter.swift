@@ -41,6 +41,10 @@ public final class HealthKitWorkoutAdapter: HealthKitWorkoutAdapterProtocol {
         try await storeAdaptor.fetchWorkout(id: id)
     }
 
+    public func workoutRoute(id: UUID) async throws -> [WorkoutRoutePoint] {
+        try await storeAdaptor.fetchWorkoutRoute(id: id)
+    }
+
     public func deleteWorkout(id: UUID) async throws {
         try await storeAdaptor.deleteWorkout(id: id)
     }

@@ -105,6 +105,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         try await workouts.workout(id: id)
     }
 
+    public func workoutRoute(id: UUID) async throws -> [WorkoutRoutePoint] {
+        try await workouts.workoutRoute(id: id)
+    }
+
     public func deleteWorkout(id: UUID) async throws {
         try await workouts.deleteWorkout(id: id)
     }

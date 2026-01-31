@@ -11,6 +11,7 @@ import Models
 public struct WorkoutDetailView: View {
     @StateObject private var viewModel: WorkoutDetailViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var isRouteFullScreenPresented: Bool = false
 
     public init(service: WorkoutDetailServiceProtocol, id: UUID) {
         _viewModel = StateObject(wrappedValue: WorkoutDetailViewModel(service: service, id: id))
@@ -28,6 +29,60 @@ public struct WorkoutDetailView: View {
                         LabeledContent("Start", value: workout.startedAt.formatted(date: .abbreviated, time: .shortened))
                         LabeledContent("End", value: workout.endedAt.formatted(date: .abbreviated, time: .shortened))
                         LabeledContent("Duration", value: viewModel.durationText ?? "—")
+                    }
+                    if !viewModel.routePoints.isEmpty {
+                        Section {
+                            WorkoutRouteMapView(points: viewModel.routePoints)
+                        } header: {
+                            HStack {
+                                Text("Route")
+                                Spacer()
+                                Button("Full Screen") {
+                                    isRouteFullScreenPresented = true
+                                }
+                                .font(.subheadline.weight(.semibold))
+                            }
+                        }
+
+                        Section("Splits") {
+                            if viewModel.splits.isEmpty {
+                                Text("Not enough distance to compute splits.")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                HStack(spacing: 0) {
+                                    Text("KM")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Text("Time")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                    Text("Pace")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                    Text("HR")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                        .frame(maxWidth: .infinity, alignment: .trailing)
+                                }
+                                .textCase(nil)
+                                ForEach(viewModel.splits) { split in
+                                    WorkoutSplitRowView(
+                                        index: split.index,
+                                        durationText: viewModel.splitDurationText(split),
+                                        paceText: viewModel.paceText(split),
+                                        heartRateText: viewModel.heartRateText(split)
+                                    )
+                                }
+                            }
+                        }
+
+                        Section("Heart Rate") {
+                            WorkoutHeartRateLineChartView(points: viewModel.workoutHeartRatePoints)
+                        }
                     }
                 }
             } else {
@@ -73,6 +128,9 @@ public struct WorkoutDetailView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(viewModel.errorMessage ?? "")
+        }
+        .sheet(isPresented: $isRouteFullScreenPresented) {
+            WorkoutRouteFullScreenView(points: viewModel.routePoints)
         }
     }
 }

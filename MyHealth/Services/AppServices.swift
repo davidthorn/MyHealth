@@ -106,6 +106,7 @@ public struct AppServices: AppServicesProviding {
         let workoutStore = WorkoutStore()
         let healthKitAdapter = HealthKitAdapter.live()
         let workoutSource = WorkoutStoreSource(healthKitAdapter: healthKitAdapter)
+        let heartRateSource = HeartRateStoreSource(healthKitAdapter: healthKitAdapter)
         return AppServices(
             workoutStore: workoutStore,
             dashboardService: DashboardService(),
@@ -133,7 +134,7 @@ public struct AppServices: AppServicesProviding {
             workoutsService: WorkoutsService(source: workoutSource),
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(),
-            workoutDetailService: WorkoutDetailService(source: workoutSource),
+            workoutDetailService: WorkoutDetailService(source: workoutSource, heartRateSource: heartRateSource),
             insightsService: InsightsService(),
             settingsService: SettingsService()
         )

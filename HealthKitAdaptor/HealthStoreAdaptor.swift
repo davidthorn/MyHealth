@@ -5,6 +5,7 @@
 //  Created by Codex.
 //
 
+import CoreLocation
 import Foundation
 import HealthKit
 import Models
@@ -22,6 +23,7 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
 
         var readTypes = Set<HKObjectType>()
         readTypes.insert(HKObjectType.workoutType())
+        readTypes.insert(HKSeriesType.workoutRoute())
 
         if let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) {
             readTypes.insert(heartRateType)
@@ -58,8 +60,9 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
     public func requestWorkoutAuthorization() async -> Bool {
         guard HKHealthStore.isHealthDataAvailable() else { return false }
         let workoutType = HKObjectType.workoutType()
+        let routeType = HKSeriesType.workoutRoute()
         return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [workoutType]) { success, _ in
+            healthStore.requestAuthorization(toShare: [], read: [workoutType, routeType]) { success, _ in
                 continuation.resume(returning: success)
             }
         }
@@ -170,6 +173,41 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
         return model
     }
 
+    public func fetchWorkoutRoute(id: UUID) async throws -> [WorkoutRoutePoint] {
+        let workout = try await fetchHealthKitWorkout(id: id)
+        let routeType = HKSeriesType.workoutRoute()
+        let predicate = HKQuery.predicateForObjects(from: workout)
+        let routes = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKWorkoutRoute], Error>) in
+            let query = HKSampleQuery(
+                sampleType: routeType,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                let routes = (samples as? [HKWorkoutRoute]) ?? []
+                continuation.resume(returning: routes)
+            }
+            healthStore.execute(query)
+        }
+
+        var points: [WorkoutRoutePoint] = []
+        for route in routes {
+            let locations = try await fetchLocations(for: route)
+            points.append(contentsOf: locations.map {
+                WorkoutRoutePoint(
+                    latitude: $0.coordinate.latitude,
+                    longitude: $0.coordinate.longitude,
+                    timestamp: $0.timestamp
+                )
+            })
+        }
+        return points.sorted { $0.timestamp < $1.timestamp }
+    }
+
     public func deleteWorkout(id: UUID) async throws {
         let workout = try await fetchHealthKitWorkout(id: id)
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
@@ -184,6 +222,28 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
                     continuation.resume(throwing: HealthKitAdapterError.deleteFailed)
                 }
             }
+        }
+    }
+
+    private func fetchLocations(for route: HKWorkoutRoute) async throws -> [CLLocation] {
+        return try await withCheckedThrowingContinuation { continuation in
+            var collected: [CLLocation] = []
+            var didResume = false
+            let query = HKWorkoutRouteQuery(route: route) { _, locations, done, error in
+                if let error, !didResume {
+                    didResume = true
+                    continuation.resume(throwing: error)
+                    return
+                }
+                if let locations {
+                    collected.append(contentsOf: locations)
+                }
+                if done, !didResume {
+                    didResume = true
+                    continuation.resume(returning: collected)
+                }
+            }
+            healthStore.execute(query)
         }
     }
 

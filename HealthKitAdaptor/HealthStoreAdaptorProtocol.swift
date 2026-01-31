@@ -21,6 +21,7 @@ public protocol HealthStoreAdaptorProtocol {
     func requestRestingHeartRateAuthorization() async -> Bool
     func fetchWorkouts() async -> [Workout]
     func fetchWorkout(id: UUID) async throws -> Workout
+    func fetchWorkoutRoute(id: UUID) async throws -> [WorkoutRoutePoint]
     func deleteWorkout(id: UUID) async throws
     func fetchHeartRateReadings(limit: Int) async -> [HeartRateReading]
     func fetchHeartRateReading(id: UUID) async throws -> HeartRateReading
