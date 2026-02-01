@@ -36,6 +36,10 @@ public final class HealthKitNutritionAdapter: HealthKitNutritionAdapterProtocol 
         await storeAdaptor.fetchNutritionSamples(type: type, limit: limit)
     }
 
+    public func nutritionSamples(type: NutritionType, start: Date, end: Date) async -> [NutritionSample] {
+        await storeAdaptor.fetchNutritionSamples(type: type, start: start, end: end)
+    }
+
     public func saveNutritionSample(_ sample: NutritionSample) async throws {
         try await storeAdaptor.saveNutritionSample(sample)
     }

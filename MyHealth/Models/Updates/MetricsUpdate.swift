@@ -18,6 +18,7 @@ public struct MetricsUpdate: Sendable {
     public let caloriesSummary: CaloriesSummary?
     public let sleepSummary: SleepSummary?
     public let activityRingsSummary: ActivityRingsSummary?
+    public let nutritionSummary: NutritionDaySummary?
 
     public init(
         title: String,
@@ -28,7 +29,8 @@ public struct MetricsUpdate: Sendable {
         standHoursSummary: StandHoursSummary?,
         caloriesSummary: CaloriesSummary?,
         sleepSummary: SleepSummary?,
-        activityRingsSummary: ActivityRingsSummary?
+        activityRingsSummary: ActivityRingsSummary?,
+        nutritionSummary: NutritionDaySummary?
     ) {
         self.title = title
         self.heartRateSummary = heartRateSummary
@@ -39,5 +41,6 @@ public struct MetricsUpdate: Sendable {
         self.caloriesSummary = caloriesSummary
         self.sleepSummary = sleepSummary
         self.activityRingsSummary = activityRingsSummary
+        self.nutritionSummary = nutritionSummary
     }
 }

@@ -19,6 +19,7 @@ public final class MetricsViewModel: ObservableObject {
     @Published public private(set) var summaryCards: [(category: MetricsCategory, value: String, subtitle: String, trend: String)]
     @Published public private(set) var statItems: [(title: String, value: String)]
     @Published public private(set) var insights: [(title: String, detail: String)]
+    @Published public private(set) var nutritionSummary: NutritionDaySummary?
 
     private let service: MetricsServiceProtocol
     private var task: Task<Void, Never>?
@@ -37,6 +38,7 @@ public final class MetricsViewModel: ObservableObject {
         self.summaryCards = []
         self.statItems = []
         self.insights = []
+        self.nutritionSummary = nil
     }
 
     public func start() {
@@ -51,6 +53,7 @@ public final class MetricsViewModel: ObservableObject {
                 self.summaryCards = self.buildSummaryCards(from: update)
                 self.statItems = self.buildStatItems(from: update)
                 self.insights = self.buildInsights(from: update)
+                self.nutritionSummary = update.nutritionSummary
             }
         }
     }

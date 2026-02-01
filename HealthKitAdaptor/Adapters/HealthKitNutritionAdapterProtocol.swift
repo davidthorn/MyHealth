@@ -13,6 +13,7 @@ public protocol HealthKitNutritionAdapterProtocol {
     func requestWriteAuthorization(type: NutritionType) async -> Bool
     func nutritionTypes() -> [NutritionType]
     func nutritionSamples(type: NutritionType, limit: Int) async -> [NutritionSample]
+    func nutritionSamples(type: NutritionType, start: Date, end: Date) async -> [NutritionSample]
     func saveNutritionSample(_ sample: NutritionSample) async throws
     func deleteNutritionSample(id: UUID, type: NutritionType) async throws
     func nutritionChangesStream() -> AsyncStream<Void>

@@ -28,6 +28,7 @@ public protocol HealthStoreAdaptorProtocol {
     func fetchSleepAnalysis(days: Int) async -> [SleepDay]
     func fetchSleepAnalysisDay(date: Date) async -> SleepDay
     func fetchNutritionSamples(type: NutritionType, limit: Int) async -> [NutritionSample]
+    func fetchNutritionSamples(type: NutritionType, start: Date, end: Date) async -> [NutritionSample]
     func saveNutritionSample(_ sample: NutritionSample) async throws
     func deleteNutritionSample(id: UUID, type: NutritionType) async throws
     func nutritionChangesStream() -> AsyncStream<Void>

@@ -83,6 +83,10 @@ public struct MetricsView: View {
                     .frame(maxWidth: .infinity)
                 }
 
+                if let nutritionSummary = viewModel.nutritionSummary {
+                    MetricsNutritionSummaryCardView(summary: nutritionSummary)
+                }
+
                 VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             Text(viewModel.selectedMetric.title)
