@@ -44,6 +44,11 @@ public struct ContentView: View {
                 restingHeartRateHistoryService: viewModel.restingHeartRateHistoryService,
                 restingHeartRateDayDetailService: viewModel.restingHeartRateDayDetailService
             )
+            NutritionScene(
+                service: viewModel.nutritionService,
+                nutritionTypeListService: viewModel.nutritionTypeListService,
+                nutritionEntryDetailService: viewModel.nutritionEntryDetailService
+            )
             WorkoutsScene(
                 service: viewModel.workoutsService,
                 workoutFlowService: viewModel.workoutFlowService,

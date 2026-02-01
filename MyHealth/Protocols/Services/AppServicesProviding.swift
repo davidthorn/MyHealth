@@ -34,6 +34,9 @@ public protocol AppServicesProviding {
     var workoutFlowService: WorkoutFlowServiceProtocol { get }
     var workoutListItemService: WorkoutListItemServiceProtocol { get }
     var workoutDetailService: WorkoutDetailServiceProtocol { get }
+    var nutritionService: NutritionServiceProtocol { get }
+    var nutritionTypeListService: NutritionTypeListServiceProtocol { get }
+    var nutritionEntryDetailService: NutritionEntryDetailServiceProtocol { get }
     var insightsService: InsightsServiceProtocol { get }
     var settingsService: SettingsServiceProtocol { get }
 
