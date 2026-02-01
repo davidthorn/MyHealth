@@ -10,9 +10,15 @@ import SwiftUI
 
 public struct NutritionTypeListView: View {
     @StateObject private var viewModel: NutritionTypeListViewModel
+    private let onAddEntry: (NutritionType) -> Void
 
-    public init(service: NutritionTypeListServiceProtocol, type: NutritionType) {
+    public init(
+        service: NutritionTypeListServiceProtocol,
+        type: NutritionType,
+        onAddEntry: @escaping (NutritionType) -> Void
+    ) {
         _viewModel = StateObject(wrappedValue: NutritionTypeListViewModel(service: service, type: type))
+        self.onAddEntry = onAddEntry
     }
 
     public var body: some View {
@@ -38,6 +44,16 @@ public struct NutritionTypeListView: View {
             .padding(.vertical, 20)
         }
         .scrollIndicators(.hidden)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    onAddEntry(viewModel.type)
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                }
+                .accessibilityLabel("Add Nutrition Entry")
+            }
+        }
         .task {
             viewModel.start()
         }
@@ -49,6 +65,10 @@ public struct NutritionTypeListView: View {
 
 #if DEBUG
 #Preview("Nutrition Type List") {
-    NutritionTypeListView(service: AppServices.shared.nutritionTypeListService, type: .energy)
+    NutritionTypeListView(
+        service: AppServices.shared.nutritionTypeListService,
+        type: .energy,
+        onAddEntry: { _ in }
+    )
 }
 #endif

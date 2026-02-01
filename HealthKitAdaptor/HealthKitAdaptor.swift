@@ -20,6 +20,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let activitySummary: HealthKitActivitySummaryAdapterProtocol
     private let restingHeartRate: HealthKitRestingHeartRateAdapterProtocol
     private let sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
+    private let nutrition: HealthKitNutritionAdapterProtocol
 
     public var authorizationProvider: HealthAuthorizationProviding {
         storeAdaptor.authorizationProvider
@@ -35,7 +36,8 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         activeEnergy: HealthKitActiveEnergyAdapterProtocol,
         activitySummary: HealthKitActivitySummaryAdapterProtocol,
         restingHeartRate: HealthKitRestingHeartRateAdapterProtocol,
-        sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
+        sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol,
+        nutrition: HealthKitNutritionAdapterProtocol
     ) {
         self.storeAdaptor = storeAdaptor
         self.workouts = workouts
@@ -47,6 +49,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         self.activitySummary = activitySummary
         self.restingHeartRate = restingHeartRate
         self.sleepAnalysis = sleepAnalysis
+        self.nutrition = nutrition
     }
 
     public static func live() -> HealthKitAdapter {
@@ -61,7 +64,8 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
             activeEnergy: HealthKitActiveEnergyAdapter(storeAdaptor: storeAdaptor),
             activitySummary: HealthKitActivitySummaryAdapter(storeAdaptor: storeAdaptor),
             restingHeartRate: HealthKitRestingHeartRateAdapter(storeAdaptor: storeAdaptor),
-            sleepAnalysis: HealthKitSleepAnalysisAdapter(storeAdaptor: storeAdaptor)
+            sleepAnalysis: HealthKitSleepAnalysisAdapter(storeAdaptor: storeAdaptor),
+            nutrition: HealthKitNutritionAdapter(storeAdaptor: storeAdaptor)
         )
     }
     
@@ -131,5 +135,25 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func activitySummaryDay(date: Date) async -> ActivityRingsDay {
         await activitySummary.activitySummaryDay(date: date)
+    }
+
+    public func nutritionTypes() -> [NutritionType] {
+        nutrition.nutritionTypes()
+    }
+
+    public func nutritionSamples(type: NutritionType, limit: Int) async -> [NutritionSample] {
+        await nutrition.nutritionSamples(type: type, limit: limit)
+    }
+
+    public func saveNutritionSample(_ sample: NutritionSample) async throws {
+        try await nutrition.saveNutritionSample(sample)
+    }
+
+    public func deleteNutritionSample(id: UUID, type: NutritionType) async throws {
+        try await nutrition.deleteNutritionSample(id: id, type: type)
+    }
+
+    public func nutritionChangesStream() -> AsyncStream<Void> {
+        nutrition.nutritionChangesStream()
     }
 }

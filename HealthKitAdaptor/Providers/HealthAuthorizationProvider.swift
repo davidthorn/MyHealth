@@ -6,6 +6,7 @@
 //
 
 import HealthKit
+import Models
 
 @MainActor
 public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
@@ -42,7 +43,6 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
             readTypes.insert(sleepType)
         }
         readTypes.insert(HKObjectType.activitySummaryType())
-
         return await requestAuthorization(readTypes: readTypes)
     }
 
@@ -92,6 +92,17 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
         return await requestAuthorization(readTypes: [restingType])
     }
 
+    public func requestNutritionReadAuthorization(type: NutritionType) async -> Bool {
+        let readTypes = Self.nutritionReadTypes(for: type)
+        return await requestAuthorization(readTypes: readTypes)
+    }
+
+    public func requestNutritionWriteAuthorization(type: NutritionType) async -> Bool {
+        let shareTypes = Self.nutritionShareTypes(for: type)
+        let readTypes = Self.nutritionReadTypes(for: type)
+        return await requestAuthorization(readTypes: readTypes, shareTypes: shareTypes)
+    }
+
     public func requestAuthorization(readTypes: Set<HKObjectType>) async -> Bool {
         guard HKHealthStore.isHealthDataAvailable() else { return false }
         guard !readTypes.isEmpty else { return false }
@@ -100,5 +111,31 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
                 continuation.resume(returning: success)
             }
         }
+    }
+
+    private func requestAuthorization(readTypes: Set<HKObjectType>, shareTypes: Set<HKSampleType>) async -> Bool {
+        guard HKHealthStore.isHealthDataAvailable() else { return false }
+        guard !readTypes.isEmpty || !shareTypes.isEmpty else { return false }
+        return await withCheckedContinuation { continuation in
+            healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) { success, _ in
+                continuation.resume(returning: success)
+            }
+        }
+    }
+
+    private nonisolated static func nutritionReadTypes(for type: NutritionType) -> Set<HKObjectType> {
+        guard let identifier = type.quantityIdentifier,
+              let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
+            return []
+        }
+        return [quantityType]
+    }
+
+    private nonisolated static func nutritionShareTypes(for type: NutritionType) -> Set<HKSampleType> {
+        guard let identifier = type.quantityIdentifier,
+              let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
+            return []
+        }
+        return [quantityType]
     }
 }

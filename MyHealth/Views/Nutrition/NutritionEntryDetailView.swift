@@ -13,8 +13,14 @@ public struct NutritionEntryDetailView: View {
     @StateObject private var viewModel: NutritionEntryDetailViewModel
     @State private var showDeleteConfirm = false
 
-    public init(service: NutritionEntryDetailServiceProtocol, sample: NutritionSample) {
-        _viewModel = StateObject(wrappedValue: NutritionEntryDetailViewModel(service: service, sample: sample))
+    public init(service: NutritionEntryDetailServiceProtocol, sample: NutritionSample, isNewEntry: Bool) {
+        _viewModel = StateObject(
+            wrappedValue: NutritionEntryDetailViewModel(
+                service: service,
+                sample: sample,
+                isNewEntry: isNewEntry
+            )
+        )
     }
 
     public var body: some View {
@@ -32,6 +38,7 @@ public struct NutritionEntryDetailView: View {
                 }
                 TextField("Value", text: $viewModel.valueText)
                     .keyboardType(.decimalPad)
+                    .environment(\.locale, Locale(identifier: "en_US_POSIX"))
                 DatePicker("Date", selection: $viewModel.date, displayedComponents: [.date, .hourAndMinute])
             }
 
@@ -84,6 +91,7 @@ public struct NutritionEntryDetailView: View {
             }
         }
         .onChange(of: viewModel.valueText) { _, _ in
+            viewModel.normalizeDecimalSeparator()
             viewModel.updateChangeState()
         }
         .onChange(of: viewModel.type) { _, _ in
@@ -106,7 +114,8 @@ public struct NutritionEntryDetailView: View {
     NavigationStack {
         NutritionEntryDetailView(
             service: AppServices.shared.nutritionEntryDetailService,
-            sample: NutritionSample(type: .protein, date: Date(), value: 22.5, unit: "g")
+            sample: NutritionSample(type: .protein, date: Date(), value: 22.5, unit: "g"),
+            isNewEntry: false
         )
     }
 }

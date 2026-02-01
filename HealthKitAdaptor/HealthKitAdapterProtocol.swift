@@ -27,4 +27,9 @@ public protocol HealthKitAdapterProtocol {
     func sleepAnalysisSummaryStream(days: Int) -> AsyncStream<SleepSummary>
     func sleepAnalysisDay(date: Date) async -> SleepDay
     func activitySummaryDay(date: Date) async -> ActivityRingsDay
+    func nutritionTypes() -> [NutritionType]
+    func nutritionSamples(type: NutritionType, limit: Int) async -> [NutritionSample]
+    func saveNutritionSample(_ sample: NutritionSample) async throws
+    func deleteNutritionSample(id: UUID, type: NutritionType) async throws
+    func nutritionChangesStream() -> AsyncStream<Void>
 }

@@ -22,8 +22,9 @@ public final class NutritionEntryDetailViewModel: ObservableObject {
     private let service: NutritionEntryDetailServiceProtocol
     private var task: Task<Void, Never>?
     private var originalSample: NutritionSample
+    private var isNewEntry: Bool
 
-    public init(service: NutritionEntryDetailServiceProtocol, sample: NutritionSample) {
+    public init(service: NutritionEntryDetailServiceProtocol, sample: NutritionSample, isNewEntry: Bool) {
         self.service = service
         self.sample = sample
         self.originalSample = sample
@@ -33,6 +34,7 @@ public final class NutritionEntryDetailViewModel: ObservableObject {
         self.errorMessage = nil
         self.isDeleted = false
         self.hasChanges = false
+        self.isNewEntry = isNewEntry
     }
 
     public func start() {
@@ -72,7 +74,12 @@ public final class NutritionEntryDetailViewModel: ObservableObject {
             unit: type.unit
         )
         do {
-            try await service.save(sample: updated)
+            if isNewEntry {
+                try await service.save(sample: updated)
+                isNewEntry = false
+            } else {
+                try await service.update(original: originalSample, updated: updated)
+            }
             sample = updated
             originalSample = updated
             hasChanges = false
@@ -90,8 +97,12 @@ public final class NutritionEntryDetailViewModel: ObservableObject {
     }
 
     public func delete() async {
+        if isNewEntry {
+            isDeleted = true
+            return
+        }
         do {
-            try await service.delete(id: sample.id)
+            try await service.delete(sample: sample)
             isDeleted = true
         } catch {
             errorMessage = "Failed to delete entry."
@@ -108,5 +119,13 @@ public final class NutritionEntryDetailViewModel: ObservableObject {
         let valueChanged = abs(value - originalSample.value) > 0.0001
         let typeChanged = type != originalSample.type
         hasChanges = valueChanged || typeChanged || date != originalSample.date
+    }
+
+    public func normalizeDecimalSeparator() {
+        guard valueText.contains(",") else { return }
+        let updated = valueText.replacingOccurrences(of: ",", with: ".")
+        if updated != valueText {
+            valueText = updated
+        }
     }
 }

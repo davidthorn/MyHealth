@@ -27,6 +27,8 @@ public final class NutritionTypeListViewModel: ObservableObject {
         guard task == nil else { return }
         task = Task { [weak self] in
             guard let service = self?.service, let type = self?.type else { return }
+            let isAuthorized = await service.requestAuthorization(type: type)
+            guard isAuthorized, !Task.isCancelled else { return }
             for await update in service.updates(for: type) {
                 guard let self, !Task.isCancelled else { break }
                 self.type = update.type

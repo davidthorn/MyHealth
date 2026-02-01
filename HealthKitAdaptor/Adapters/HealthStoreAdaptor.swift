@@ -5,6 +5,7 @@
 //  Created by Codex.
 //
 
+import Combine
 import Foundation
 import HealthKit
 
@@ -18,10 +19,13 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol,
                                        HealthStoreActiveEnergyReading,
                                        HealthStoreRestingHeartRateReading,
                                        HealthStoreActivitySummaryReading,
-                                       HealthStoreSleepReading {
+                                       HealthStoreSleepReading,
+                                       HealthStoreNutritionReading,
+                                       HealthStoreNutritionWriting {
     
     internal let healthStore: HKHealthStore
     public let authorizationProvider: HealthAuthorizationProviding
+    private let nutritionChangesSubject = PassthroughSubject<Void, Never>()
     
     public init(
         healthStore: HKHealthStore = HKHealthStore(),
@@ -29,5 +33,20 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol,
     ) {
         self.healthStore = healthStore
         self.authorizationProvider = authorizationProvider ?? HealthAuthorizationProvider(healthStore: healthStore)
+    }
+
+    public func nutritionChangesStream() -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            let cancellable = nutritionChangesSubject.sink {
+                continuation.yield(())
+            }
+            continuation.onTermination = { _ in
+                cancellable.cancel()
+            }
+        }
+    }
+
+    internal func notifyNutritionChanged() {
+        nutritionChangesSubject.send(())
     }
 }

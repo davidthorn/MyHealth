@@ -32,10 +32,20 @@ public struct NutritionScene: View {
                 .navigationDestination(for: NutritionRoute.self) { route in
                     switch route {
                     case .type(let type):
-                        NutritionTypeListView(service: nutritionTypeListService, type: type)
-                            .navigationTitle(type.title)
+                        NutritionTypeListView(
+                            service: nutritionTypeListService,
+                            type: type,
+                            onAddEntry: { selectedType in
+                                path.append(NutritionRoute.newEntryType(selectedType))
+                            }
+                        )
+                        .navigationTitle(type.title)
                     case .entry(let sample):
-                        NutritionEntryDetailView(service: nutritionEntryDetailService, sample: sample)
+                        NutritionEntryDetailView(
+                            service: nutritionEntryDetailService,
+                            sample: sample,
+                            isNewEntry: false
+                        )
                     case .newEntry:
                         let type = NutritionType.energy
                         let sample = NutritionSample(
@@ -44,7 +54,23 @@ public struct NutritionScene: View {
                             value: 0,
                             unit: type.unit
                         )
-                        NutritionEntryDetailView(service: nutritionEntryDetailService, sample: sample)
+                        NutritionEntryDetailView(
+                            service: nutritionEntryDetailService,
+                            sample: sample,
+                            isNewEntry: true
+                        )
+                    case .newEntryType(let type):
+                        let sample = NutritionSample(
+                            type: type,
+                            date: Date(),
+                            value: 0,
+                            unit: type.unit
+                        )
+                        NutritionEntryDetailView(
+                            service: nutritionEntryDetailService,
+                            sample: sample,
+                            isNewEntry: true
+                        )
                     }
                 }
         }

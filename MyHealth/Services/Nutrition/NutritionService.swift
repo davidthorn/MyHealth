@@ -6,11 +6,16 @@
 //
 
 import Foundation
+import HealthKitAdaptor
 import Models
 
 @MainActor
 public final class NutritionService: NutritionServiceProtocol {
-    public init() {}
+    private let healthKitAdapter: HealthKitAdapterProtocol
+
+    public init(healthKitAdapter: HealthKitAdapterProtocol) {
+        self.healthKitAdapter = healthKitAdapter
+    }
 
     public func updates() -> AsyncStream<NutritionUpdate> {
         AsyncStream { continuation in
@@ -19,7 +24,7 @@ public final class NutritionService: NutritionServiceProtocol {
                     continuation.finish()
                     return
                 }
-                continuation.yield(NutritionUpdate(types: NutritionType.allCases))
+                continuation.yield(NutritionUpdate(types: healthKitAdapter.nutritionTypes()))
                 continuation.finish()
             }
             continuation.onTermination = { _ in

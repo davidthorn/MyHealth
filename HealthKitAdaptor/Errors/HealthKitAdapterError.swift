@@ -12,4 +12,6 @@ public enum HealthKitAdapterError: Error {
     case workoutNotFound
     case unmappedWorkoutType
     case heartRateReadingNotFound
+    case unsupportedNutritionType
+    case nutritionSampleNotFound
 }

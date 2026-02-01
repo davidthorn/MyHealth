@@ -6,6 +6,7 @@
 //
 
 import HealthKit
+import Models
 
 public protocol HealthAuthorizationProviding {
     func requestAuthorization(readTypes: Set<HKObjectType>) async -> Bool
@@ -19,4 +20,6 @@ public protocol HealthAuthorizationProviding {
     func requestSleepAnalysisAuthorization() async -> Bool
     func requestActivitySummaryAuthorization() async -> Bool
     func requestRestingHeartRateAuthorization() async -> Bool
+    func requestNutritionReadAuthorization(type: NutritionType) async -> Bool
+    func requestNutritionWriteAuthorization(type: NutritionType) async -> Bool
 }

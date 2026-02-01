@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum NutritionType: String, CaseIterable, Codable, Hashable, Identifiable {
+public enum NutritionType: String, CaseIterable, Codable, Hashable, Identifiable, Sendable {
     case energy
     case carbohydrate
     case fiber
@@ -100,8 +100,10 @@ public enum NutritionType: String, CaseIterable, Codable, Hashable, Identifiable
         switch self {
         case .energy: return "kcal"
         case .carbohydrate, .fiber, .sugar, .sugarAlcohol, .fatTotal, .fatSaturated, .fatMonounsaturated, .fatPolyunsaturated,
-             .protein, .cholesterol:
+             .protein:
             return "g"
+        case .cholesterol:
+            return "mg"
         case .vitaminA, .vitaminD, .vitaminE, .vitaminK:
             return "mcg"
         case .thiamin, .riboflavin, .niacin, .pantothenicAcid, .vitaminB6, .biotin, .vitaminB12, .vitaminC, .folate:
