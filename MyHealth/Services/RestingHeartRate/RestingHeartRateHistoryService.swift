@@ -18,7 +18,7 @@ public final class RestingHeartRateHistoryService: RestingHeartRateHistoryServic
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestRestingHeartRateAuthorization()
+        await healthKitAdapter.authorizationProvider.requestRestingHeartRateAuthorization()
     }
 
     public func updates() -> AsyncStream<RestingHeartRateHistoryUpdate> {

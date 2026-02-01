@@ -18,7 +18,7 @@ public final class WorkoutStoreSource: WorkoutDataSourceProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestAuthorization()
+        await healthKitAdapter.authorizationProvider.requestWorkoutAuthorization()
     }
 
     public func workoutsStream() -> AsyncStream<[Workout]> {

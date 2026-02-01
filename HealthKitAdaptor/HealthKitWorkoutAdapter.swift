@@ -22,7 +22,7 @@ public final class HealthKitWorkoutAdapter: HealthKitWorkoutAdapterProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestWorkoutAuthorization()
+        await storeAdaptor.authorizationProvider.requestWorkoutAuthorization()
     }
 
     public func workoutsStream() -> AsyncStream<[Workout]> {

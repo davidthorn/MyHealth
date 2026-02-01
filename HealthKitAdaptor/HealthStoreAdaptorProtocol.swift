@@ -9,16 +9,7 @@ import Foundation
 import Models
 
 public protocol HealthStoreAdaptorProtocol {
-    func requestAllAuthorization() async -> Bool
-    func requestWorkoutAuthorization() async -> Bool
-    func requestHeartRateAuthorization() async -> Bool
-    func requestStepsAuthorization() async -> Bool
-    func requestFlightsAuthorization() async -> Bool
-    func requestStandHoursAuthorization() async -> Bool
-    func requestActiveEnergyAuthorization() async -> Bool
-    func requestSleepAnalysisAuthorization() async -> Bool
-    func requestActivitySummaryAuthorization() async -> Bool
-    func requestRestingHeartRateAuthorization() async -> Bool
+    var authorizationProvider: HealthAuthorizationProviding { get }
     func fetchWorkouts() async -> [Workout]
     func fetchWorkout(id: UUID) async throws -> Workout
     func fetchWorkoutRoute(id: UUID) async throws -> [WorkoutRoutePoint]

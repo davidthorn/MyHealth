@@ -21,7 +21,7 @@ public final class HealthKitStepsAdapter: HealthKitStepsAdapterProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestStepsAuthorization()
+        await storeAdaptor.authorizationProvider.requestStepsAuthorization()
     }
 
     public func stepsSummaryStream(days: Int) -> AsyncStream<StepsSummary> {

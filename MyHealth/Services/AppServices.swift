@@ -151,6 +151,6 @@ public struct AppServices: AppServicesProviding {
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestAuthorization()
+        await healthKitAdapter.authorizationProvider.requestAllAuthorization()
     }
 }

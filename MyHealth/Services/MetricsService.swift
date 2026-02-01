@@ -34,7 +34,7 @@ public final class MetricsService: MetricsServiceProtocol {
                     )
                 )
 
-                let isAuthorized = await healthKitAdapter.requestAuthorization()
+                let isAuthorized = await healthKitAdapter.authorizationProvider.requestAllAuthorization()
                 guard isAuthorized, !Task.isCancelled else {
                     continuation.finish()
                     return

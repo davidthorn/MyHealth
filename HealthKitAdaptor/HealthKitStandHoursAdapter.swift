@@ -21,7 +21,7 @@ public final class HealthKitStandHoursAdapter: HealthKitStandHoursAdapterProtoco
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestStandHoursAuthorization()
+        await storeAdaptor.authorizationProvider.requestStandHoursAuthorization()
     }
 
     public func standHoursSummaryStream(days: Int) -> AsyncStream<StandHoursSummary> {

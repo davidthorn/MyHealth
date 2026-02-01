@@ -18,7 +18,7 @@ public final class RestingHeartRateDayDetailService: RestingHeartRateDayDetailSe
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestRestingHeartRateAuthorization()
+        await healthKitAdapter.authorizationProvider.requestRestingHeartRateAuthorization()
     }
 
     public func updates(for date: Date) -> AsyncStream<RestingHeartRateDayDetailUpdate> {
@@ -38,7 +38,7 @@ public final class RestingHeartRateDayDetailService: RestingHeartRateDayDetailSe
     public func rangeUpdates(start: Date, end: Date) -> AsyncStream<[HeartRateReading]> {
         AsyncStream { continuation in
             let task = Task { [healthKitAdapter] in
-                let isAuthorized = await healthKitAdapter.requestHeartRateAuthorization()
+                let isAuthorized = await healthKitAdapter.authorizationProvider.requestHeartRateAuthorization()
                 guard isAuthorized, !Task.isCancelled else {
                     continuation.finish()
                     return

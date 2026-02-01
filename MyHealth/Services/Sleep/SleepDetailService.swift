@@ -18,7 +18,7 @@ public final class SleepDetailService: SleepDetailServiceProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestSleepAnalysisAuthorization()
+        await healthKitAdapter.authorizationProvider.requestSleepAnalysisAuthorization()
     }
 
     public func updates() -> AsyncStream<SleepDetailUpdate> {

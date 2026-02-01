@@ -18,7 +18,7 @@ public final class CaloriesDetailService: CaloriesDetailServiceProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestActiveEnergyAuthorization()
+        await healthKitAdapter.authorizationProvider.requestActiveEnergyAuthorization()
     }
 
     public func updates() -> AsyncStream<CaloriesDetailUpdate> {

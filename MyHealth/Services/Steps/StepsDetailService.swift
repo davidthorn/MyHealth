@@ -18,7 +18,7 @@ public final class StepsDetailService: StepsDetailServiceProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestStepsAuthorization()
+        await healthKitAdapter.authorizationProvider.requestStepsAuthorization()
     }
 
     public func updates() -> AsyncStream<StepsDetailUpdate> {

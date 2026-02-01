@@ -21,7 +21,7 @@ public final class HealthKitFlightsAdapter: HealthKitFlightsAdapterProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestFlightsAuthorization()
+        await storeAdaptor.authorizationProvider.requestFlightsAuthorization()
     }
 
     public func flightsSummaryStream(days: Int) -> AsyncStream<FlightsSummary> {

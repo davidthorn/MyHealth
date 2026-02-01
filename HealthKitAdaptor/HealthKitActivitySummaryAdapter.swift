@@ -21,7 +21,7 @@ public final class HealthKitActivitySummaryAdapter: HealthKitActivitySummaryAdap
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestActivitySummaryAuthorization()
+        await storeAdaptor.authorizationProvider.requestActivitySummaryAuthorization()
     }
 
     public func activitySummaryStream(days: Int) -> AsyncStream<ActivityRingsSummary> {

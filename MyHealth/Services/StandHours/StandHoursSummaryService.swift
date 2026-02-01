@@ -18,7 +18,7 @@ public final class StandHoursSummaryService: StandHoursSummaryServiceProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestStandHoursAuthorization()
+        await healthKitAdapter.authorizationProvider.requestStandHoursAuthorization()
     }
 
     public func updates() -> AsyncStream<StandHoursSummaryUpdate> {

@@ -21,7 +21,7 @@ public final class HealthKitRestingHeartRateAdapter: HealthKitRestingHeartRateAd
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestRestingHeartRateAuthorization()
+        await storeAdaptor.authorizationProvider.requestRestingHeartRateAuthorization()
     }
 
     public func restingHeartRateSummaryStream(days: Int) -> AsyncStream<RestingHeartRateSummary> {

@@ -21,7 +21,7 @@ public final class HealthKitActiveEnergyAdapter: HealthKitActiveEnergyAdapterPro
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestActiveEnergyAuthorization()
+        await storeAdaptor.authorizationProvider.requestActiveEnergyAuthorization()
     }
 
     public func activeEnergySummaryStream(days: Int) -> AsyncStream<CaloriesSummary> {

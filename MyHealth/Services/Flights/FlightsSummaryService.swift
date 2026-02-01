@@ -18,7 +18,7 @@ public final class FlightsSummaryService: FlightsSummaryServiceProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestFlightsAuthorization()
+        await healthKitAdapter.authorizationProvider.requestFlightsAuthorization()
     }
 
     public func updates() -> AsyncStream<FlightsSummaryUpdate> {

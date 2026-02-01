@@ -21,7 +21,7 @@ public final class HealthKitHeartRateAdapter: HealthKitHeartRateAdapterProtocol 
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestHeartRateAuthorization()
+        await storeAdaptor.authorizationProvider.requestHeartRateAuthorization()
     }
 
     public func heartRateSummaryStream() -> AsyncStream<HeartRateSummary> {

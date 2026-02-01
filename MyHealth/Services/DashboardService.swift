@@ -21,7 +21,7 @@ public final class DashboardService: DashboardServiceProtocol {
         AsyncStream { continuation in
             let task = Task { [healthKitAdapter] in
                 continuation.yield(DashboardUpdate(title: "Dashboard", latestWorkout: nil, activityRingsDay: nil))
-                let isAuthorized = await healthKitAdapter.requestAuthorization()
+                let isAuthorized = await healthKitAdapter.authorizationProvider.requestAllAuthorization()
                 guard isAuthorized, !Task.isCancelled else {
                     continuation.finish()
                     return

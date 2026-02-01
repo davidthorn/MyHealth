@@ -18,7 +18,7 @@ public final class HeartRateStoreSource: HeartRateDataSourceProtocol {
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestHeartRateAuthorization()
+        await healthKitAdapter.authorizationProvider.requestHeartRateAuthorization()
     }
 
     public func heartRateReadings(from start: Date, to end: Date) async -> [HeartRateReading] {

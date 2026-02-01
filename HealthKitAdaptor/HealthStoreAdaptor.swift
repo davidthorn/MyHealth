@@ -13,139 +13,14 @@ import Models
 @MainActor
 public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
     private let healthStore: HKHealthStore
+    public let authorizationProvider: HealthAuthorizationProviding
 
-    public init(healthStore: HKHealthStore = HKHealthStore()) {
+    public init(
+        healthStore: HKHealthStore = HKHealthStore(),
+        authorizationProvider: HealthAuthorizationProviding? = nil
+    ) {
         self.healthStore = healthStore
-    }
-
-    public func requestAllAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-
-        var readTypes = Set<HKObjectType>()
-        readTypes.insert(HKObjectType.workoutType())
-        readTypes.insert(HKSeriesType.workoutRoute())
-
-        if let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) {
-            readTypes.insert(heartRateType)
-        }
-        if let restingType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate) {
-            readTypes.insert(restingType)
-        }
-        if let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) {
-            readTypes.insert(stepType)
-        }
-        if let flightsType = HKQuantityType.quantityType(forIdentifier: .flightsClimbed) {
-            readTypes.insert(flightsType)
-        }
-        if let standType = HKObjectType.categoryType(forIdentifier: .appleStandHour) {
-            readTypes.insert(standType)
-        }
-        if let activeType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) {
-            readTypes.insert(activeType)
-        }
-        if let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) {
-            readTypes.insert(sleepType)
-        }
-        readTypes.insert(HKObjectType.activitySummaryType())
-
-        guard !readTypes.isEmpty else { return false }
-
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: readTypes) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestWorkoutAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        let workoutType = HKObjectType.workoutType()
-        let routeType = HKSeriesType.workoutRoute()
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [workoutType, routeType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestHeartRateAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return false }
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [heartRateType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestStepsAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        guard let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return false }
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [stepType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestFlightsAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        guard let flightsType = HKQuantityType.quantityType(forIdentifier: .flightsClimbed) else { return false }
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [flightsType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestStandHoursAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        guard let standType = HKObjectType.categoryType(forIdentifier: .appleStandHour) else { return false }
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [standType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestActiveEnergyAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        guard let activeType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) else { return false }
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [activeType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestSleepAnalysisAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return false }
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [sleepType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestActivitySummaryAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        let summaryType = HKObjectType.activitySummaryType()
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [summaryType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
-    }
-
-    public func requestRestingHeartRateAuthorization() async -> Bool {
-        guard HKHealthStore.isHealthDataAvailable() else { return false }
-        guard let restingType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate) else { return false }
-        return await withCheckedContinuation { continuation in
-            healthStore.requestAuthorization(toShare: [], read: [restingType]) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
+        self.authorizationProvider = authorizationProvider ?? HealthAuthorizationProvider(healthStore: healthStore)
     }
 
     public func fetchWorkouts() async -> [Workout] {
@@ -642,4 +517,5 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol {
             healthStore.execute(query)
         }
     }
+
 }

@@ -18,7 +18,7 @@ public final class ActivityRingsMetricDayDetailService: ActivityRingsMetricDayDe
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestActivitySummaryAuthorization()
+        await healthKitAdapter.authorizationProvider.requestActivitySummaryAuthorization()
     }
 
     public func updates(for date: Date) -> AsyncStream<ActivityRingsMetricDayDetailUpdate> {

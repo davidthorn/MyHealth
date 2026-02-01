@@ -18,7 +18,7 @@ public final class ActivityRingsSummaryService: ActivityRingsSummaryServiceProto
     }
 
     public func requestAuthorization() async -> Bool {
-        await healthKitAdapter.requestActivitySummaryAuthorization()
+        await healthKitAdapter.authorizationProvider.requestActivitySummaryAuthorization()
     }
 
     public func updates() -> AsyncStream<ActivityRingsSummaryUpdate> {

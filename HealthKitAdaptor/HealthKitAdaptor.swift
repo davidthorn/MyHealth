@@ -20,7 +20,11 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let activitySummary: HealthKitActivitySummaryAdapterProtocol
     private let restingHeartRate: HealthKitRestingHeartRateAdapterProtocol
     private let sleepAnalysis: HealthKitSleepAnalysisAdapterProtocol
-    
+
+    public var authorizationProvider: HealthAuthorizationProviding {
+        storeAdaptor.authorizationProvider
+    }
+
     public init(
         storeAdaptor: HealthStoreAdaptorProtocol,
         workouts: HealthKitWorkoutAdapterProtocol,
@@ -61,42 +65,6 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         )
     }
     
-    public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestAllAuthorization()
-    }
-
-    public func requestHeartRateAuthorization() async -> Bool {
-        await heartRates.requestAuthorization()
-    }
-
-    public func requestStepsAuthorization() async -> Bool {
-        await steps.requestAuthorization()
-    }
-
-    public func requestFlightsAuthorization() async -> Bool {
-        await flights.requestAuthorization()
-    }
-
-    public func requestStandHoursAuthorization() async -> Bool {
-        await standHours.requestAuthorization()
-    }
-
-    public func requestActiveEnergyAuthorization() async -> Bool {
-        await activeEnergy.requestAuthorization()
-    }
-
-    public func requestActivitySummaryAuthorization() async -> Bool {
-        await activitySummary.requestAuthorization()
-    }
-
-    public func requestRestingHeartRateAuthorization() async -> Bool {
-        await restingHeartRate.requestAuthorization()
-    }
-
-    public func requestSleepAnalysisAuthorization() async -> Bool {
-        await sleepAnalysis.requestAuthorization()
-    }
-
     public func workoutsStream() -> AsyncStream<[Workout]> {
         workouts.workoutsStream()
     }

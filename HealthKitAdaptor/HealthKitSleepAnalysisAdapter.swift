@@ -21,7 +21,7 @@ public final class HealthKitSleepAnalysisAdapter: HealthKitSleepAnalysisAdapterP
     }
 
     public func requestAuthorization() async -> Bool {
-        await storeAdaptor.requestSleepAnalysisAuthorization()
+        await storeAdaptor.authorizationProvider.requestSleepAnalysisAuthorization()
     }
 
     public func sleepAnalysisSummaryStream(days: Int) -> AsyncStream<SleepSummary> {
