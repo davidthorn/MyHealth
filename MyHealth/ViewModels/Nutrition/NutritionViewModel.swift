@@ -12,6 +12,7 @@ import Models
 @MainActor
 public final class NutritionViewModel: ObservableObject {
     @Published public private(set) var types: [NutritionType]
+    @Published public private(set) var summary: NutritionDaySummary?
 
     private let service: NutritionServiceProtocol
     private var task: Task<Void, Never>?
@@ -19,6 +20,7 @@ public final class NutritionViewModel: ObservableObject {
     public init(service: NutritionServiceProtocol) {
         self.service = service
         self.types = []
+        self.summary = nil
     }
 
     public func start() {
@@ -28,6 +30,7 @@ public final class NutritionViewModel: ObservableObject {
             for await update in service.updates() {
                 guard let self, !Task.isCancelled else { break }
                 self.types = update.types
+                self.summary = update.summary
             }
         }
     }

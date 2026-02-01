@@ -24,7 +24,9 @@ public final class NutritionService: NutritionServiceProtocol {
                     continuation.finish()
                     return
                 }
-                continuation.yield(NutritionUpdate(types: healthKitAdapter.nutritionTypes()))
+                let types = healthKitAdapter.nutritionTypes()
+                let summary = await NutritionSummaryBuilder().todaySummary(using: healthKitAdapter)
+                continuation.yield(NutritionUpdate(types: types, summary: summary))
                 continuation.finish()
             }
             continuation.onTermination = { _ in

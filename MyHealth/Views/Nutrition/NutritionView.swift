@@ -18,6 +18,9 @@ public struct NutritionView: View {
     public var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
+                if let summary = viewModel.summary {
+                    MetricsNutritionSummaryCardView(summary: summary)
+                }
                 ForEach(viewModel.types, id: \.self) { type in
                     NavigationLink(value: viewModel.route(for: type)) {
                         NutritionTypeRowView(type: type)
