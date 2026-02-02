@@ -19,7 +19,14 @@ public struct NutritionView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
                 if let summary = viewModel.summary {
-                    MetricsNutritionSummaryCardView(summary: summary)
+                    MetricsNutritionSummaryCardView(
+                        summary: summary,
+                        selectedWindow: Binding(
+                            get: { viewModel.window },
+                            set: { viewModel.selectWindow($0) }
+                        ),
+                        windows: viewModel.windows
+                    )
                 }
                 ForEach(viewModel.types, id: \.self) { type in
                     NavigationLink(value: viewModel.route(for: type)) {

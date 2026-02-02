@@ -25,7 +25,7 @@ public final class NutritionService: NutritionServiceProtocol {
                     return
                 }
                 let types = healthKitAdapter.nutritionTypes()
-                let summary = await NutritionSummaryBuilder().todaySummary(using: healthKitAdapter)
+                let summary = await NutritionSummaryBuilder().windowSummary(using: healthKitAdapter, window: .today)
                 continuation.yield(NutritionUpdate(types: types, summary: summary))
                 continuation.finish()
             }
@@ -34,4 +34,24 @@ public final class NutritionService: NutritionServiceProtocol {
             }
         }
     }
+
+    public func nutritionSummary(window: NutritionWindow) -> AsyncStream<NutritionWindowSummary?> {
+        AsyncStream { continuation in
+            let task = Task { [healthKitAdapter] in
+                let builder = NutritionSummaryBuilder()
+                let summary = await builder.windowSummary(using: healthKitAdapter, window: window)
+                continuation.yield(summary)
+                for await _ in healthKitAdapter.nutritionChangesStream() {
+                    guard !Task.isCancelled else { break }
+                    let updated = await builder.windowSummary(using: healthKitAdapter, window: window)
+                    continuation.yield(updated)
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
+    }
+
 }

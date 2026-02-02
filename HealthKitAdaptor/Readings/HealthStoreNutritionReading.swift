@@ -79,4 +79,24 @@ extension HealthStoreNutritionReading {
             healthStore.execute(query)
         }
     }
+
+    public func fetchNutritionTotal(type: NutritionType, start: Date, end: Date) async -> Double? {
+        guard let identifier = type.quantityIdentifier,
+              let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
+            return nil
+        }
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        let unit = type.quantityUnit
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: quantityType,
+                quantitySamplePredicate: predicate,
+                options: .cumulativeSum
+            ) { _, statistics, _ in
+                let total = statistics?.sumQuantity()?.doubleValue(for: unit)
+                continuation.resume(returning: total)
+            }
+            healthStore.execute(query)
+        }
+    }
 }

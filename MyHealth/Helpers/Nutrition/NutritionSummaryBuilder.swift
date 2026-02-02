@@ -12,21 +12,22 @@ import Models
 public struct NutritionSummaryBuilder {
     public init() {}
 
-    public func todaySummary(using adapter: HealthKitAdapterProtocol) async -> NutritionDaySummary? {
+    public func windowSummary(using adapter: HealthKitAdapterProtocol, window: NutritionWindow) async -> NutritionWindowSummary? {
         let calendar = Calendar.current
-        let startDate = calendar.startOfDay(for: Date())
-        guard let endDate = calendar.date(byAdding: .day, value: 1, to: startDate) else { return nil }
+        let endDate = calendar.startOfDay(for: Date()).addingTimeInterval(24 * 60 * 60)
+        guard let startDate = calendar.date(byAdding: .day, value: -(window.dayCount - 1), to: calendar.startOfDay(for: Date())) else {
+            return nil
+        }
 
         var totals: [NutritionDayTotal] = []
         for type in adapter.nutritionTypes() {
-            let samples = await adapter.nutritionSamples(type: type, start: startDate, end: endDate)
-            let totalValue = samples.reduce(0) { $0 + $1.value }
+            let totalValue = await adapter.nutritionTotal(type: type, start: startDate, end: endDate) ?? 0
             guard totalValue > 0 else { continue }
             totals.append(NutritionDayTotal(type: type, value: totalValue, unit: type.unit))
         }
 
         guard !totals.isEmpty else { return nil }
         let sorted = totals.sorted { $0.value > $1.value }
-        return NutritionDaySummary(date: startDate, totals: sorted)
+        return NutritionWindowSummary(window: window, startDate: startDate, endDate: endDate, totals: sorted)
     }
 }

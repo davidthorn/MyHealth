@@ -66,7 +66,7 @@ public struct NutritionSampleRowView: View {
 private extension NutritionSampleRowView {
     var accentColor: Color {
         switch sample.type {
-        case .energy, .carbohydrate, .sugar, .sugarAlcohol:
+        case .energy, .carbohydrate, .sugar:
             return Color(red: 0.93, green: 0.45, blue: 0.18)
         case .fatTotal, .fatSaturated, .fatMonounsaturated, .fatPolyunsaturated, .cholesterol:
             return Color(red: 0.88, green: 0.34, blue: 0.21)

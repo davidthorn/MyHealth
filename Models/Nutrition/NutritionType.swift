@@ -12,7 +12,6 @@ public enum NutritionType: String, CaseIterable, Codable, Hashable, Identifiable
     case carbohydrate
     case fiber
     case sugar
-    case sugarAlcohol
     case fatTotal
     case fatSaturated
     case fatMonounsaturated
@@ -57,7 +56,6 @@ public enum NutritionType: String, CaseIterable, Codable, Hashable, Identifiable
         case .carbohydrate: return "Carbohydrates"
         case .fiber: return "Fiber"
         case .sugar: return "Sugar"
-        case .sugarAlcohol: return "Sugar Alcohol"
         case .fatTotal: return "Total Fat"
         case .fatSaturated: return "Saturated Fat"
         case .fatMonounsaturated: return "Monounsaturated Fat"
@@ -99,15 +97,17 @@ public enum NutritionType: String, CaseIterable, Codable, Hashable, Identifiable
     public var unit: String {
         switch self {
         case .energy: return "kcal"
-        case .carbohydrate, .fiber, .sugar, .sugarAlcohol, .fatTotal, .fatSaturated, .fatMonounsaturated, .fatPolyunsaturated,
+        case .carbohydrate, .fiber, .sugar, .fatTotal, .fatSaturated, .fatMonounsaturated, .fatPolyunsaturated,
              .protein:
             return "g"
         case .cholesterol:
             return "mg"
         case .vitaminA, .vitaminD, .vitaminE, .vitaminK:
             return "mcg"
-        case .thiamin, .riboflavin, .niacin, .pantothenicAcid, .vitaminB6, .biotin, .vitaminB12, .vitaminC, .folate:
+        case .thiamin, .riboflavin, .niacin, .pantothenicAcid, .vitaminB6, .vitaminB12, .vitaminC, .folate:
             return "mg"
+        case .biotin:
+            return "mcg"
         case .calcium, .chloride, .iron, .magnesium, .phosphorus, .potassium, .sodium, .zinc, .chromium, .copper,
              .iodine, .manganese, .molybdenum, .selenium:
             return "mg"

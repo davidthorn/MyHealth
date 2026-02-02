@@ -49,7 +49,7 @@ public struct MetricsView: View {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 90), spacing: 8)], alignment: .leading, spacing: 8) {
                         ForEach(viewModel.ranges, id: \.self) { range in
                             MetricFilterChipView(
-                                title: range,
+                                title: range.title,
                                 isSelected: viewModel.selectedRange == range
                             ) {
                                 viewModel.selectRange(range)
@@ -84,7 +84,14 @@ public struct MetricsView: View {
                 }
 
                 if let nutritionSummary = viewModel.nutritionSummary {
-                    MetricsNutritionSummaryCardView(summary: nutritionSummary)
+                    MetricsNutritionSummaryCardView(
+                        summary: nutritionSummary,
+                        selectedWindow: Binding(
+                            get: { viewModel.nutritionWindow },
+                            set: { viewModel.selectNutritionWindow($0) }
+                        ),
+                        windows: viewModel.nutritionWindows
+                    )
                 }
 
                 VStack(alignment: .leading, spacing: 12) {

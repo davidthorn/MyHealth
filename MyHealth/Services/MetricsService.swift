@@ -18,7 +18,7 @@ public final class MetricsService: MetricsServiceProtocol {
     }
 
     public func updates() -> AsyncStream<MetricsUpdate> {
-        AsyncStream { continuation in
+            AsyncStream { continuation in
             let task = Task { [healthKitAdapter] in
                 continuation.yield(
                     MetricsUpdate(
@@ -49,7 +49,7 @@ public final class MetricsService: MetricsServiceProtocol {
                 let caloriesSummary = await firstValue(from: healthKitAdapter.activeEnergySummaryStream(days: 7))
                 let sleepSummary = await firstValue(from: healthKitAdapter.sleepAnalysisSummaryStream(days: 7))
                 let activityRingsSummary = await firstValue(from: healthKitAdapter.activitySummaryStream(days: 7))
-                let nutritionSummary = await NutritionSummaryBuilder().todaySummary(using: healthKitAdapter)
+                let nutritionSummary = await NutritionSummaryBuilder().windowSummary(using: healthKitAdapter, window: .today)
 
                 guard !Task.isCancelled else {
                     continuation.finish()
@@ -77,6 +77,26 @@ public final class MetricsService: MetricsServiceProtocol {
             }
         }
     }
+
+    public func nutritionSummary(window: NutritionWindow) -> AsyncStream<NutritionWindowSummary?> {
+        AsyncStream { continuation in
+            let task = Task { [healthKitAdapter] in
+                let builder = NutritionSummaryBuilder()
+                let summary = await builder.windowSummary(using: healthKitAdapter, window: window)
+                continuation.yield(summary)
+                for await _ in healthKitAdapter.nutritionChangesStream() {
+                    guard !Task.isCancelled else { break }
+                    let updated = await builder.windowSummary(using: healthKitAdapter, window: window)
+                    continuation.yield(updated)
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
+    }
+
 
     private func firstValue<T>(from stream: AsyncStream<T>) async -> T? {
         for await value in stream {

@@ -15,7 +15,6 @@ internal extension NutritionType {
         case .carbohydrate: return .dietaryCarbohydrates
         case .fiber: return .dietaryFiber
         case .sugar: return .dietarySugar
-        case .sugarAlcohol: return nil
         case .fatTotal: return .dietaryFatTotal
         case .fatSaturated: return .dietaryFatSaturated
         case .fatMonounsaturated: return .dietaryFatMonounsaturated
@@ -61,14 +60,14 @@ internal extension NutritionType {
             return .kilocalorie()
         case .water:
             return .literUnit(with: .milli)
-        case .vitaminA, .vitaminD, .vitaminE, .vitaminK:
+        case .vitaminA, .vitaminD, .vitaminE, .vitaminK, .biotin:
             return .gramUnit(with: .micro)
-        case .carbohydrate, .fiber, .sugar, .sugarAlcohol, .fatTotal, .fatSaturated, .fatMonounsaturated,
+        case .carbohydrate, .fiber, .sugar, .fatTotal, .fatSaturated, .fatMonounsaturated,
              .fatPolyunsaturated, .protein:
             return .gram()
         case .cholesterol:
             return .gramUnit(with: .milli)
-        case .thiamin, .riboflavin, .niacin, .pantothenicAcid, .vitaminB6, .biotin, .vitaminB12, .vitaminC, .folate,
+        case .thiamin, .riboflavin, .niacin, .pantothenicAcid, .vitaminB6, .vitaminB12, .vitaminC, .folate,
              .calcium, .chloride, .iron, .magnesium, .phosphorus, .potassium, .sodium, .zinc, .chromium, .copper,
              .iodine, .manganese, .molybdenum, .selenium, .caffeine:
             return .gramUnit(with: .milli)
