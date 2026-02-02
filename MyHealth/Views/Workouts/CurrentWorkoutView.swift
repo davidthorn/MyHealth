@@ -11,35 +11,116 @@ import Models
 public struct CurrentWorkoutView: View {
     @StateObject private var viewModel: CurrentWorkoutViewModel
 
-    public init(service: WorkoutFlowServiceProtocol) {
-        _viewModel = StateObject(wrappedValue: CurrentWorkoutViewModel(service: service))
+    public init(service: WorkoutFlowServiceProtocol, locationService: LocationServiceProtocol) {
+        _viewModel = StateObject(wrappedValue: CurrentWorkoutViewModel(service: service, locationService: locationService))
     }
 
     public var body: some View {
-        VStack(spacing: 16) {
+        Group {
             if let session = viewModel.currentSession {
-                Text("Current Workout")
-                    .font(.title)
-                Text(session.type.displayName)
-                    .font(.headline)
-                Text("Started at \(session.startedAt.formatted(date: .abbreviated, time: .shortened))")
-                    .foregroundStyle(.secondary)
-                if let elapsedText = viewModel.elapsedText {
-                    Text(elapsedText)
-                        .font(.headline)
-                }
-                Button(role: .destructive) {
-                    Task {
-                        await viewModel.endWorkout()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Current Workout")
+                                .font(.title2.weight(.bold))
+                            Text(session.type.displayName)
+                                .font(.headline)
+                            if let startedAt = session.startedAt {
+                                Text("Started at \(startedAt.formatted(date: .abbreviated, time: .shortened))")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                Text("Ready to start")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
+                            if let elapsedText = viewModel.elapsedText {
+                                Text(elapsedText)
+                                    .font(.headline)
+                            }
+                        }
+
+                        if viewModel.isOutdoorSupported {
+                            WorkoutRouteMapView(points: viewModel.routePoints, height: 240)
+
+                            CurrentWorkoutStatsView(
+                                distanceText: viewModel.distanceText,
+                                paceText: viewModel.paceText,
+                                speedText: viewModel.speedText
+                            )
+
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Splits")
+                                    .font(.headline)
+                                WorkoutSplitsHeaderView()
+                                ForEach(viewModel.splits, id: \.id) { split in
+                                    WorkoutSplitRowView(
+                                        index: split.index,
+                                        durationText: split.formattedDurationText,
+                                        paceText: split.formattedPaceText,
+                                        heartRateText: split.formattedHeartRateText
+                                    )
+                                }
+                            }
+                        } else {
+                            ContentUnavailableView(
+                                "Outdoor Only",
+                                systemImage: "location.slash",
+                                description: Text("GPS workouts are supported for walking, running, and cycling.")
+                            )
+                        }
+
+                        HStack(spacing: 12) {
+                            switch session.status {
+                            case .notStarted:
+                                Button {
+                                    viewModel.beginWorkout()
+                                } label: {
+                                    Text("Start")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.borderedProminent)
+                            case .paused:
+                                Button {
+                                    viewModel.resumeWorkout()
+                                } label: {
+                                    Text("Resume")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.borderedProminent)
+                            case .active:
+                                Button {
+                                    viewModel.pauseWorkout()
+                                } label: {
+                                    Text("Pause")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.bordered)
+                            }
+
+                            Button(role: .destructive) {
+                                Task {
+                                    await viewModel.endWorkout()
+                                }
+                            } label: {
+                                Text("End")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.red)
+                        }
                     }
-                } label: {
-                    Text("End Workout")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
                 }
             } else {
-                ContentUnavailableView("No Active Workout", systemImage: "figure.run", description: Text("Start a workout to begin tracking."))
+                ContentUnavailableView(
+                    "No Active Workout",
+                    systemImage: "figure.run",
+                    description: Text("Start a workout to begin tracking.")
+                )
             }
         }
-        .padding()
         .navigationTitle("Current Workout")
         .task {
             viewModel.start()
@@ -67,7 +148,10 @@ public struct CurrentWorkoutView: View {
 #if DEBUG
 #Preview {
     NavigationStack {
-        CurrentWorkoutView(service: AppServices.shared.workoutFlowService)
+        CurrentWorkoutView(
+            service: AppServices.shared.workoutFlowService,
+            locationService: AppServices.shared.locationService
+        )
     }
 }
 #endif

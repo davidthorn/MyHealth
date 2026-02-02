@@ -44,6 +44,7 @@ public final class ContentViewModel: ObservableObject {
     public var workoutFlowService: WorkoutFlowServiceProtocol { services.workoutFlowService }
     public var workoutListItemService: WorkoutListItemServiceProtocol { services.workoutListItemService }
     public var workoutDetailService: WorkoutDetailServiceProtocol { services.workoutDetailService }
+    public var locationService: LocationServiceProtocol { services.locationService }
     public var nutritionService: NutritionServiceProtocol { services.nutritionService }
     public var nutritionTypeListService: NutritionTypeListServiceProtocol { services.nutritionTypeListService }
     public var nutritionEntryDetailService: NutritionEntryDetailServiceProtocol { services.nutritionEntryDetailService }

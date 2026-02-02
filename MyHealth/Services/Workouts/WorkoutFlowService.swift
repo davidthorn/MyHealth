@@ -35,12 +35,54 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
     }
 
     public func startWorkout(type: WorkoutType) {
-        currentSession = WorkoutSession(type: type, startedAt: Date())
+        currentSession = WorkoutSession(type: type)
+        subject.send(currentUpdate())
+    }
+
+    public func beginWorkout() {
+        guard let session = currentSession, session.status == .notStarted else { return }
+        currentSession = WorkoutSession(
+            type: session.type,
+            startedAt: Date(),
+            status: .active,
+            pausedAt: nil,
+            totalPausedSeconds: 0
+        )
+        subject.send(currentUpdate())
+    }
+
+    public func pauseWorkout() {
+        guard let session = currentSession, session.status == .active else { return }
+        currentSession = WorkoutSession(
+            type: session.type,
+            startedAt: session.startedAt,
+            status: .paused,
+            pausedAt: Date(),
+            totalPausedSeconds: session.totalPausedSeconds
+        )
+        subject.send(currentUpdate())
+    }
+
+    public func resumeWorkout() {
+        guard let session = currentSession, session.status == .paused, let pausedAt = session.pausedAt else { return }
+        let newPaused = session.totalPausedSeconds + Date().timeIntervalSince(pausedAt)
+        currentSession = WorkoutSession(
+            type: session.type,
+            startedAt: session.startedAt,
+            status: .active,
+            pausedAt: nil,
+            totalPausedSeconds: newPaused
+        )
         subject.send(currentUpdate())
     }
 
     public func endWorkout() async throws {
         guard let session = currentSession else {
+            subject.send(currentUpdate())
+            return
+        }
+        guard let startedAt = session.startedAt, session.status != .notStarted else {
+            currentSession = nil
             subject.send(currentUpdate())
             return
         }
@@ -50,7 +92,7 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
             id: UUID(),
             title: session.type.displayName,
             type: session.type,
-            startedAt: session.startedAt,
+            startedAt: startedAt,
             endedAt: Date()
         )
         try await store.create(workout)
