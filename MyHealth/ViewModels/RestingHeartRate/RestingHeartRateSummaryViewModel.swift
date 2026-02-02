@@ -52,6 +52,20 @@ public final class RestingHeartRateSummaryViewModel: ObservableObject {
         }
     }
 
+    public var statItems: [(title: String, value: String)] {
+        guard let summary else { return [] }
+        let average = summary.averageBpm.map { "\(formatNumber($0)) bpm" } ?? "—"
+        let min = summary.minAverageBpm.map { "\(formatNumber($0)) bpm" } ?? "—"
+        let max = summary.maxAverageBpm.map { "\(formatNumber($0)) bpm" } ?? "—"
+        let delta = summary.latestDeltaBpm.map { formatDelta($0) } ?? "—"
+        return [
+            ("Average", average),
+            ("Min", min),
+            ("Max", max),
+            ("Delta", delta)
+        ]
+    }
+
     private func startUpdates(with service: RestingHeartRateSummaryServiceProtocol) {
         guard task == nil else { return }
         task = Task { [weak self] in
@@ -60,6 +74,15 @@ public final class RestingHeartRateSummaryViewModel: ObservableObject {
                 self.summary = update.summary
             }
         }
+    }
+
+    private func formatNumber(_ value: Double) -> String {
+        value.formatted(.number.precision(.fractionLength(0)))
+    }
+
+    private func formatDelta(_ value: Double) -> String {
+        let symbol = value >= 0 ? "+" : "−"
+        return "\(symbol)\(formatNumber(abs(value))) bpm"
     }
 
     public func latestChartPoints() -> [HeartRateRangePoint] {

@@ -11,11 +11,10 @@ import Models
 
 extension HeartRateReading {
     public init(sample: HKQuantitySample) {
-        let unit = HKUnit.count().unitDivided(by: .minute())
         let metadata = sample.heartRateMetadata()
         self.init(
             id: sample.uuid,
-            bpm: sample.quantity.doubleValue(for: unit),
+            bpm: sample.heartRateBpm,
             date: sample.endDate,
             startDate: sample.startDate,
             endDate: sample.endDate,

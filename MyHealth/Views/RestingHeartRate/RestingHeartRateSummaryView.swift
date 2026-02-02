@@ -20,6 +20,13 @@ public struct RestingHeartRateSummaryView: View {
             if viewModel.isAuthorized {
                 if let summary = viewModel.summary {
                     List {
+                        if !viewModel.statItems.isEmpty {
+                            Section("Summary") {
+                                ForEach(viewModel.statItems, id: \.title) { item in
+                                    LabeledContent(item.title, value: item.value)
+                                }
+                            }
+                        }
                         Section("Latest") {
                             if let latest = summary.latest {
                                 VStack(spacing: 12) {
