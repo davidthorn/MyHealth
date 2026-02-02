@@ -12,6 +12,7 @@ public protocol HealthAuthorizationProviding {
     func requestAuthorization(readTypes: Set<HKObjectType>) async -> Bool
     func requestAllAuthorization() async -> Bool
     func requestWorkoutAuthorization() async -> Bool
+    func requestCreateWorkoutAuthorization() async -> Bool
     func requestHeartRateAuthorization() async -> Bool
     func requestStepsAuthorization() async -> Bool
     func requestFlightsAuthorization() async -> Bool

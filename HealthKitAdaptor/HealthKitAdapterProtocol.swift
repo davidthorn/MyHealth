@@ -8,12 +8,17 @@
 import Foundation
 import Models
 
+@MainActor
 public protocol HealthKitAdapterProtocol {
     var authorizationProvider: HealthAuthorizationProviding { get }
     func workoutsStream() -> AsyncStream<[Workout]>
     func workout(id: UUID) async throws -> Workout?
     func workoutRoute(id: UUID) async throws -> [WorkoutRoutePoint]
     func deleteWorkout(id: UUID) async throws
+    func beginWorkout(type: WorkoutType) async throws
+    func pauseWorkout() async throws
+    func resumeWorkout() async throws
+    func endWorkout() async throws
     func heartRateSummaryStream() -> AsyncStream<HeartRateSummary>
     func heartRateReading(id: UUID) async throws -> HeartRateReading
     func heartRateReadings(from start: Date, to end: Date) async -> [HeartRateReading]

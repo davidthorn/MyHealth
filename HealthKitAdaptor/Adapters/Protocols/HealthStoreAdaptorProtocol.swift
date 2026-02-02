@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import HealthKit
 import Models
 
 public protocol HealthStoreAdaptorProtocol {
+    var healthStore: HKHealthStore { get }
     var authorizationProvider: HealthAuthorizationProviding { get }
     func fetchWorkouts() async -> [Workout]
     func fetchWorkout(id: UUID) async throws -> Workout

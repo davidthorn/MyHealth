@@ -11,8 +11,8 @@ import Models
 public protocol WorkoutFlowServiceProtocol {
     func updates() -> AsyncStream<WorkoutFlowUpdate>
     func startWorkout(type: WorkoutType)
-    func beginWorkout()
-    func pauseWorkout()
-    func resumeWorkout()
+    func beginWorkout() async throws
+    func pauseWorkout() async throws
+    func resumeWorkout() async throws
     func endWorkout() async throws
 }

@@ -39,8 +39,9 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
         subject.send(currentUpdate())
     }
 
-    public func beginWorkout() {
+    public func beginWorkout() async throws {
         guard let session = currentSession, session.status == .notStarted else { return }
+        try await store.beginWorkout(type: session.type)
         currentSession = WorkoutSession(
             type: session.type,
             startedAt: Date(),
@@ -51,8 +52,9 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
         subject.send(currentUpdate())
     }
 
-    public func pauseWorkout() {
+    public func pauseWorkout() async throws {
         guard let session = currentSession, session.status == .active else { return }
+        try await store.pauseWorkout()
         currentSession = WorkoutSession(
             type: session.type,
             startedAt: session.startedAt,
@@ -63,8 +65,9 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
         subject.send(currentUpdate())
     }
 
-    public func resumeWorkout() {
+    public func resumeWorkout() async throws {
         guard let session = currentSession, session.status == .paused, let pausedAt = session.pausedAt else { return }
+        try await store.resumeWorkout()
         let newPaused = session.totalPausedSeconds + Date().timeIntervalSince(pausedAt)
         currentSession = WorkoutSession(
             type: session.type,
@@ -88,14 +91,7 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
         }
         currentSession = nil
         subject.send(currentUpdate())
-        let workout = Workout(
-            id: UUID(),
-            title: session.type.displayName,
-            type: session.type,
-            startedAt: startedAt,
-            endedAt: Date()
-        )
-        try await store.create(workout)
+        try await store.endWorkout()
     }
 
     private func currentUpdate() -> WorkoutFlowUpdate {

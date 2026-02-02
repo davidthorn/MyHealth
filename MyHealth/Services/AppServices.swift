@@ -118,8 +118,8 @@ public struct AppServices: AppServicesProviding {
     }
 
     public static func live() -> AppServices {
-        let workoutStore = WorkoutStore()
         let healthKitAdapter = HealthKitAdapter.live()
+        let workoutStore = WorkoutStore(healthKitAdapter: healthKitAdapter)
         let workoutSource = WorkoutStoreSource(healthKitAdapter: healthKitAdapter)
         let heartRateSource = HeartRateStoreSource(healthKitAdapter: healthKitAdapter)
         return AppServices(
@@ -163,7 +163,7 @@ public struct AppServices: AppServicesProviding {
     public static let shared = AppServices.live()
 
     public func loadStores() async {
-        try? await workoutStore.loadAll()
+        return
     }
 
     public func requestAuthorization() async -> Bool {

@@ -23,7 +23,7 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol,
                                        HealthStoreNutritionReading,
                                        HealthStoreNutritionWriting {
     
-    internal let healthStore: HKHealthStore
+    public let healthStore: HKHealthStore
     public let authorizationProvider: HealthAuthorizationProviding
     private let nutritionChangesSubject = PassthroughSubject<Void, Never>()
     

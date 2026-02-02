@@ -85,6 +85,22 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         try await workouts.deleteWorkout(id: id)
     }
 
+    public func beginWorkout(type: WorkoutType) async throws {
+        try await workouts.beginWorkout(type: type)
+    }
+
+    public func pauseWorkout() async throws {
+        try await workouts.pauseWorkout()
+    }
+
+    public func resumeWorkout() async throws {
+        try await workouts.resumeWorkout()
+    }
+
+    public func endWorkout() async throws {
+        try await workouts.endWorkout()
+    }
+
     public func heartRateSummaryStream() -> AsyncStream<HeartRateSummary> {
         heartRates.heartRateSummaryStream()
     }

@@ -74,18 +74,37 @@ public final class CurrentWorkoutViewModel: ObservableObject {
     }
     
     public func pauseWorkout() {
-        service.pauseWorkout()
-    }
-    
-    public func resumeWorkout() {
-        service.resumeWorkout()
-    }
-    
-    public func beginWorkout() {
-        if let session = currentSession {
-            configureLocationUpdates(for: session)
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await service.pauseWorkout()
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
         }
-        service.beginWorkout()
+    }
+
+    public func resumeWorkout() {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await service.resumeWorkout()
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    public func beginWorkout() {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await service.beginWorkout()
+            } catch {
+                print(error)
+                self.errorMessage = error.localizedDescription
+            }
+        }
     }
     
     public func clearError() {

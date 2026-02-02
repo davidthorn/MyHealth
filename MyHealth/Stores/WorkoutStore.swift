@@ -6,49 +6,29 @@
 //
 
 import Foundation
+import HealthKitAdaptor
 import Models
 
 public actor WorkoutStore: WorkoutStoreProtocol {
-    private let store: DocumentStore<Workout>
+    private let healthKitAdapter: HealthKitAdapterProtocol
 
-    @MainActor
-    public init(fileName: String? = nil) {
-        self.store = DocumentStore(fileName: fileName ?? "Workouts")
+    public init(healthKitAdapter: HealthKitAdapterProtocol) {
+        self.healthKitAdapter = healthKitAdapter
     }
 
-    public func stream() async -> AsyncStream<[Workout]> {
-        await store.stream()
+    public func beginWorkout(type: WorkoutType) async throws {
+        try await healthKitAdapter.beginWorkout(type: type)
     }
 
-    public func loadAll() async throws {
-        try await store.loadAll()
+    public func pauseWorkout() async throws {
+        try await healthKitAdapter.pauseWorkout()
     }
 
-    public func bootstrap(_ items: [Workout]) async throws {
-        try await store.bootstrap(items)
+    public func resumeWorkout() async throws {
+        try await healthKitAdapter.resumeWorkout()
     }
 
-    public func create(_ item: Workout) async throws {
-        try await store.create(item)
-    }
-
-    public func read(id: Workout.ID) async -> Workout? {
-        await store.read(id: id)
-    }
-
-    public func readAll() async -> [Workout] {
-        await store.readAll()
-    }
-
-    public func update(_ item: Workout) async throws {
-        try await store.update(item)
-    }
-
-    public func delete(id: Workout.ID) async throws {
-        try await store.delete(id: id)
-    }
-
-    public func deleteAll() async throws {
-        try await store.deleteAll()
+    public func endWorkout() async throws {
+        try await healthKitAdapter.endWorkout()
     }
 }
