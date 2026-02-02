@@ -7,6 +7,7 @@
 
 import Foundation
 import HealthKitAdaptor
+import Models
 
 @MainActor
 public final class HeartRateSummaryService: HeartRateSummaryServiceProtocol {
@@ -32,5 +33,9 @@ public final class HeartRateSummaryService: HeartRateSummaryServiceProtocol {
                 task.cancel()
             }
         }
+    }
+
+    public func dayReadings(start: Date, end: Date) async -> [HeartRateReading] {
+        await healthKitAdapter.heartRateReadings(from: start, to: end)
     }
 }

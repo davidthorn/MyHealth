@@ -27,6 +27,28 @@ public struct HeartRateSummaryView: View {
                                 }
                             }
                         }
+                        Section("Today") {
+                            if let averageText = viewModel.dayAverageText {
+                                VStack(spacing: 12) {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            Text(averageText)
+                                                .font(.title2.weight(.bold))
+                                            Text(viewModel.latestTimeText ?? "Latest reading")
+                                                .font(.footnote)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        Spacer()
+                                        Image(systemName: "heart.fill")
+                                            .font(.title2)
+                                            .foregroundStyle(Color.accentColor)
+                                    }
+                                    HeartRateLineChartView(points: viewModel.dayPoints)
+                                }
+                            } else {
+                                HeartRateLineChartView(points: viewModel.dayPoints)
+                            }
+                        }
                         Section("Latest") {
                             if let latest = summary.latest {
                                 LabeledContent("Heart Rate", value: "\(Int(latest.bpm.rounded())) bpm")
