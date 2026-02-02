@@ -19,19 +19,35 @@ public struct WorkoutRouteMapView: View {
     }
 
     public var body: some View {
-        if let region = points.routeRegion {
-            Map(position: .constant(.region(region))) {
-                MapPolyline(coordinates: points.routeCoordinates)
-                    .stroke(Color.blue, lineWidth: 4)
+        let mapView = Group {
+            if let region = points.routeRegion {
+                Map(position: .constant(.region(region))) {
+                    if points.count > 1 {
+                        MapPolyline(coordinates: points.routeCoordinates)
+                            .stroke(Color.blue, lineWidth: 4)
+                    }
+                }
+            } else {
+                Map(position: .constant(.automatic)) { }
             }
+        }
+
+        mapView
             .frame(maxWidth: .infinity)
             .frame(height: height)
             .frame(maxHeight: height == nil ? .infinity : nil)
             .allowsHitTesting(false)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        } else {
-            ContentUnavailableView("No Route", systemImage: "map", description: Text("No GPS route was recorded for this workout."))
-        }
+            .overlay(alignment: .bottomLeading) {
+                if points.isEmpty {
+                    Label("Waiting for GPS", systemImage: "location")
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .padding(10)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .padding(12)
+                }
+            }
     }
 }
 

@@ -27,4 +27,8 @@ public enum WorkoutType: String, CaseIterable, Hashable, Identifiable, Codable, 
         case .yoga: return "Yoga"
         }
     }
+
+    public static var outdoorSupported: [WorkoutType] {
+        [.walking, .running, .cycling]
+    }
 }

@@ -41,7 +41,10 @@ public struct CurrentWorkoutView: View {
                         }
 
                         if viewModel.isOutdoorSupported {
-                            WorkoutRouteMapView(points: viewModel.routePoints, height: 240)
+                            let mapPoints = viewModel.routePoints.isEmpty
+                                ? (viewModel.currentLocationPoint.map { [$0] } ?? [])
+                                : viewModel.routePoints
+                            WorkoutRouteMapView(points: mapPoints, height: 240)
 
                             CurrentWorkoutStatsView(
                                 distanceText: viewModel.distanceText,
@@ -96,6 +99,8 @@ public struct CurrentWorkoutView: View {
                                         .frame(maxWidth: .infinity)
                                 }
                                 .buttonStyle(.bordered)
+                            default:
+                                fatalError("Not supported")
                             }
 
                             Button(role: .destructive) {
@@ -123,7 +128,7 @@ public struct CurrentWorkoutView: View {
         }
         .navigationTitle("Current Workout")
         .task {
-            viewModel.start()
+            await viewModel.start()
         }
         .onDisappear {
             viewModel.stop()

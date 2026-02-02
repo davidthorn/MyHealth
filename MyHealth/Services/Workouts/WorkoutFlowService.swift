@@ -19,7 +19,7 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
         self.store = store
         self.currentSession = nil
         self.subject = CurrentValueSubject(
-            WorkoutFlowUpdate(availableTypes: WorkoutType.allCases, currentSession: nil)
+            WorkoutFlowUpdate(availableTypes: WorkoutType.outdoorSupported, currentSession: nil)
         )
     }
 
@@ -99,6 +99,6 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
     }
 
     private func currentUpdate() -> WorkoutFlowUpdate {
-        WorkoutFlowUpdate(availableTypes: WorkoutType.allCases, currentSession: currentSession)
+        WorkoutFlowUpdate(availableTypes: WorkoutType.outdoorSupported, currentSession: currentSession)
     }
 }

@@ -151,7 +151,7 @@ public struct AppServices: AppServicesProviding {
             workoutFlowService: WorkoutFlowService(store: workoutStore),
             workoutListItemService: WorkoutListItemService(workoutSource: workoutSource, heartRateSource: heartRateSource),
             workoutDetailService: WorkoutDetailService(source: workoutSource, heartRateSource: heartRateSource),
-            locationService: MockLocationService(),
+            locationService: LiveLocationService(),
             nutritionService: NutritionService(healthKitAdapter: healthKitAdapter),
             nutritionTypeListService: NutritionTypeListService(healthKitAdapter: healthKitAdapter),
             nutritionEntryDetailService: NutritionEntryDetailService(healthKitAdapter: healthKitAdapter),
