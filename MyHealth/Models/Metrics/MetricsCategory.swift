@@ -14,6 +14,7 @@ public enum MetricsCategory: String, CaseIterable, Hashable, Sendable {
     case steps
     case flights
     case standHours
+    case exerciseMinutes
     case calories
     case sleep
     case activityRings
@@ -32,6 +33,8 @@ public enum MetricsCategory: String, CaseIterable, Hashable, Sendable {
             return "Flights"
         case .standHours:
             return "Stand Hours"
+        case .exerciseMinutes:
+            return "Exercise Minutes"
         case .calories:
             return "Calories"
         case .sleep:

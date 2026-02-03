@@ -16,6 +16,7 @@ public struct MetricsUpdate: Sendable {
     public let stepsSummary: StepsSummary?
     public let flightsSummary: FlightsSummary?
     public let standHoursSummary: StandHoursSummary?
+    public let exerciseMinutesSummary: ExerciseMinutesSummary?
     public let caloriesSummary: CaloriesSummary?
     public let sleepSummary: SleepSummary?
     public let activityRingsSummary: ActivityRingsSummary?
@@ -29,6 +30,7 @@ public struct MetricsUpdate: Sendable {
         stepsSummary: StepsSummary?,
         flightsSummary: FlightsSummary?,
         standHoursSummary: StandHoursSummary?,
+        exerciseMinutesSummary: ExerciseMinutesSummary?,
         caloriesSummary: CaloriesSummary?,
         sleepSummary: SleepSummary?,
         activityRingsSummary: ActivityRingsSummary?,
@@ -41,6 +43,7 @@ public struct MetricsUpdate: Sendable {
         self.stepsSummary = stepsSummary
         self.flightsSummary = flightsSummary
         self.standHoursSummary = standHoursSummary
+        self.exerciseMinutesSummary = exerciseMinutesSummary
         self.caloriesSummary = caloriesSummary
         self.sleepSummary = sleepSummary
         self.activityRingsSummary = activityRingsSummary

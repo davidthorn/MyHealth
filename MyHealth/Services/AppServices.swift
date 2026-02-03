@@ -17,6 +17,7 @@ public struct AppServices: AppServicesProviding {
     public let heartRateSummaryService: HeartRateSummaryServiceProtocol
     public let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
     public let bloodOxygenDetailService: BloodOxygenDetailServiceProtocol
+    public let exerciseMinutesDetailService: ExerciseMinutesDetailServiceProtocol
     public let stepsSummaryService: StepsSummaryServiceProtocol
     public let stepsDetailService: StepsDetailServiceProtocol
     public let flightsSummaryService: FlightsSummaryServiceProtocol
@@ -55,6 +56,7 @@ public struct AppServices: AppServicesProviding {
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
         bloodOxygenDetailService: BloodOxygenDetailServiceProtocol,
+        exerciseMinutesDetailService: ExerciseMinutesDetailServiceProtocol,
         stepsSummaryService: StepsSummaryServiceProtocol,
         stepsDetailService: StepsDetailServiceProtocol,
         flightsSummaryService: FlightsSummaryServiceProtocol,
@@ -92,6 +94,7 @@ public struct AppServices: AppServicesProviding {
         self.heartRateSummaryService = heartRateSummaryService
         self.heartRateReadingDetailService = heartRateReadingDetailService
         self.bloodOxygenDetailService = bloodOxygenDetailService
+        self.exerciseMinutesDetailService = exerciseMinutesDetailService
         self.stepsSummaryService = stepsSummaryService
         self.stepsDetailService = stepsDetailService
         self.flightsSummaryService = flightsSummaryService
@@ -136,6 +139,7 @@ public struct AppServices: AppServicesProviding {
             heartRateSummaryService: HeartRateSummaryService(healthKitAdapter: healthKitAdapter),
             heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),
             bloodOxygenDetailService: BloodOxygenDetailService(healthKitAdapter: healthKitAdapter),
+            exerciseMinutesDetailService: ExerciseMinutesDetailService(healthKitAdapter: healthKitAdapter),
             stepsSummaryService: StepsSummaryService(healthKitAdapter: healthKitAdapter),
             stepsDetailService: StepsDetailService(healthKitAdapter: healthKitAdapter),
             flightsSummaryService: FlightsSummaryService(healthKitAdapter: healthKitAdapter),

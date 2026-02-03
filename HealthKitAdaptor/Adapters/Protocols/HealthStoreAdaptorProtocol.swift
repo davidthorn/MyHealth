@@ -25,6 +25,7 @@ public protocol HealthStoreAdaptorProtocol: Sendable {
     func fetchStepCounts(days: Int) async -> [StepsDay]
     func fetchFlightCounts(days: Int) async -> [FlightsDay]
     func fetchStandHourCounts(days: Int) async -> [StandHourDay]
+    func fetchExerciseMinutes(days: Int) async -> [ExerciseMinutesDay]
     func fetchActiveEnergy(days: Int) async -> [CaloriesDay]
     func fetchRestingHeartRateDays(days: Int) async -> [RestingHeartRateDay]
     func fetchRestingHeartRateReadings(on date: Date) async -> [RestingHeartRateReading]

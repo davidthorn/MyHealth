@@ -24,6 +24,7 @@ public protocol HealthKitAdapterProtocol: Sendable {
     func stepsSummaryStream(days: Int) -> AsyncStream<StepsSummary>
     func flightsSummaryStream(days: Int) -> AsyncStream<FlightsSummary>
     func standHoursSummaryStream(days: Int) -> AsyncStream<StandHoursSummary>
+    func exerciseMinutesSummaryStream(days: Int) -> AsyncStream<ExerciseMinutesSummary>
     func activeEnergySummaryStream(days: Int) -> AsyncStream<CaloriesSummary>
     func restingHeartRateSummaryStream(days: Int) -> AsyncStream<RestingHeartRateSummary>
     func restingHeartRateReadings(on date: Date) async -> [RestingHeartRateReading]

@@ -29,6 +29,7 @@ public final class MetricsService: MetricsServiceProtocol {
                         stepsSummary: nil,
                         flightsSummary: nil,
                         standHoursSummary: nil,
+                        exerciseMinutesSummary: nil,
                         caloriesSummary: nil,
                         sleepSummary: nil,
                         activityRingsSummary: nil,
@@ -48,6 +49,7 @@ public final class MetricsService: MetricsServiceProtocol {
                 let stepsSummary = await firstValue(from: healthKitAdapter.stepsSummaryStream(days: 7))
                 let flightsSummary = await firstValue(from: healthKitAdapter.flightsSummaryStream(days: 7))
                 let standHoursSummary = await firstValue(from: healthKitAdapter.standHoursSummaryStream(days: 7))
+                let exerciseMinutesSummary = await firstValue(from: healthKitAdapter.exerciseMinutesSummaryStream(days: 7))
                 let caloriesSummary = await firstValue(from: healthKitAdapter.activeEnergySummaryStream(days: 7))
                 let sleepSummary = await firstValue(from: healthKitAdapter.sleepAnalysisSummaryStream(days: 7))
                 let activityRingsSummary = await firstValue(from: healthKitAdapter.activitySummaryStream(days: 7))
@@ -67,6 +69,7 @@ public final class MetricsService: MetricsServiceProtocol {
                         stepsSummary: stepsSummary,
                         flightsSummary: flightsSummary,
                         standHoursSummary: standHoursSummary,
+                        exerciseMinutesSummary: exerciseMinutesSummary,
                         caloriesSummary: caloriesSummary,
                         sleepSummary: sleepSummary,
                         activityRingsSummary: activityRingsSummary,

@@ -17,6 +17,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let steps: HealthKitStepsAdapterProtocol
     private let flights: HealthKitFlightsAdapterProtocol
     private let standHours: HealthKitStandHoursAdapterProtocol
+    private let exerciseMinutes: HealthKitExerciseMinutesAdapterProtocol
     private let activeEnergy: HealthKitActiveEnergyAdapterProtocol
     private let activitySummary: HealthKitActivitySummaryAdapterProtocol
     private let restingHeartRate: HealthKitRestingHeartRateAdapterProtocol
@@ -36,6 +37,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         steps: HealthKitStepsAdapterProtocol,
         flights: HealthKitFlightsAdapterProtocol,
         standHours: HealthKitStandHoursAdapterProtocol,
+        exerciseMinutes: HealthKitExerciseMinutesAdapterProtocol,
         activeEnergy: HealthKitActiveEnergyAdapterProtocol,
         activitySummary: HealthKitActivitySummaryAdapterProtocol,
         restingHeartRate: HealthKitRestingHeartRateAdapterProtocol,
@@ -50,6 +52,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         self.steps = steps
         self.flights = flights
         self.standHours = standHours
+        self.exerciseMinutes = exerciseMinutes
         self.activeEnergy = activeEnergy
         self.activitySummary = activitySummary
         self.restingHeartRate = restingHeartRate
@@ -71,6 +74,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
             steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor),
             flights: HealthKitFlightsAdapter(storeAdaptor: storeAdaptor),
             standHours: HealthKitStandHoursAdapter(storeAdaptor: storeAdaptor),
+            exerciseMinutes: HealthKitExerciseMinutesAdapter(storeAdaptor: storeAdaptor),
             activeEnergy: HealthKitActiveEnergyAdapter(storeAdaptor: storeAdaptor),
             activitySummary: HealthKitActivitySummaryAdapter(storeAdaptor: storeAdaptor),
             restingHeartRate: HealthKitRestingHeartRateAdapter(storeAdaptor: storeAdaptor),
@@ -129,6 +133,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func standHoursSummaryStream(days: Int) -> AsyncStream<StandHoursSummary> {
         standHours.standHoursSummaryStream(days: days)
+    }
+
+    public func exerciseMinutesSummaryStream(days: Int) -> AsyncStream<ExerciseMinutesSummary> {
+        exerciseMinutes.exerciseMinutesSummaryStream(days: days)
     }
 
     public func activeEnergySummaryStream(days: Int) -> AsyncStream<CaloriesSummary> {

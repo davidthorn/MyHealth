@@ -38,6 +38,9 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
         if let standType = HKObjectType.categoryType(forIdentifier: .appleStandHour) {
             readTypes.insert(standType)
         }
+        if let exerciseType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime) {
+            readTypes.insert(exerciseType)
+        }
         if let activeType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) {
             readTypes.insert(activeType)
         }
@@ -83,6 +86,11 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
     public func requestStandHoursAuthorization() async -> Bool {
         guard let standType = HKObjectType.categoryType(forIdentifier: .appleStandHour) else { return false }
         return await requestAuthorization(readTypes: [standType])
+    }
+
+    public func requestExerciseMinutesAuthorization() async -> Bool {
+        guard let exerciseType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime) else { return false }
+        return await requestAuthorization(readTypes: [exerciseType])
     }
 
     public func requestActiveEnergyAuthorization() async -> Bool {

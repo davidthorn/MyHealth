@@ -109,6 +109,15 @@ public extension MetricsUpdate {
         )
         cards.append(
             summaryCard(
+                category: .exerciseMinutes,
+                latestValue: exerciseMinutesSummary?.latest?.minutes,
+                previousValue: exerciseMinutesSummary?.previous.first?.minutes,
+                unit: "min",
+                subtitle: "Today"
+            )
+        )
+        cards.append(
+            summaryCard(
                 category: .calories,
                 latestValue: caloriesSummary?.latest?.activeKilocalories,
                 previousValue: caloriesSummary?.previous.first?.activeKilocalories,
