@@ -32,78 +32,28 @@ public struct CurrentWorkoutView: View {
         return viewModel.routePoints
     }
 
-    @ViewBuilder
-    private var gpsStatusView: some View {
-        if let gpsStatusText = viewModel.gpsStatusText, viewModel.currentSession?.status == .notStarted {
-            Text(gpsStatusText)
-                .font(.footnote.weight(.medium))
-                .foregroundStyle(viewModel.hasGoodGpsFix ? Color.secondary : Color.orange)
-        }
-    }
-
-    @ViewBuilder
-    private var locationPermissionView: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: viewModel.isLocationDenied ? "location.slash" : "location")
-                    .font(.title2)
-                    .foregroundStyle(viewModel.isLocationDenied ? Color.red : Color.accentColor)
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(viewModel.isLocationDenied ? "Location Disabled" : "Enable Location")
-                        .font(.headline)
-                    Text(viewModel.isLocationDenied
-                         ? "Turn on Location Services for MyHealth in Settings to see your route."
-                         : "Allow location access to show your current position and route.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            if !viewModel.isLocationDenied {
-                Button {
-                    viewModel.requestLocationAuthorization()
-                } label: {
-                    Text("Allow Location")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-            }
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, minHeight: 220, alignment: .leading)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-    }
-
     public var body: some View {
         Group {
             if let session = viewModel.currentSession {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Current Workout")
-                                .font(.title2.weight(.bold))
-                            Text(session.type.displayName)
-                                .font(.headline)
-                            if let startedAt = session.startedAt {
-                                Text("Started at \(startedAt.formatted(date: .abbreviated, time: .shortened))")
-                                    .font(.footnote)
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                Text("Ready to start")
-                                    .font(.footnote)
-                                    .foregroundStyle(.secondary)
-                            }
-                            if let elapsedText = viewModel.elapsedText {
-                                Text(elapsedText)
-                                    .font(.headline)
-                            }
-                        }
+                        CurrentWorkoutHeaderView(session: session, elapsedText: viewModel.elapsedText)
 
                         if viewModel.isOutdoorSupported {
                             if viewModel.isLocationAuthorized {
                                 WorkoutRouteMapView(points: mapPoints, height: 240)
-                                gpsStatusView
+                                if let gpsStatusText = viewModel.gpsStatusText,
+                                   viewModel.currentSession?.status == .notStarted {
+                                    CurrentWorkoutGpsStatusView(
+                                        statusText: gpsStatusText,
+                                        isLocked: viewModel.hasGoodGpsFix
+                                    )
+                                }
                             } else {
-                                locationPermissionView
+                                CurrentWorkoutLocationPermissionView(
+                                    isDenied: viewModel.isLocationDenied,
+                                    onRequest: viewModel.requestLocationAuthorization
+                                )
                             }
 
                             CurrentWorkoutStatsView(
@@ -112,19 +62,7 @@ public struct CurrentWorkoutView: View {
                                 speedText: viewModel.speedText
                             )
 
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Splits")
-                                    .font(.headline)
-                                WorkoutSplitsHeaderView()
-                                ForEach(viewModel.splits, id: \.id) { split in
-                                    WorkoutSplitRowView(
-                                        index: split.index,
-                                        durationText: split.formattedDurationText,
-                                        paceText: split.formattedPaceText,
-                                        heartRateText: split.formattedHeartRateText
-                                    )
-                                }
-                            }
+                            CurrentWorkoutSplitsView(splits: viewModel.splits)
                         } else {
                             ContentUnavailableView(
                                 "Outdoor Only",
@@ -133,48 +71,18 @@ public struct CurrentWorkoutView: View {
                             )
                         }
 
-                        HStack(spacing: 12) {
-                            switch session.status {
-                            case .notStarted:
-                                Button {
-                                    viewModel.beginWorkout()
-                                } label: {
-                                    Text("Start")
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .disabled(!viewModel.canStartWorkout)
-                            case .paused:
-                                Button {
-                                    viewModel.resumeWorkout()
-                                } label: {
-                                    Text("Resume")
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.borderedProminent)
-                            case .active:
-                                Button {
-                                    viewModel.pauseWorkout()
-                                } label: {
-                                    Text("Pause")
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.bordered)
-                            default:
-                                fatalError("Not supported")
-                            }
-
-                            Button(role: .destructive) {
+                        CurrentWorkoutControlsView(
+                            status: session.status,
+                            canStart: viewModel.canStartWorkout,
+                            onStart: viewModel.beginWorkout,
+                            onPause: viewModel.pauseWorkout,
+                            onResume: viewModel.resumeWorkout,
+                            onEnd: {
                                 Task {
                                     await viewModel.endWorkout()
                                 }
-                            } label: {
-                                Text("End")
-                                    .frame(maxWidth: .infinity)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.red)
-                        }
+                        )
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
