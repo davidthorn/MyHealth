@@ -38,6 +38,12 @@ public struct CurrentWorkoutView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         CurrentWorkoutHeaderView(session: session, elapsedText: viewModel.elapsedText)
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                    .fill(Color.blue.opacity(0.08))
+                            )
 
                         if viewModel.isOutdoorSupported {
                             if viewModel.isLocationAuthorized {
@@ -69,6 +75,11 @@ public struct CurrentWorkoutView: View {
                             )
 
                             CurrentWorkoutSplitsView(splits: viewModel.splits)
+                                .padding(16)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                        .fill(Color.secondary.opacity(0.08))
+                                )
                         } else {
                             ContentUnavailableView(
                                 "Outdoor Only",
@@ -111,7 +122,8 @@ public struct CurrentWorkoutView: View {
                 )
             }
         }
-        .navigationTitle("Current Workout")
+        .navigationTitle("Workout")
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.start()
         }

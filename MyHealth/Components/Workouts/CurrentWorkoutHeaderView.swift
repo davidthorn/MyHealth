@@ -19,10 +19,8 @@ public struct CurrentWorkoutHeaderView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Current Workout")
-                .font(.title2.weight(.bold))
             Text(session.type.displayName)
-                .font(.headline)
+                .font(.title2.weight(.bold))
             if let startedAt = session.startedAt {
                 Text("Started at \(startedAt.formatted(date: .abbreviated, time: .shortened))")
                     .font(.footnote)
@@ -34,7 +32,7 @@ public struct CurrentWorkoutHeaderView: View {
             }
             if let elapsedText {
                 Text(elapsedText)
-                    .font(.headline)
+                    .font(.title3.weight(.semibold))
             }
         }
     }

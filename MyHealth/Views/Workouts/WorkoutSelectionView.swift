@@ -16,14 +16,19 @@ public struct WorkoutSelectionView: View {
     }
 
     public var body: some View {
-        List(viewModel.types) { workoutType in
-            Button {
-                viewModel.startWorkout(type: workoutType)
-            } label: {
-                Text(workoutType.displayName)
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                ForEach(viewModel.types) { workoutType in
+                    WorkoutSelectionRowView(type: workoutType) {
+                        viewModel.startWorkout(type: workoutType)
+                    }
+                }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
         .navigationTitle("Select Workout")
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             viewModel.start()
         }

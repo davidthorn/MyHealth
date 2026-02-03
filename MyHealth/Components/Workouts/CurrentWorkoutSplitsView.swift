@@ -20,13 +20,33 @@ public struct CurrentWorkoutSplitsView: View {
             Text("Splits")
                 .font(.headline)
             WorkoutSplitsHeaderView()
-            ForEach(splits, id: \.id) { split in
-                WorkoutSplitRowView(
-                    index: split.index,
-                    durationText: split.formattedDurationText,
-                    paceText: split.formattedPaceText,
-                    heartRateText: split.formattedHeartRateText
-                )
+            if splits.isEmpty {
+                HStack {
+                    Text("1")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(width: 28, alignment: .leading)
+                    Text("00:00")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text("— /km")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text("— bpm")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 6)
+            } else {
+                ForEach(splits, id: \.id) { split in
+                    WorkoutSplitRowView(
+                        index: split.index,
+                        durationText: split.formattedDurationText,
+                        paceText: split.formattedPaceText,
+                        heartRateText: split.formattedHeartRateText
+                    )
+                }
             }
         }
     }
