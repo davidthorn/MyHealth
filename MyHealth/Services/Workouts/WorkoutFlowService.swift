@@ -84,6 +84,11 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
         try await store.appendRoutePoint(point)
     }
 
+    public func cancelWorkout() {
+        currentSession = nil
+        subject.send(currentUpdate())
+    }
+
     public func endWorkout() async throws {
         guard let session = currentSession else {
             subject.send(currentUpdate())

@@ -14,6 +14,7 @@ public enum WorkoutType: String, CaseIterable, Hashable, Identifiable, Codable, 
     case swimming
     case strength
     case yoga
+    case other
 
     public var id: String { rawValue }
 
@@ -25,6 +26,7 @@ public enum WorkoutType: String, CaseIterable, Hashable, Identifiable, Codable, 
         case .swimming: return "Swimming"
         case .strength: return "Strength Training"
         case .yoga: return "Yoga"
+        case .other: return "Other"
         }
     }
 

@@ -15,5 +15,6 @@ public protocol WorkoutFlowServiceProtocol {
     func pauseWorkout() async throws
     func resumeWorkout() async throws
     func appendRoutePoint(_ point: WorkoutRoutePoint) async throws
+    func cancelWorkout()
     func endWorkout() async throws
 }

@@ -23,8 +23,10 @@ public extension WorkoutType {
             self = .strength
         case .yoga:
             self = .yoga
+        case .other:
+            self = .other
         default:
-            return nil
+            self = .other
         }
     }
 
@@ -42,6 +44,8 @@ public extension WorkoutType {
             return .traditionalStrengthTraining
         case .yoga:
             return .yoga
+        case .other:
+            return .other
         }
     }
 
@@ -51,6 +55,8 @@ public extension WorkoutType {
             return .outdoor
         case .swimming, .strength, .yoga:
             return .indoor
+        case .other:
+            return .unknown
         }
     }
 }

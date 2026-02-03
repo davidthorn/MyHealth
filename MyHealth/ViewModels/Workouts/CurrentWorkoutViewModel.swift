@@ -8,6 +8,7 @@
 import Combine
 import CoreLocation
 import Foundation
+import HealthKitAdaptor
 import Models
 
 @MainActor
@@ -86,7 +87,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         do {
             try await service.endWorkout()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userMessage(for: error)
         }
     }
     
@@ -96,7 +97,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
             do {
                 try await service.pauseWorkout()
             } catch {
-                self.errorMessage = error.localizedDescription
+                self.errorMessage = self.userMessage(for: error)
             }
         }
     }
@@ -107,7 +108,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
             do {
                 try await service.resumeWorkout()
             } catch {
-                self.errorMessage = error.localizedDescription
+                self.errorMessage = self.userMessage(for: error)
             }
         }
     }
@@ -117,15 +118,18 @@ public final class CurrentWorkoutViewModel: ObservableObject {
             guard let self else { return }
             do {
                 guard self.canStartWorkout else {
-                    self.errorMessage = "Waiting for a GPS fix before starting."
+                    self.errorMessage = "Waiting for a strong GPS signal before starting."
                     return
                 }
                 try await service.beginWorkout()
-            } catch let error {
-                print(error)
-                self.errorMessage = error.localizedDescription
+            } catch {
+                self.errorMessage = self.userMessage(for: error)
             }
         }
+    }
+
+    public func cancelWorkout() {
+        service.cancelWorkout()
     }
     
     public func clearError() {
@@ -149,6 +153,11 @@ public final class CurrentWorkoutViewModel: ObservableObject {
 
     public var isLocationDenied: Bool {
         locationAuthorizationStatus == .denied || locationAuthorizationStatus == .restricted
+    }
+
+    public var backgroundTrackingWarning: String? {
+        guard locationAuthorizationStatus == .authorizedWhenInUse else { return nil }
+        return "Location updates stop in the background. Keep the app visible to track your route."
     }
 
     public func requestLocationAuthorization() {
@@ -243,7 +252,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
                     do {
                         try await self.service.appendRoutePoint(point)
                     } catch {
-                        self.errorMessage = error.localizedDescription
+                        self.errorMessage = self.userMessage(for: error)
                     }
                 }
             }
@@ -315,6 +324,22 @@ public final class CurrentWorkoutViewModel: ObservableObject {
             gpsStatusText = "Waiting for GPS (\(Int(rounded)) m)"
             hasGoodGpsFix = false
         }
+    }
+
+    private func userMessage(for error: Error) -> String {
+        if let workoutError = error as? HealthKitWorkoutSessionError {
+            switch workoutError {
+            case .authorizationDenied:
+                return "Health access is required to start a workout. Enable Health permissions in Settings."
+            case .alreadyActive:
+                return "A workout is already active."
+            case .notActive:
+                return "No active workout to update."
+            case .notSupportedOnThisPlatform:
+                return "Workouts aren’t supported on this device."
+            }
+        }
+        return "Something went wrong while updating your workout. Please try again."
     }
     
     private func formatDistance(_ meters: Double) -> String {

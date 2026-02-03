@@ -19,7 +19,8 @@ public extension Workout {
             title: type.displayName,
             type: type,
             startedAt: healthKitWorkout.startDate,
-            endedAt: healthKitWorkout.endDate
+            endedAt: healthKitWorkout.endDate,
+            sourceBundleIdentifier: healthKitWorkout.sourceRevision.source.bundleIdentifier
         )
     }
 }

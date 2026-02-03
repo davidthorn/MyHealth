@@ -8,7 +8,17 @@
 import Foundation
 import Models
 
-@MainActor
+public enum WorkoutDeleteError: Error, LocalizedError {
+    case authorizationDenied
+
+    public var errorDescription: String? {
+        switch self {
+        case .authorizationDenied:
+            return "Health access is required to delete a workout. Enable Health permissions in Settings."
+        }
+    }
+}
+
 public final class WorkoutDetailService: WorkoutDetailServiceProtocol {
     private let source: WorkoutDataSourceProtocol
     private let heartRateSource: HeartRateDataSourceProtocol
@@ -73,6 +83,13 @@ public final class WorkoutDetailService: WorkoutDetailServiceProtocol {
     }
 
     public func delete(id: UUID) async throws {
-        try await source.deleteWorkout(id: id)
+        let source = source
+        let isAuthorized = await source.requestDeleteAuthorization()
+        guard isAuthorized else {
+            throw WorkoutDeleteError.authorizationDenied
+        }
+        try await Task.detached {
+            try await source.deleteWorkout(id: id)
+        }.value
     }
 }

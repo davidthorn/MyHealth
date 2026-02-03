@@ -49,6 +49,12 @@ public struct CurrentWorkoutView: View {
                                         isLocked: viewModel.hasGoodGpsFix
                                     )
                                 }
+                                if let warning = viewModel.backgroundTrackingWarning,
+                                   viewModel.currentSession?.status == .notStarted {
+                                    Text(warning)
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                }
                             } else {
                                 CurrentWorkoutLocationPermissionView(
                                     isDenied: viewModel.isLocationDenied,
@@ -74,6 +80,7 @@ public struct CurrentWorkoutView: View {
                         CurrentWorkoutControlsView(
                             status: session.status,
                             canStart: viewModel.canStartWorkout,
+                            showStart: viewModel.isLocationAuthorized,
                             onStart: viewModel.beginWorkout,
                             onPause: viewModel.pauseWorkout,
                             onResume: viewModel.resumeWorkout,
@@ -83,6 +90,15 @@ public struct CurrentWorkoutView: View {
                                 }
                             }
                         )
+                        if session.status == .notStarted {
+                            Button(role: .cancel) {
+                                viewModel.cancelWorkout()
+                            } label: {
+                                Text("Cancel")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()

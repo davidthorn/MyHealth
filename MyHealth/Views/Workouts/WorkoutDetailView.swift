@@ -12,6 +12,9 @@ public struct WorkoutDetailView: View {
     @StateObject private var viewModel: WorkoutDetailViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var isRouteFullScreenPresented: Bool = false
+    @State private var isDeleteProgressPresented: Bool = false
+    @State private var shouldDeleteAfterProgress: Bool = false
+    @State private var isDeleteErrorPresented: Bool = false
 
     public init(service: WorkoutDetailServiceProtocol, id: UUID) {
         _viewModel = StateObject(wrappedValue: WorkoutDetailViewModel(service: service, id: id))
@@ -21,50 +24,30 @@ public struct WorkoutDetailView: View {
         Group {
             if let workout = viewModel.workout {
                 List {
-                    Section("Summary") {
-                        LabeledContent("Title", value: workout.title)
-                        LabeledContent("Type", value: workout.type.displayName)
-                    }
-                    Section("Timing") {
-                        LabeledContent("Start", value: workout.startedAt.formatted(date: .abbreviated, time: .shortened))
-                        LabeledContent("End", value: workout.endedAt.formatted(date: .abbreviated, time: .shortened))
-                        LabeledContent("Duration", value: viewModel.durationText ?? "—")
-                    }
-                    if !viewModel.routePoints.isEmpty {
+                    WorkoutDetailSummarySectionView(workout: workout)
+                    if !viewModel.canDelete {
                         Section {
-                            WorkoutRouteMapView(points: viewModel.routePoints)
-                        } header: {
-                            HStack {
-                                Text("Route")
-                                Spacer()
-                                Button("Full Screen") {
-                                    isRouteFullScreenPresented = true
-                                }
-                                .font(.subheadline.weight(.semibold))
-                            }
+                            Label("Read-only workout", systemImage: "lock.fill")
+                                .font(.footnote.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                        } footer: {
+                            Text("This workout was created by another app and can’t be deleted here.")
+                                .font(.footnote)
                         }
-
-                        Section("Splits") {
-                            if viewModel.splits.isEmpty {
-                                Text("Not enough distance to compute splits.")
-                                    .font(.footnote)
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                WorkoutSplitsHeaderView()
-                                ForEach(viewModel.splits) { split in
-                                    WorkoutSplitRowView(
-                                        index: split.index,
-                                        durationText: viewModel.splitDurationText(split),
-                                        paceText: viewModel.paceText(split),
-                                        heartRateText: viewModel.heartRateText(split)
-                                    )
-                                }
-                            }
-                        }
-
-                        Section("Heart Rate") {
-                            WorkoutHeartRateLineChartView(points: viewModel.workoutHeartRatePoints)
-                        }
+                    }
+                    WorkoutDetailTimingSectionView(workout: workout, durationText: viewModel.durationText)
+                    if !viewModel.routePoints.isEmpty {
+                        WorkoutDetailRouteSectionView(
+                            points: viewModel.routePoints,
+                            onFullScreen: { isRouteFullScreenPresented = true }
+                        )
+                        WorkoutDetailSplitsSectionView(
+                            splits: viewModel.splits,
+                            durationText: viewModel.splitDurationText,
+                            paceText: viewModel.paceText,
+                            heartRateText: viewModel.heartRateText
+                        )
+                        WorkoutDetailHeartRateSectionView(points: viewModel.workoutHeartRatePoints)
                     }
                 }
             } else {
@@ -73,10 +56,12 @@ public struct WorkoutDetailView: View {
         }
         .navigationTitle("Workout")
         .toolbar {
-            Button(role: .destructive) {
-                viewModel.requestDelete()
-            } label: {
-                Label("Delete", systemImage: "trash")
+            if viewModel.canDelete {
+                Button(role: .destructive) {
+                    viewModel.requestDelete()
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
             }
         }
         .task {
@@ -87,29 +72,49 @@ public struct WorkoutDetailView: View {
         }
         .alert("Delete Workout?", isPresented: $viewModel.isDeleteAlertPresented) {
             Button("Delete", role: .destructive) {
-                Task { [weak viewModel] in
-                    guard let viewModel else { return }
-                    let didDelete = await viewModel.delete()
-                    guard !Task.isCancelled else { return }
-                    if didDelete {
-                        dismiss()
-                    }
-                }
+                viewModel.isDeleteAlertPresented = false
+                shouldDeleteAfterProgress = true
+                isDeleteProgressPresented = true
             }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This action cannot be undone.")
         }
-        .alert("Unable to Delete", isPresented: Binding(get: {
-            viewModel.errorMessage != nil
-        }, set: { newValue in
-            if !newValue {
-                viewModel.errorMessage = nil
+        .sheet(isPresented: $isDeleteProgressPresented) {
+            VStack(spacing: 16) {
+                ProgressView()
+                Text("Deleting workout…")
+                    .font(.headline)
             }
-        })) {
+            .padding()
+            .presentationDetents([.height(160)])
+            .task {
+                guard shouldDeleteAfterProgress else { return }
+                shouldDeleteAfterProgress = false
+                do {
+                    try await viewModel.delete()
+                    await MainActor.run {
+                        isDeleteProgressPresented = false
+                        dismiss()
+                    }
+                } catch {
+                    await MainActor.run {
+                        viewModel.errorMessage = error.localizedDescription
+                        isDeleteProgressPresented = false
+                        isDeleteErrorPresented = true
+                    }
+                }
+            }
+        }
+        .alert("Unable to Delete", isPresented: $isDeleteErrorPresented) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(viewModel.errorMessage ?? "")
+        }
+        .onChange(of: isDeleteErrorPresented) { isPresented in
+            if !isPresented {
+                viewModel.errorMessage = nil
+            }
         }
         .sheet(isPresented: $isRouteFullScreenPresented) {
             WorkoutRouteFullScreenView(points: viewModel.routePoints)

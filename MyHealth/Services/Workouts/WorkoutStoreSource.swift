@@ -9,7 +9,6 @@ import Foundation
 import Models
 import HealthKitAdaptor
 
-@MainActor
 public final class WorkoutStoreSource: WorkoutDataSourceProtocol {
     private let healthKitAdapter: HealthKitAdapterProtocol
 
@@ -19,6 +18,10 @@ public final class WorkoutStoreSource: WorkoutDataSourceProtocol {
 
     public func requestAuthorization() async -> Bool {
         await healthKitAdapter.authorizationProvider.requestWorkoutAuthorization()
+    }
+
+    public func requestDeleteAuthorization() async -> Bool {
+        await healthKitAdapter.authorizationProvider.requestCreateWorkoutAuthorization()
     }
 
     public func workoutsStream() -> AsyncStream<[Workout]> {

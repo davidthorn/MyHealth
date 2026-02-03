@@ -49,13 +49,15 @@ public struct WorkoutsScene: View {
             }
             .navigationTitle("Workouts")
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        viewModel.path.append(.newWorkout)
-                    } label: {
-                        Image(systemName: "plus")
+                if viewModel.currentSession == nil {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            viewModel.path.append(.newWorkout)
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        .accessibilityLabel("Start new workout")
                     }
-                    .accessibilityLabel("Start new workout")
                 }
             }
             .navigationDestination(for: WorkoutsRoute.self) { route in

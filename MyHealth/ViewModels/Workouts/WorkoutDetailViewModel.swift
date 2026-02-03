@@ -16,6 +16,7 @@ public final class WorkoutDetailViewModel: ObservableObject {
     @Published public private(set) var splits: [WorkoutSplit]
     @Published public private(set) var workoutHeartRatePoints: [HeartRateRangePoint]
     @Published public var isDeleteAlertPresented: Bool
+    @Published public var isDeleting: Bool
     @Published public var errorMessage: String?
 
     private let service: WorkoutDetailServiceProtocol
@@ -33,6 +34,7 @@ public final class WorkoutDetailViewModel: ObservableObject {
         self.splits = []
         self.workoutHeartRatePoints = []
         self.isDeleteAlertPresented = false
+        self.isDeleting = false
         self.errorMessage = nil
     }
 
@@ -64,14 +66,10 @@ public final class WorkoutDetailViewModel: ObservableObject {
         isDeleteAlertPresented = true
     }
 
-    public func delete() async -> Bool {
-        do {
-            try await service.delete(id: id)
-            return true
-        } catch {
-            errorMessage = error.localizedDescription
-            return false
-        }
+    public func delete() async throws {
+        isDeleting = true
+        defer { isDeleting = false }
+        try await service.delete(id: id)
     }
 
     public var durationText: String? {
@@ -81,6 +79,12 @@ public final class WorkoutDetailViewModel: ObservableObject {
         formatter.unitsStyle = .positional
         formatter.zeroFormattingBehavior = [.pad]
         return formatter.string(from: workout.startedAt, to: workout.endedAt)
+    }
+
+    public var canDelete: Bool {
+        guard let workout else { return false }
+        guard let bundleId = Bundle.main.bundleIdentifier else { return false }
+        return workout.sourceBundleIdentifier == bundleId
     }
 
     private func startRouteUpdates() {
