@@ -28,6 +28,10 @@ public actor WorkoutStore: WorkoutStoreProtocol {
         try await healthKitAdapter.workoutSession.resumeWorkout()
     }
 
+    public func appendRoutePoint(_ point: WorkoutRoutePoint) async throws {
+        try await healthKitAdapter.workoutSession.appendRoutePoint(point)
+    }
+
     public func endWorkout() async throws {
         try await healthKitAdapter.workoutSession.endWorkout()
     }

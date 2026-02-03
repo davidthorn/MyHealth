@@ -59,9 +59,22 @@
 		44AD77092F2DE75000385A6C /* Models.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Models.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4452134E2F32083C007FADE2 /* Exceptions for "MyHealth" folder in "MyHealth" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 442440FB2F2CC6FD005456F5 /* MyHealth */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		442440FE2F2CC6FD005456F5 /* MyHealth */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4452134E2F32083C007FADE2 /* Exceptions for "MyHealth" folder in "MyHealth" target */,
+			);
 			path = MyHealth;
 			sourceTree = "<group>";
 		};
@@ -466,6 +479,7 @@
 				DEVELOPMENT_TEAM = Z5L45HU7SA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyHealth/Info.plist;
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "This is required to be able to access health kit records";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This is required to be able to share sames of health kit data.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This is required to be able to access health kit records";
@@ -505,6 +519,7 @@
 				DEVELOPMENT_TEAM = Z5L45HU7SA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyHealth/Info.plist;
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "This is required to be able to access health kit records";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This is required to be able to share sames of health kit data.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This is required to be able to access health kit records";

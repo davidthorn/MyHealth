@@ -8,6 +8,7 @@
 //  Created by David Thorn on 02.02.26.
 //
 
+import CoreLocation
 import Foundation
 import HealthKit
 import Models
@@ -43,6 +44,7 @@ public actor HealthKitWorkoutSession {
     private var finishContinuation: CheckedContinuation<HKWorkout, Error>?
 #else
     private var builder: HKWorkoutBuilder?
+    private var routeBuilder: HKWorkoutRouteBuilder?
 #endif
     
     public init(
@@ -101,8 +103,10 @@ public actor HealthKitWorkoutSession {
             configuration: configuration,
             device: nil
         )
+        let routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
         
         self.builder = builder
+        self.routeBuilder = routeBuilder
         self.startedAt = startDate
         self.pausedAt = nil
         self.totalPaused = 0
@@ -163,6 +167,17 @@ public actor HealthKitWorkoutSession {
                     return
                 }
                 continuation.resume(returning: workout)
+            }
+        }
+        if let routeBuilder {
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                routeBuilder.finishRoute(with: workout, metadata: nil) { _, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    continuation.resume(returning: ())
+                }
             }
         }
         
@@ -229,6 +244,7 @@ public actor HealthKitWorkoutSession {
         builderDelegateBridge = nil
 #else
         builder = nil
+        routeBuilder = nil
 #endif
     }
 }
@@ -244,6 +260,31 @@ extension HealthKitWorkoutSession: HealthKitWorkoutSessionManaging {
 
     public func resumeWorkout() async throws {
         try await resume()
+    }
+
+    public func     appendRoutePoint(_ point: WorkoutRoutePoint) async throws {
+#if os(watchOS)
+        return
+#else
+        guard let routeBuilder else { return }
+        let accuracy = point.horizontalAccuracy ?? 0
+        let location = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude),
+            altitude: 0,
+            horizontalAccuracy: accuracy,
+            verticalAccuracy: -1,
+            timestamp: point.timestamp
+        )
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            routeBuilder.insertRouteData([location]) { _, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: ())
+            }
+        }
+#endif
     }
 
     public func endWorkout() async throws {

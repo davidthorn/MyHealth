@@ -13,6 +13,7 @@ import Models
 public final class LiveLocationService: NSObject, LocationServiceProtocol {
     private let manager: CLLocationManager
     private var continuation: AsyncStream<WorkoutRoutePoint>.Continuation?
+    private var authorizationContinuation: AsyncStream<CLAuthorizationStatus>.Continuation?
     private var lastLocation: CLLocation?
     
     public override init() {
@@ -20,6 +21,7 @@ public final class LiveLocationService: NSObject, LocationServiceProtocol {
         super.init()
         manager.delegate = self
         manager.activityType = .fitness
+        manager.allowsBackgroundLocationUpdates = true
         manager.pausesLocationUpdatesAutomatically = false
         manager.desiredAccuracy = kCLLocationAccuracyBest
         manager.distanceFilter = 0
@@ -29,7 +31,6 @@ public final class LiveLocationService: NSObject, LocationServiceProtocol {
         AsyncStream { continuation in
             self.continuation?.finish()
             self.continuation = continuation
-            self.requestAuthorizationIfNeeded()
             continuation.onTermination = { _ in
                 Task { @MainActor [weak self] in
                     self?.manager.stopUpdatingLocation()
@@ -41,10 +42,8 @@ public final class LiveLocationService: NSObject, LocationServiceProtocol {
     }
 
     public func currentLocation() -> WorkoutRoutePoint? {
-        requestAuthorizationIfNeeded()
-        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
-            manager.requestLocation()
-        }
+        guard isAuthorized else { return nil }
+        manager.requestLocation()
         guard let location = manager.location ?? lastLocation else { return nil }
         return WorkoutRoutePoint(
             latitude: location.coordinate.latitude,
@@ -53,24 +52,45 @@ public final class LiveLocationService: NSObject, LocationServiceProtocol {
             horizontalAccuracy: location.horizontalAccuracy
         )
     }
-    
-    private func requestAuthorizationIfNeeded() {
-        switch manager.authorizationStatus {
-        case .notDetermined:
-            manager.requestWhenInUseAuthorization()
-        case .authorizedWhenInUse, .authorizedAlways:
-            manager.startUpdatingLocation()
-        case .restricted, .denied:
-            manager.stopUpdatingLocation()
-        @unknown default:
-            manager.stopUpdatingLocation()
+
+    public func currentAuthorizationStatus() -> CLAuthorizationStatus {
+        manager.authorizationStatus
+    }
+
+    public func authorizationUpdates() -> AsyncStream<CLAuthorizationStatus> {
+        AsyncStream { continuation in
+            self.authorizationContinuation?.finish()
+            self.authorizationContinuation = continuation
+            continuation.yield(self.manager.authorizationStatus)
+            continuation.onTermination = { _ in
+                Task { @MainActor [weak self] in
+                    self?.authorizationContinuation = nil
+                }
+            }
         }
+    }
+
+    public func requestWhenInUseAuthorization() {
+        manager.requestWhenInUseAuthorization()
+    }
+
+    public func requestAlwaysAuthorization() {
+        manager.requestAlwaysAuthorization()
+    }
+
+    public func startLocationUpdates() {
+        guard isAuthorized else { return }
+        manager.startUpdatingLocation()
+    }
+
+    public func stopLocationUpdates() {
+        manager.stopUpdatingLocation()
     }
 }
 
 extension LiveLocationService: CLLocationManagerDelegate {
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        requestAuthorizationIfNeeded()
+        authorizationContinuation?.yield(manager.authorizationStatus)
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -89,5 +109,11 @@ extension LiveLocationService: CLLocationManagerDelegate {
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         // Swallow transient location errors; a later update may succeed.
+    }
+}
+
+private extension LiveLocationService {
+    var isAuthorized: Bool {
+        manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways
     }
 }

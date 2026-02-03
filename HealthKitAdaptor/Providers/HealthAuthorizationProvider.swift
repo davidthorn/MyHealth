@@ -54,7 +54,7 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
     public func requestCreateWorkoutAuthorization() async -> Bool {
         let workoutType = HKObjectType.workoutType()
         let routeType = HKSeriesType.workoutRoute()
-        return await requestAuthorization(readTypes: [workoutType, routeType], shareTypes: [workoutType])
+        return await requestAuthorization(readTypes: [workoutType, routeType], shareTypes: [workoutType, routeType])
     }
     
     public func requestHeartRateAuthorization() async -> Bool {

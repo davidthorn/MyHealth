@@ -79,6 +79,11 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
         subject.send(currentUpdate())
     }
 
+    public func appendRoutePoint(_ point: WorkoutRoutePoint) async throws {
+        guard let session = currentSession, session.status == .active else { return }
+        try await store.appendRoutePoint(point)
+    }
+
     public func endWorkout() async throws {
         guard let session = currentSession else {
             subject.send(currentUpdate())

@@ -6,6 +6,7 @@
 //
 
 import Combine
+import CoreLocation
 import Foundation
 import Models
 
@@ -23,12 +24,14 @@ public final class CurrentWorkoutViewModel: ObservableObject {
     @Published public private(set) var availableTypes: [WorkoutType]
     @Published public private(set) var gpsStatusText: String?
     @Published public private(set) var hasGoodGpsFix: Bool
+    @Published public private(set) var locationAuthorizationStatus: CLAuthorizationStatus
     
     private let service: WorkoutFlowServiceProtocol
     private let locationService: LocationServiceProtocol
     private let workoutLocationManager: WorkoutLocationManaging
     private var task: Task<Void, Never>?
     private var locationTask: Task<Void, Never>?
+    private var authorizationTask: Task<Void, Never>?
     private var timerCancellable: AnyCancellable?
     private let gpsAccuracyThreshold: Double = 25
     
@@ -52,6 +55,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         self.availableTypes = WorkoutType.outdoorSupported
         self.gpsStatusText = nil
         self.hasGoodGpsFix = false
+        self.locationAuthorizationStatus = locationService.currentAuthorizationStatus()
     }
     
     public func startWorkout(type: WorkoutType) {
@@ -73,6 +77,8 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         task = nil
         locationTask?.cancel()
         locationTask = nil
+        authorizationTask?.cancel()
+        authorizationTask = nil
         stopTimer()
     }
     
@@ -115,7 +121,8 @@ public final class CurrentWorkoutViewModel: ObservableObject {
                     return
                 }
                 try await service.beginWorkout()
-            } catch {
+            } catch let error {
+                print(error)
                 self.errorMessage = error.localizedDescription
             }
         }
@@ -134,6 +141,18 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         guard let session = currentSession else { return false }
         if session.status != .notStarted { return true }
         return !isOutdoorSupported || hasGoodGpsFix
+    }
+
+    public var isLocationAuthorized: Bool {
+        locationAuthorizationStatus == .authorizedWhenInUse || locationAuthorizationStatus == .authorizedAlways
+    }
+
+    public var isLocationDenied: Bool {
+        locationAuthorizationStatus == .denied || locationAuthorizationStatus == .restricted
+    }
+
+    public func requestLocationAuthorization() {
+        locationService.requestAlwaysAuthorization()
     }
     
     private func configureTimer(for session: WorkoutSession?) {
@@ -160,6 +179,8 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         guard session != nil, isOutdoorSupported else {
             locationTask?.cancel()
             locationTask = nil
+            authorizationTask?.cancel()
+            authorizationTask = nil
             routePoints = []
             currentLocationPoint = nil
             splits = []
@@ -171,8 +192,35 @@ public final class CurrentWorkoutViewModel: ObservableObject {
             workoutLocationManager.reset()
             return
         }
-        
+        if authorizationTask == nil {
+            authorizationTask = Task { [weak self] in
+                guard let self else { return }
+                for await status in locationService.authorizationUpdates() {
+                    guard !Task.isCancelled else { break }
+                    self.locationAuthorizationStatus = status
+                    if self.isLocationAuthorized {
+                        if let current = self.locationService.currentLocation() {
+                            self.currentLocationPoint = current
+                            self.updateGpsStatus()
+                        }
+                        self.startLocationUpdatesIfNeeded()
+                    } else {
+                        self.stopLocationUpdates()
+                    }
+                }
+            }
+        }
+
+        startLocationUpdatesIfNeeded()
+    }
+
+    private func startLocationUpdatesIfNeeded() {
+        guard isLocationAuthorized else {
+            stopLocationUpdates()
+            return
+        }
         guard locationTask == nil else { return }
+        locationService.startLocationUpdates()
         if let current = locationService.currentLocation() {
             currentLocationPoint = current
             updateGpsStatus()
@@ -192,9 +240,29 @@ public final class CurrentWorkoutViewModel: ObservableObject {
                 if self.workoutLocationManager.shouldAppend(point: point) {
                     self.routePoints.append(point)
                     self.updateMetrics()
+                    do {
+                        try await self.service.appendRoutePoint(point)
+                    } catch {
+                        self.errorMessage = error.localizedDescription
+                    }
                 }
             }
         }
+    }
+
+    private func stopLocationUpdates() {
+        locationTask?.cancel()
+        locationTask = nil
+        locationService.stopLocationUpdates()
+        routePoints = []
+        currentLocationPoint = nil
+        splits = []
+        distanceText = "—"
+        paceText = "—"
+        speedText = "—"
+        gpsStatusText = nil
+        hasGoodGpsFix = false
+        workoutLocationManager.reset()
     }
     
     private func stopTimer() {

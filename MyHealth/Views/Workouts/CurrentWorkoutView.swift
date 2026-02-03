@@ -41,6 +41,38 @@ public struct CurrentWorkoutView: View {
         }
     }
 
+    @ViewBuilder
+    private var locationPermissionView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: viewModel.isLocationDenied ? "location.slash" : "location")
+                    .font(.title2)
+                    .foregroundStyle(viewModel.isLocationDenied ? Color.red : Color.accentColor)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(viewModel.isLocationDenied ? "Location Disabled" : "Enable Location")
+                        .font(.headline)
+                    Text(viewModel.isLocationDenied
+                         ? "Turn on Location Services for MyHealth in Settings to see your route."
+                         : "Allow location access to show your current position and route.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            if !viewModel.isLocationDenied {
+                Button {
+                    viewModel.requestLocationAuthorization()
+                } label: {
+                    Text("Allow Location")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 220, alignment: .leading)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
     public var body: some View {
         Group {
             if let session = viewModel.currentSession {
@@ -67,8 +99,12 @@ public struct CurrentWorkoutView: View {
                         }
 
                         if viewModel.isOutdoorSupported {
-                            WorkoutRouteMapView(points: mapPoints, height: 240)
-                            gpsStatusView
+                            if viewModel.isLocationAuthorized {
+                                WorkoutRouteMapView(points: mapPoints, height: 240)
+                                gpsStatusView
+                            } else {
+                                locationPermissionView
+                            }
 
                             CurrentWorkoutStatsView(
                                 distanceText: viewModel.distanceText,
