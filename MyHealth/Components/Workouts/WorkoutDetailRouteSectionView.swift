@@ -18,22 +18,16 @@ public struct WorkoutDetailRouteSectionView: View {
     }
 
     public var body: some View {
-        Section {
+        WorkoutDetailCardView(title: "Route", actionTitle: "Full Screen", action: onFullScreen) {
             WorkoutRouteMapView(points: points)
-        } header: {
-            HStack {
-                Text("Route")
-                Spacer()
-                Button("Full Screen", action: onFullScreen)
-                    .font(.subheadline.weight(.semibold))
-            }
+                .frame(maxWidth: .infinity)
         }
     }
 }
 
 #if DEBUG
 #Preview {
-    List {
+    ScrollView {
         WorkoutDetailRouteSectionView(
             points: [
                 WorkoutRoutePoint(latitude: 37.332, longitude: -122.031, timestamp: Date(), horizontalAccuracy: nil),
@@ -41,6 +35,7 @@ public struct WorkoutDetailRouteSectionView: View {
             ],
             onFullScreen: {}
         )
+        .padding()
     }
 }
 #endif

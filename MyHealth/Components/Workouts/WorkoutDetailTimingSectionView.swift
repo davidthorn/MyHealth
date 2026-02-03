@@ -18,10 +18,21 @@ public struct WorkoutDetailTimingSectionView: View {
     }
 
     public var body: some View {
-        Section("Timing") {
-            LabeledContent("Start", value: workout.startedAt.formatted(date: .abbreviated, time: .shortened))
-            LabeledContent("End", value: workout.endedAt.formatted(date: .abbreviated, time: .shortened))
-            LabeledContent("Duration", value: durationText ?? "—")
+        WorkoutDetailCardView(title: "Timing") {
+            VStack(spacing: 10) {
+                WorkoutDetailKeyValueRowView(
+                    title: "Start",
+                    value: workout.startedAt.formatted(date: .abbreviated, time: .shortened)
+                )
+                WorkoutDetailKeyValueRowView(
+                    title: "End",
+                    value: workout.endedAt.formatted(date: .abbreviated, time: .shortened)
+                )
+                WorkoutDetailKeyValueRowView(
+                    title: "Duration",
+                    value: durationText ?? "—"
+                )
+            }
         }
     }
 }
@@ -35,8 +46,9 @@ public struct WorkoutDetailTimingSectionView: View {
         startedAt: Date().addingTimeInterval(-1500),
         endedAt: Date()
     )
-    return List {
+    return ScrollView {
         WorkoutDetailTimingSectionView(workout: workout, durationText: "25:00")
+            .padding()
     }
 }
 #endif

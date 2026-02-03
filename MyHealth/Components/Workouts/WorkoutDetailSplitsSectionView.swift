@@ -27,20 +27,22 @@ public struct WorkoutDetailSplitsSectionView: View {
     }
 
     public var body: some View {
-        Section("Splits") {
+        WorkoutDetailCardView(title: "Splits") {
             if splits.isEmpty {
                 Text("Not enough distance to compute splits.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
-                WorkoutSplitsHeaderView()
-                ForEach(splits) { split in
-                    WorkoutSplitRowView(
-                        index: split.index,
-                        durationText: durationText(split),
-                        paceText: paceText(split),
-                        heartRateText: heartRateText(split)
-                    )
+                VStack(spacing: 8) {
+                    WorkoutSplitsHeaderView()
+                    ForEach(splits) { split in
+                        WorkoutSplitRowView(
+                            index: split.index,
+                            durationText: durationText(split),
+                            paceText: paceText(split),
+                            heartRateText: heartRateText(split)
+                        )
+                    }
                 }
             }
         }
@@ -72,13 +74,14 @@ public struct WorkoutDetailSplitsSectionView: View {
             averageHeartRateBpm: 151
         )
     ]
-    return List {
+    return ScrollView {
         WorkoutDetailSplitsSectionView(
             splits: splits,
             durationText: { $0.formattedDurationText },
             paceText: { $0.formattedPaceText },
             heartRateText: { $0.formattedHeartRateText }
         )
+        .padding()
     }
 }
 #endif

@@ -16,7 +16,7 @@ public struct WorkoutDetailHeartRateSectionView: View {
     }
 
     public var body: some View {
-        Section("Heart Rate") {
+        WorkoutDetailCardView(title: "Heart Rate") {
             WorkoutHeartRateLineChartView(points: points)
         }
     }
@@ -29,8 +29,9 @@ public struct WorkoutDetailHeartRateSectionView: View {
         HeartRateRangePoint(date: Date().addingTimeInterval(-200), bpm: 135),
         HeartRateRangePoint(date: Date().addingTimeInterval(-100), bpm: 128)
     ]
-    return List {
+    return ScrollView {
         WorkoutDetailHeartRateSectionView(points: points)
+            .padding()
     }
 }
 #endif
