@@ -12,26 +12,26 @@ import SwiftUI
 public struct WorkoutRouteMapView: View {
     private let points: [WorkoutRoutePoint]
     private let height: CGFloat?
-
+    
     public init(points: [WorkoutRoutePoint], height: CGFloat? = 220) {
         self.points = points
         self.height = height
     }
-
+    
     public var body: some View {
         let mapView = Group {
-            if let region = points.routeRegion {
-                Map(position: .constant(.region(region))) {
-                    if points.count > 1 {
-                        MapPolyline(coordinates: points.routeCoordinates)
-                            .stroke(Color.blue, lineWidth: 4)
-                    }
+            let region = points.routeRegion
+            
+            Map(position: .constant(region.map { .region($0) } ?? .automatic)) {
+                UserAnnotation()
+                
+                if points.count > 1 {
+                    MapPolyline(coordinates: points.routeCoordinates)
+                        .stroke(Color.blue, lineWidth: 4)
                 }
-            } else {
-                Map(position: .constant(.automatic)) { }
             }
         }
-
+        
         mapView
             .frame(maxWidth: .infinity)
             .frame(height: height)

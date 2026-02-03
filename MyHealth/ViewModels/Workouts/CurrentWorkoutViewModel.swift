@@ -26,14 +26,20 @@ public final class CurrentWorkoutViewModel: ObservableObject {
     
     private let service: WorkoutFlowServiceProtocol
     private let locationService: LocationServiceProtocol
+    private let workoutLocationManager: WorkoutLocationManaging
     private var task: Task<Void, Never>?
     private var locationTask: Task<Void, Never>?
     private var timerCancellable: AnyCancellable?
     private let gpsAccuracyThreshold: Double = 25
     
-    public init(service: WorkoutFlowServiceProtocol, locationService: LocationServiceProtocol) {
+    public init(
+        service: WorkoutFlowServiceProtocol,
+        locationService: LocationServiceProtocol,
+        workoutLocationManager: WorkoutLocationManaging
+    ) {
         self.service = service
         self.locationService = locationService
+        self.workoutLocationManager = workoutLocationManager
         self.currentSession = nil
         self.errorMessage = nil
         self.elapsedText = nil
@@ -162,10 +168,15 @@ public final class CurrentWorkoutViewModel: ObservableObject {
             speedText = "—"
             gpsStatusText = nil
             hasGoodGpsFix = false
+            workoutLocationManager.reset()
             return
         }
         
         guard locationTask == nil else { return }
+        if let current = locationService.currentLocation() {
+            currentLocationPoint = current
+            updateGpsStatus()
+        }
         gpsStatusText = "Waiting for GPS…"
         hasGoodGpsFix = false
         locationTask = Task { [weak self] in
@@ -178,8 +189,10 @@ public final class CurrentWorkoutViewModel: ObservableObject {
                 if let accuracy = point.horizontalAccuracy, accuracy > self.gpsAccuracyThreshold {
                     continue
                 }
-                self.routePoints.append(point)
-                self.updateMetrics()
+                if self.workoutLocationManager.shouldAppend(point: point) {
+                    self.routePoints.append(point)
+                    self.updateMetrics()
+                }
             }
         }
     }

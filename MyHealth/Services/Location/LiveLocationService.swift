@@ -22,7 +22,7 @@ public final class LiveLocationService: NSObject, LocationServiceProtocol {
         manager.activityType = .fitness
         manager.pausesLocationUpdatesAutomatically = false
         manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.distanceFilter = 1
+        manager.distanceFilter = 0
     }
     
     public func locationUpdates() -> AsyncStream<WorkoutRoutePoint> {
@@ -38,6 +38,20 @@ public final class LiveLocationService: NSObject, LocationServiceProtocol {
                 }
             }
         }
+    }
+
+    public func currentLocation() -> WorkoutRoutePoint? {
+        requestAuthorizationIfNeeded()
+        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
+            manager.requestLocation()
+        }
+        guard let location = manager.location ?? lastLocation else { return nil }
+        return WorkoutRoutePoint(
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude,
+            timestamp: location.timestamp,
+            horizontalAccuracy: location.horizontalAccuracy
+        )
     }
     
     private func requestAuthorizationIfNeeded() {
@@ -61,9 +75,6 @@ extension LiveLocationService: CLLocationManagerDelegate {
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        if let lastLocation, location.distance(from: lastLocation) < 1 {
-            return
-        }
         lastLocation = location
         let point = WorkoutRoutePoint(
             latitude: location.coordinate.latitude,
@@ -74,5 +85,9 @@ extension LiveLocationService: CLLocationManagerDelegate {
         if let continuation = continuation {
             continuation.yield(point)
         }
+    }
+
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // Swallow transient location errors; a later update may succeed.
     }
 }

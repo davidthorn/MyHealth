@@ -15,13 +15,15 @@ public struct WorkoutsScene: View {
     private let workoutListItemService: WorkoutListItemServiceProtocol
     private let workoutDetailService: WorkoutDetailServiceProtocol
     private let locationService: LocationServiceProtocol
+    private let workoutLocationManager: WorkoutLocationManaging
 
     public init(
         service: WorkoutsServiceProtocol,
         workoutFlowService: WorkoutFlowServiceProtocol,
         workoutListItemService: WorkoutListItemServiceProtocol,
         workoutDetailService: WorkoutDetailServiceProtocol,
-        locationService: LocationServiceProtocol
+        locationService: LocationServiceProtocol,
+        workoutLocationManager: WorkoutLocationManaging
     ) {
         _viewModel = StateObject(wrappedValue: WorkoutsSceneViewModel(service: workoutFlowService))
         self.workoutsService = service
@@ -29,6 +31,7 @@ public struct WorkoutsScene: View {
         self.workoutListItemService = workoutListItemService
         self.workoutDetailService = workoutDetailService
         self.locationService = locationService
+        self.workoutLocationManager = workoutLocationManager
     }
 
     public var body: some View {
@@ -37,7 +40,11 @@ public struct WorkoutsScene: View {
                 if viewModel.currentSession == nil {
                     WorkoutsView(service: workoutsService, workoutListItemService: workoutListItemService)
                 } else {
-                    CurrentWorkoutView(service: workoutFlowService, locationService: locationService)
+                    CurrentWorkoutView(
+                        service: workoutFlowService,
+                        locationService: locationService,
+                        workoutLocationManager: workoutLocationManager
+                    )
                 }
             }
             .navigationTitle("Workouts")

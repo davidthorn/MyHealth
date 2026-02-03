@@ -54,7 +54,8 @@ public struct ContentView: View {
                 workoutFlowService: viewModel.workoutFlowService,
                 workoutListItemService: viewModel.workoutListItemService,
                 workoutDetailService: viewModel.workoutDetailService,
-                locationService: viewModel.locationService
+                locationService: viewModel.locationService,
+                workoutLocationManager: viewModel.workoutLocationManager
             )
             InsightsScene(service: viewModel.insightsService)
             SettingsScene(service: viewModel.settingsService)

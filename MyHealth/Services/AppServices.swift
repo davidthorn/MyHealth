@@ -39,6 +39,7 @@ public struct AppServices: AppServicesProviding {
     public let workoutListItemService: WorkoutListItemServiceProtocol
     public let workoutDetailService: WorkoutDetailServiceProtocol
     public let locationService: LocationServiceProtocol
+    public let workoutLocationManager: WorkoutLocationManaging
     public let nutritionService: NutritionServiceProtocol
     public let nutritionTypeListService: NutritionTypeListServiceProtocol
     public let nutritionEntryDetailService: NutritionEntryDetailServiceProtocol
@@ -75,6 +76,7 @@ public struct AppServices: AppServicesProviding {
         workoutListItemService: WorkoutListItemServiceProtocol,
         workoutDetailService: WorkoutDetailServiceProtocol,
         locationService: LocationServiceProtocol,
+        workoutLocationManager: WorkoutLocationManaging,
         nutritionService: NutritionServiceProtocol,
         nutritionTypeListService: NutritionTypeListServiceProtocol,
         nutritionEntryDetailService: NutritionEntryDetailServiceProtocol,
@@ -110,6 +112,7 @@ public struct AppServices: AppServicesProviding {
         self.workoutListItemService = workoutListItemService
         self.workoutDetailService = workoutDetailService
         self.locationService = locationService
+        self.workoutLocationManager = workoutLocationManager
         self.nutritionService = nutritionService
         self.nutritionTypeListService = nutritionTypeListService
         self.nutritionEntryDetailService = nutritionEntryDetailService
@@ -152,6 +155,7 @@ public struct AppServices: AppServicesProviding {
             workoutListItemService: WorkoutListItemService(workoutSource: workoutSource, heartRateSource: heartRateSource),
             workoutDetailService: WorkoutDetailService(source: workoutSource, heartRateSource: heartRateSource),
             locationService: LiveLocationService(),
+            workoutLocationManager: WorkoutLocationManager(),
             nutritionService: NutritionService(healthKitAdapter: healthKitAdapter),
             nutritionTypeListService: NutritionTypeListService(healthKitAdapter: healthKitAdapter),
             nutritionEntryDetailService: NutritionEntryDetailService(healthKitAdapter: healthKitAdapter),

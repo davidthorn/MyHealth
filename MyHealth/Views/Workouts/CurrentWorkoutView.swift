@@ -11,8 +11,18 @@ import Models
 public struct CurrentWorkoutView: View {
     @StateObject private var viewModel: CurrentWorkoutViewModel
 
-    public init(service: WorkoutFlowServiceProtocol, locationService: LocationServiceProtocol) {
-        _viewModel = StateObject(wrappedValue: CurrentWorkoutViewModel(service: service, locationService: locationService))
+    public init(
+        service: WorkoutFlowServiceProtocol,
+        locationService: LocationServiceProtocol,
+        workoutLocationManager: WorkoutLocationManaging
+    ) {
+        _viewModel = StateObject(
+            wrappedValue: CurrentWorkoutViewModel(
+                service: service,
+                locationService: locationService,
+                workoutLocationManager: workoutLocationManager
+            )
+        )
     }
 
     private var mapPoints: [WorkoutRoutePoint] {
@@ -170,7 +180,8 @@ public struct CurrentWorkoutView: View {
     NavigationStack {
         CurrentWorkoutView(
             service: AppServices.shared.workoutFlowService,
-            locationService: AppServices.shared.locationService
+            locationService: AppServices.shared.locationService,
+            workoutLocationManager: AppServices.shared.workoutLocationManager
         )
     }
 }
