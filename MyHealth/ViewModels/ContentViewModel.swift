@@ -22,6 +22,9 @@ public final class ContentViewModel: ObservableObject {
     public var heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol {
         services.heartRateReadingDetailService
     }
+    public var bloodOxygenDetailService: BloodOxygenDetailServiceProtocol {
+        services.bloodOxygenDetailService
+    }
     public var stepsSummaryService: StepsSummaryServiceProtocol { services.stepsSummaryService }
     public var stepsDetailService: StepsDetailServiceProtocol { services.stepsDetailService }
     public var flightsSummaryService: FlightsSummaryServiceProtocol { services.flightsSummaryService }

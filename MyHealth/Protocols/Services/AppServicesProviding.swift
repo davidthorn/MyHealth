@@ -12,6 +12,7 @@ public protocol AppServicesProviding {
     var metricsService: MetricsServiceProtocol { get }
     var heartRateSummaryService: HeartRateSummaryServiceProtocol { get }
     var heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol { get }
+    var bloodOxygenDetailService: BloodOxygenDetailServiceProtocol { get }
     var stepsSummaryService: StepsSummaryServiceProtocol { get }
     var stepsDetailService: StepsDetailServiceProtocol { get }
     var flightsSummaryService: FlightsSummaryServiceProtocol { get }

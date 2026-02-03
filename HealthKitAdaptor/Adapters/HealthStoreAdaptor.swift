@@ -11,6 +11,7 @@ import HealthKit
 
 public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol,
                                        HealthStoreHeartRateReading,
+                                       HealthStoreBloodOxygenReading,
                                        HealthStoreWorkoutReading,
                                        HealthStoreStepsReading,
                                        HealthStoreFlightsReading,

@@ -16,6 +16,7 @@ public struct AppServices: AppServicesProviding {
     public let metricsService: MetricsServiceProtocol
     public let heartRateSummaryService: HeartRateSummaryServiceProtocol
     public let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
+    public let bloodOxygenDetailService: BloodOxygenDetailServiceProtocol
     public let stepsSummaryService: StepsSummaryServiceProtocol
     public let stepsDetailService: StepsDetailServiceProtocol
     public let flightsSummaryService: FlightsSummaryServiceProtocol
@@ -53,6 +54,7 @@ public struct AppServices: AppServicesProviding {
         metricsService: MetricsServiceProtocol,
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
+        bloodOxygenDetailService: BloodOxygenDetailServiceProtocol,
         stepsSummaryService: StepsSummaryServiceProtocol,
         stepsDetailService: StepsDetailServiceProtocol,
         flightsSummaryService: FlightsSummaryServiceProtocol,
@@ -89,6 +91,7 @@ public struct AppServices: AppServicesProviding {
         self.metricsService = metricsService
         self.heartRateSummaryService = heartRateSummaryService
         self.heartRateReadingDetailService = heartRateReadingDetailService
+        self.bloodOxygenDetailService = bloodOxygenDetailService
         self.stepsSummaryService = stepsSummaryService
         self.stepsDetailService = stepsDetailService
         self.flightsSummaryService = flightsSummaryService
@@ -132,6 +135,7 @@ public struct AppServices: AppServicesProviding {
             metricsService: MetricsService(healthKitAdapter: healthKitAdapter),
             heartRateSummaryService: HeartRateSummaryService(healthKitAdapter: healthKitAdapter),
             heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),
+            bloodOxygenDetailService: BloodOxygenDetailService(healthKitAdapter: healthKitAdapter),
             stepsSummaryService: StepsSummaryService(healthKitAdapter: healthKitAdapter),
             stepsDetailService: StepsDetailService(healthKitAdapter: healthKitAdapter),
             flightsSummaryService: FlightsSummaryService(healthKitAdapter: healthKitAdapter),

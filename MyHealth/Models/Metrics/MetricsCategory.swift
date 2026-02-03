@@ -9,6 +9,7 @@ import Foundation
 
 public enum MetricsCategory: String, CaseIterable, Hashable, Sendable {
     case heartRate
+    case bloodOxygen
     case restingHeartRate
     case steps
     case flights
@@ -21,6 +22,8 @@ public enum MetricsCategory: String, CaseIterable, Hashable, Sendable {
         switch self {
         case .heartRate:
             return "Heart Rate"
+        case .bloodOxygen:
+            return "Blood Oxygen"
         case .restingHeartRate:
             return "Resting HR"
         case .steps:

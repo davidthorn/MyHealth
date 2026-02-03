@@ -25,6 +25,7 @@ public struct ContentView: View {
                 service: viewModel.metricsService,
                 heartRateSummaryService: viewModel.heartRateSummaryService,
                 heartRateReadingDetailService: viewModel.heartRateReadingDetailService,
+                bloodOxygenDetailService: viewModel.bloodOxygenDetailService,
                 stepsSummaryService: viewModel.stepsSummaryService,
                 stepsDetailService: viewModel.stepsDetailService,
                 flightsSummaryService: viewModel.flightsSummaryService,

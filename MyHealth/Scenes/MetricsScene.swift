@@ -12,6 +12,7 @@ public struct MetricsScene: View {
     private let service: MetricsServiceProtocol
     private let heartRateSummaryService: HeartRateSummaryServiceProtocol
     private let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
+    private let bloodOxygenDetailService: BloodOxygenDetailServiceProtocol
     private let stepsSummaryService: StepsSummaryServiceProtocol
     private let stepsDetailService: StepsDetailServiceProtocol
     private let flightsSummaryService: FlightsSummaryServiceProtocol
@@ -35,6 +36,7 @@ public struct MetricsScene: View {
         service: MetricsServiceProtocol,
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
+        bloodOxygenDetailService: BloodOxygenDetailServiceProtocol,
         stepsSummaryService: StepsSummaryServiceProtocol,
         stepsDetailService: StepsDetailServiceProtocol,
         flightsSummaryService: FlightsSummaryServiceProtocol,
@@ -57,6 +59,7 @@ public struct MetricsScene: View {
         self.service = service
         self.heartRateSummaryService = heartRateSummaryService
         self.heartRateReadingDetailService = heartRateReadingDetailService
+        self.bloodOxygenDetailService = bloodOxygenDetailService
         self.stepsSummaryService = stepsSummaryService
         self.stepsDetailService = stepsDetailService
         self.flightsSummaryService = flightsSummaryService
@@ -88,6 +91,8 @@ public struct MetricsScene: View {
                         switch category {
                         case .heartRate:
                             HeartRateSummaryView(service: heartRateSummaryService)
+                        case .bloodOxygen:
+                            BloodOxygenDetailView(service: bloodOxygenDetailService)
                         case .steps:
                             StepsSummaryView(service: stepsSummaryService)
                         case .flights:
@@ -186,6 +191,7 @@ public struct MetricsScene: View {
         service: AppServices.shared.metricsService,
         heartRateSummaryService: AppServices.shared.heartRateSummaryService,
         heartRateReadingDetailService: AppServices.shared.heartRateReadingDetailService,
+        bloodOxygenDetailService: AppServices.shared.bloodOxygenDetailService,
         stepsSummaryService: AppServices.shared.stepsSummaryService,
         stepsDetailService: AppServices.shared.stepsDetailService,
         flightsSummaryService: AppServices.shared.flightsSummaryService,

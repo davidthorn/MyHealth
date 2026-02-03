@@ -64,6 +64,15 @@ public extension MetricsUpdate {
         )
         cards.append(
             summaryCard(
+                category: .bloodOxygen,
+                latestValue: bloodOxygenSummary?.latest?.percent,
+                previousValue: bloodOxygenSummary?.previous.first?.percent,
+                unit: "%",
+                subtitle: "Latest"
+            )
+        )
+        cards.append(
+            summaryCard(
                 category: .restingHeartRate,
                 latestValue: restingHeartRateSummary?.latest?.averageBpm,
                 previousValue: restingHeartRateSummary?.previous.first?.averageBpm,
