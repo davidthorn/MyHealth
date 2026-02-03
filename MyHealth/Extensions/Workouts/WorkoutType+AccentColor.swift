@@ -23,6 +23,8 @@ public extension WorkoutType {
             return Color(red: 0.78, green: 0.42, blue: 0.63)
         case .strength:
             return Color(red: 0.55, green: 0.28, blue: 0.63)
+        case .other:
+            return Color(red: 0.45, green: 0.45, blue: 0.52)
         @unknown default:
             return Color(red: 0.45, green: 0.45, blue: 0.52)
         }

@@ -106,8 +106,10 @@ public actor HealthKitWorkoutSession {
         let routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
         
         if let bundleId = Bundle.main.bundleIdentifier {
-            builder.addMetadata([HKMetadataKeyExternalUUID: UUID().uuidString,
-                                 "MyHealthSourceBundleId": bundleId]) { _, _ in }
+            try await builder.addMetadata([
+                HKMetadataKeyExternalUUID: UUID().uuidString,
+                "MyHealthSourceBundleId": bundleId
+            ])
         }
         self.builder = builder
         self.routeBuilder = routeBuilder

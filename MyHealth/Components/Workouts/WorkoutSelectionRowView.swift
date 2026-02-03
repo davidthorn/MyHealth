@@ -74,6 +74,7 @@ private extension WorkoutSelectionRowView {
         case .strength: return .orange
         case .yoga: return .pink
         case .other: return .gray
+        @unknown default: return .gray
         }
     }
 
@@ -86,6 +87,7 @@ private extension WorkoutSelectionRowView {
         case .strength: return "dumbbell"
         case .yoga: return "figure.yoga"
         case .other: return "figure.mixed.cardio"
+        @unknown default: return "figure.mixed.cardio"
         }
     }
 
@@ -98,6 +100,7 @@ private extension WorkoutSelectionRowView {
         case .strength: return "Sets, reps, and effort"
         case .yoga: return "Flow and recovery"
         case .other: return "General workout session"
+        @unknown default: return "General workout session"
         }
     }
 }

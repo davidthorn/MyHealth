@@ -36,6 +36,7 @@ public struct WorkoutDetailView: View {
                         }
                     }
                     WorkoutDetailTimingSectionView(workout: workout, durationText: viewModel.durationText)
+                    WorkoutDetailMetricsSectionView(workout: workout)
                     if !viewModel.routePoints.isEmpty {
                         WorkoutDetailRouteSectionView(
                             points: viewModel.routePoints,
@@ -111,7 +112,7 @@ public struct WorkoutDetailView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
-        .onChange(of: isDeleteErrorPresented) { isPresented in
+        .onChange(of: isDeleteErrorPresented) { _, isPresented in
             if !isPresented {
                 viewModel.errorMessage = nil
             }
