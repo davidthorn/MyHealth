@@ -5,11 +5,10 @@
 //  Created by Codex.
 //
 
-import Combine
+@preconcurrency import Combine
 import Foundation
 import HealthKit
 
-@MainActor
 public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol,
                                        HealthStoreHeartRateReading,
                                        HealthStoreWorkoutReading,

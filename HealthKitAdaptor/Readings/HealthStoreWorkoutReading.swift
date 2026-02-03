@@ -10,12 +10,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreWorkoutReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreWorkoutReading {
     public func fetchWorkouts() async -> [Workout] {
         return await withCheckedContinuation { continuation in
@@ -70,7 +68,8 @@ extension HealthStoreWorkoutReading {
                 WorkoutRoutePoint(
                     latitude: $0.coordinate.latitude,
                     longitude: $0.coordinate.longitude,
-                    timestamp: $0.timestamp
+                    timestamp: $0.timestamp,
+                    horizontalAccuracy: $0.horizontalAccuracy
                 )
             })
         }

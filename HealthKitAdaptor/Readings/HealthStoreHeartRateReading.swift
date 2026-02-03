@@ -9,12 +9,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreHeartRateReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreHeartRateReading {
     public func fetchHeartRateReadings(limit: Int) async -> [HeartRateReading] {
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return [] }

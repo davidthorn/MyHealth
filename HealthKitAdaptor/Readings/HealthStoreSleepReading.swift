@@ -9,12 +9,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreSleepReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreSleepReading {
     public func fetchSleepAnalysis(days: Int) async -> [SleepDay] {
         guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return [] }

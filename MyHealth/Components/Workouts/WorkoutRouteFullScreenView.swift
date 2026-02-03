@@ -36,9 +36,9 @@ public struct WorkoutRouteFullScreenView: View {
 #if DEBUG
 #Preview {
     WorkoutRouteFullScreenView(points: [
-        WorkoutRoutePoint(latitude: 37.332, longitude: -122.031, timestamp: Date()),
-        WorkoutRoutePoint(latitude: 37.333, longitude: -122.029, timestamp: Date().addingTimeInterval(60)),
-        WorkoutRoutePoint(latitude: 37.334, longitude: -122.028, timestamp: Date().addingTimeInterval(120))
+        WorkoutRoutePoint(latitude: 37.332, longitude: -122.031, timestamp: Date(), horizontalAccuracy: nil),
+        WorkoutRoutePoint(latitude: 37.333, longitude: -122.029, timestamp: Date().addingTimeInterval(60), horizontalAccuracy: nil),
+        WorkoutRoutePoint(latitude: 37.334, longitude: -122.028, timestamp: Date().addingTimeInterval(120), horizontalAccuracy: nil)
     ])
 }
 #endif

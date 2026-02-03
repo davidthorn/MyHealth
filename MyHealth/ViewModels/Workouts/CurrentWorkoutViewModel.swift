@@ -21,12 +21,15 @@ public final class CurrentWorkoutViewModel: ObservableObject {
     @Published public private(set) var paceText: String
     @Published public private(set) var speedText: String
     @Published public private(set) var availableTypes: [WorkoutType]
+    @Published public private(set) var gpsStatusText: String?
+    @Published public private(set) var hasGoodGpsFix: Bool
     
     private let service: WorkoutFlowServiceProtocol
     private let locationService: LocationServiceProtocol
     private var task: Task<Void, Never>?
     private var locationTask: Task<Void, Never>?
     private var timerCancellable: AnyCancellable?
+    private let gpsAccuracyThreshold: Double = 25
     
     public init(service: WorkoutFlowServiceProtocol, locationService: LocationServiceProtocol) {
         self.service = service
@@ -41,6 +44,8 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         self.paceText = "—"
         self.speedText = "—"
         self.availableTypes = WorkoutType.outdoorSupported
+        self.gpsStatusText = nil
+        self.hasGoodGpsFix = false
     }
     
     public func startWorkout(type: WorkoutType) {
@@ -99,9 +104,12 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         Task { [weak self] in
             guard let self else { return }
             do {
+                guard self.canStartWorkout else {
+                    self.errorMessage = "Waiting for a GPS fix before starting."
+                    return
+                }
                 try await service.beginWorkout()
             } catch {
-                print(error)
                 self.errorMessage = error.localizedDescription
             }
         }
@@ -114,6 +122,12 @@ public final class CurrentWorkoutViewModel: ObservableObject {
     public var isOutdoorSupported: Bool {
         guard let type = currentSession?.type else { return false }
         return type == .walking || type == .running || type == .cycling
+    }
+
+    public var canStartWorkout: Bool {
+        guard let session = currentSession else { return false }
+        if session.status != .notStarted { return true }
+        return !isOutdoorSupported || hasGoodGpsFix
     }
     
     private func configureTimer(for session: WorkoutSession?) {
@@ -146,17 +160,24 @@ public final class CurrentWorkoutViewModel: ObservableObject {
             distanceText = "—"
             paceText = "—"
             speedText = "—"
+            gpsStatusText = nil
+            hasGoodGpsFix = false
             return
         }
         
         guard locationTask == nil else { return }
+        gpsStatusText = "Waiting for GPS…"
+        hasGoodGpsFix = false
         locationTask = Task { [weak self] in
             guard let self else { return }
             for await point in locationService.locationUpdates() {
                 guard !Task.isCancelled else { break }
                 self.currentLocationPoint = point
+                self.updateGpsStatus()
                 if self.currentSession?.status != .active { continue }
-                print("Updated points")
+                if let accuracy = point.horizontalAccuracy, accuracy > self.gpsAccuracyThreshold {
+                    continue
+                }
                 self.routePoints.append(point)
                 self.updateMetrics()
             }
@@ -197,6 +218,22 @@ public final class CurrentWorkoutViewModel: ObservableObject {
         }
         
         splits = WorkoutSplitCalculator.splits(from: routePoints)
+    }
+
+    private func updateGpsStatus() {
+        guard let accuracy = currentLocationPoint?.horizontalAccuracy else {
+            gpsStatusText = "Waiting for GPS…"
+            hasGoodGpsFix = false
+            return
+        }
+        let rounded = accuracy.rounded()
+        if accuracy <= gpsAccuracyThreshold {
+            gpsStatusText = "GPS locked (\(Int(rounded)) m)"
+            hasGoodGpsFix = true
+        } else {
+            gpsStatusText = "Waiting for GPS (\(Int(rounded)) m)"
+            hasGoodGpsFix = false
+        }
     }
     
     private func formatDistance(_ meters: Double) -> String {

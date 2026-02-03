@@ -61,7 +61,6 @@ extension LiveLocationService: CLLocationManagerDelegate {
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        guard location.horizontalAccuracy >= 0, location.horizontalAccuracy <= 25 else { return }
         if let lastLocation, location.distance(from: lastLocation) < 1 {
             return
         }
@@ -69,7 +68,8 @@ extension LiveLocationService: CLLocationManagerDelegate {
         let point = WorkoutRoutePoint(
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude,
-            timestamp: location.timestamp
+            timestamp: location.timestamp,
+            horizontalAccuracy: location.horizontalAccuracy
         )
         if let continuation = continuation {
             continuation.yield(point)

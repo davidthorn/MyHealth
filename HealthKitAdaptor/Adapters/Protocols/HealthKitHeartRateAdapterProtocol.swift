@@ -8,7 +8,7 @@
 import Foundation
 import Models
 
-public protocol HealthKitHeartRateAdapterProtocol {
+public protocol HealthKitHeartRateAdapterProtocol: Sendable {
     func requestAuthorization() async -> Bool
     func heartRateSummaryStream() -> AsyncStream<HeartRateSummary>
     func heartRateReading(id: UUID) async throws -> HeartRateReading

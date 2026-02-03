@@ -9,12 +9,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreStepsReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreStepsReading {
     public func fetchStepCounts(days: Int) async -> [StepsDay] {
         guard let stepsType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return [] }

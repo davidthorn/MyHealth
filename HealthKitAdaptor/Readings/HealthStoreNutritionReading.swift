@@ -9,12 +9,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreNutritionReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreNutritionReading {
     public func fetchNutritionSamples(type: NutritionType, limit: Int) async -> [NutritionSample] {
         guard let identifier = type.quantityIdentifier,

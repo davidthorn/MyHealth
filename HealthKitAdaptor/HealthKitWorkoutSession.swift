@@ -10,6 +10,7 @@
 
 import Foundation
 import HealthKit
+import Models
 
 public protocol WorkoutTypeConvertible: Sendable {
     var healthKitActivityType: HKWorkoutActivityType { get }
@@ -20,11 +21,13 @@ public enum HealthKitWorkoutSessionError: Error, Sendable {
     case alreadyActive
     case notActive
     case notSupportedOnThisPlatform
+    case authorizationDenied
 }
 
-public actor HealthKitWorkoutSessionActor {
+public actor HealthKitWorkoutSession {
     
     private let healthStore: HKHealthStore
+    private let authorizationProvider: HealthAuthorizationProviding
     
     // Shared state
     private var startedAt: Date?
@@ -42,8 +45,12 @@ public actor HealthKitWorkoutSessionActor {
     private var builder: HKWorkoutBuilder?
 #endif
     
-    public init(healthStore: HKHealthStore) {
+    public init(
+        healthStore: HKHealthStore,
+        authorizationProvider: HealthAuthorizationProviding
+    ) {
         self.healthStore = healthStore
+        self.authorizationProvider = authorizationProvider
     }
     
     // MARK: - Public API
@@ -52,6 +59,10 @@ public actor HealthKitWorkoutSessionActor {
         type: T,
         at startDate: Date = Date()
     ) async throws {
+        let authorized = await authorizationProvider.requestCreateWorkoutAuthorization()
+        guard authorized else {
+            throw HealthKitWorkoutSessionError.authorizationDenied
+        }
         guard startedAt == nil else { throw HealthKitWorkoutSessionError.alreadyActive }
         
 #if os(watchOS)
@@ -222,13 +233,31 @@ public actor HealthKitWorkoutSessionActor {
     }
 }
 
+extension HealthKitWorkoutSession: HealthKitWorkoutSessionManaging {
+    public func beginWorkout(type: WorkoutType) async throws {
+        try await start(type: type)
+    }
+
+    public func pauseWorkout() async throws {
+        try await pause()
+    }
+
+    public func resumeWorkout() async throws {
+        try await resume()
+    }
+
+    public func endWorkout() async throws {
+        _ = try await end()
+    }
+}
+
 #if os(watchOS)
 // MARK: - Delegate Bridges (required by HealthKit)
 
 private final class SessionDelegateBridge: NSObject, HKWorkoutSessionDelegate {
-    unowned let actor: HealthKitWorkoutSessionActor
+    unowned let actor: HealthKitWorkoutSession
     
-    init(actor: HealthKitWorkoutSessionActor) {
+    init(actor: HealthKitWorkoutSession) {
         self.actor = actor
         super.init()
     }
@@ -248,9 +277,9 @@ private final class SessionDelegateBridge: NSObject, HKWorkoutSessionDelegate {
 }
 
 private final class BuilderDelegateBridge: NSObject, HKLiveWorkoutBuilderDelegate {
-    unowned let actor: HealthKitWorkoutSessionActor
+    unowned let actor: HealthKitWorkoutSession
     
-    init(actor: HealthKitWorkoutSessionActor) {
+    init(actor: HealthKitWorkoutSession) {
         self.actor = actor
         super.init()
     }

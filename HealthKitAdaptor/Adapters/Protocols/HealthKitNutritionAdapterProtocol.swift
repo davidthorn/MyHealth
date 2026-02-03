@@ -8,7 +8,7 @@
 import Foundation
 import Models
 
-public protocol HealthKitNutritionAdapterProtocol {
+public protocol HealthKitNutritionAdapterProtocol: Sendable {
     func requestReadAuthorization(type: NutritionType) async -> Bool
     func requestWriteAuthorization(type: NutritionType) async -> Bool
     func nutritionTypes() -> [NutritionType]

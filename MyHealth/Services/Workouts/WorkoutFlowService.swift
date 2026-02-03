@@ -84,7 +84,7 @@ public final class WorkoutFlowService: WorkoutFlowServiceProtocol {
             subject.send(currentUpdate())
             return
         }
-        guard let startedAt = session.startedAt, session.status != .notStarted else {
+        guard let _ = session.startedAt, session.status != .notStarted else {
             currentSession = nil
             subject.send(currentUpdate())
             return

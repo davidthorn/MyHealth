@@ -17,18 +17,18 @@ public actor WorkoutStore: WorkoutStoreProtocol {
     }
 
     public func beginWorkout(type: WorkoutType) async throws {
-        try await healthKitAdapter.beginWorkout(type: type)
+        try await healthKitAdapter.workoutSession.beginWorkout(type: type)
     }
 
     public func pauseWorkout() async throws {
-        try await healthKitAdapter.pauseWorkout()
+        try await healthKitAdapter.workoutSession.pauseWorkout()
     }
 
     public func resumeWorkout() async throws {
-        try await healthKitAdapter.resumeWorkout()
+        try await healthKitAdapter.workoutSession.resumeWorkout()
     }
 
     public func endWorkout() async throws {
-        try await healthKitAdapter.endWorkout()
+        try await healthKitAdapter.workoutSession.endWorkout()
     }
 }

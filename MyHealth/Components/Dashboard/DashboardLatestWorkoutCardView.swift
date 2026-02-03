@@ -92,9 +92,9 @@ private struct WorkoutMetaPillView: View {
                 endedAt: Date()
             ),
             routePoints: [
-                WorkoutRoutePoint(latitude: 37.332, longitude: -122.031, timestamp: Date().addingTimeInterval(-3600)),
-                WorkoutRoutePoint(latitude: 37.333, longitude: -122.029, timestamp: Date().addingTimeInterval(-3300)),
-                WorkoutRoutePoint(latitude: 37.334, longitude: -122.028, timestamp: Date().addingTimeInterval(-3000))
+                WorkoutRoutePoint(latitude: 37.332, longitude: -122.031, timestamp: Date().addingTimeInterval(-3600), horizontalAccuracy: nil),
+                WorkoutRoutePoint(latitude: 37.333, longitude: -122.029, timestamp: Date().addingTimeInterval(-3300), horizontalAccuracy: nil),
+                WorkoutRoutePoint(latitude: 37.334, longitude: -122.028, timestamp: Date().addingTimeInterval(-3000), horizontalAccuracy: nil)
             ],
             heartRatePoints: [
                 HeartRateRangePoint(date: Date().addingTimeInterval(-3300), bpm: 98),

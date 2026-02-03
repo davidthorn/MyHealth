@@ -8,7 +8,6 @@
 import HealthKit
 import Models
 
-@MainActor
 public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
     private let healthStore: HKHealthStore
 

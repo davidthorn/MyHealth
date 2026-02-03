@@ -8,7 +8,6 @@
 import Foundation
 import Models
 
-@MainActor
 public final class HealthKitStepsAdapter: HealthKitStepsAdapterProtocol {
     private let storeAdaptor: HealthStoreAdaptorProtocol
 

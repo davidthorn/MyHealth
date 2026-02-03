@@ -9,12 +9,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreStandHoursReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreStandHoursReading {
     public func fetchStandHourCounts(days: Int) async -> [StandHourDay] {
         guard let standType = HKObjectType.categoryType(forIdentifier: .appleStandHour) else { return [] }

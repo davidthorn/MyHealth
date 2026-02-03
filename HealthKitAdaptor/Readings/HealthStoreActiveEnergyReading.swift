@@ -9,12 +9,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreActiveEnergyReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreActiveEnergyReading {
     public func fetchActiveEnergy(days: Int) async -> [CaloriesDay] {
         guard let activeType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) else { return [] }

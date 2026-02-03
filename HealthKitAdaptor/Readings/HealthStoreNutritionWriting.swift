@@ -9,13 +9,11 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreNutritionWriting {
     var healthStore: HKHealthStore { get }
     func notifyNutritionChanged()
 }
 
-@MainActor
 extension HealthStoreNutritionWriting {
     public func saveNutritionSample(_ sample: NutritionSample) async throws {
         guard let identifier = sample.type.quantityIdentifier,

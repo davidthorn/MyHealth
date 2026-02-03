@@ -9,12 +9,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreActivitySummaryReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreActivitySummaryReading {
     public func fetchActivitySummaries(days: Int) async -> [ActivityRingsDay] {
         let safeDays = max(days, 1)

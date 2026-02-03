@@ -9,12 +9,10 @@ import Foundation
 import HealthKit
 import Models
 
-@MainActor
 internal protocol HealthStoreFlightsReading {
     var healthStore: HKHealthStore { get }
 }
 
-@MainActor
 extension HealthStoreFlightsReading {
     public func fetchFlightCounts(days: Int) async -> [FlightsDay] {
         guard let flightsType = HKQuantityType.quantityType(forIdentifier: .flightsClimbed) else { return [] }

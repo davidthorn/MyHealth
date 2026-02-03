@@ -15,6 +15,22 @@ public struct CurrentWorkoutView: View {
         _viewModel = StateObject(wrappedValue: CurrentWorkoutViewModel(service: service, locationService: locationService))
     }
 
+    private var mapPoints: [WorkoutRoutePoint] {
+        if viewModel.routePoints.isEmpty {
+            return viewModel.currentLocationPoint.map { [$0] } ?? []
+        }
+        return viewModel.routePoints
+    }
+
+    @ViewBuilder
+    private var gpsStatusView: some View {
+        if let gpsStatusText = viewModel.gpsStatusText, viewModel.currentSession?.status == .notStarted {
+            Text(gpsStatusText)
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(viewModel.hasGoodGpsFix ? Color.secondary : Color.orange)
+        }
+    }
+
     public var body: some View {
         Group {
             if let session = viewModel.currentSession {
@@ -41,10 +57,8 @@ public struct CurrentWorkoutView: View {
                         }
 
                         if viewModel.isOutdoorSupported {
-                            let mapPoints = viewModel.routePoints.isEmpty
-                                ? (viewModel.currentLocationPoint.map { [$0] } ?? [])
-                                : viewModel.routePoints
                             WorkoutRouteMapView(points: mapPoints, height: 240)
+                            gpsStatusView
 
                             CurrentWorkoutStatsView(
                                 distanceText: viewModel.distanceText,
@@ -83,6 +97,7 @@ public struct CurrentWorkoutView: View {
                                         .frame(maxWidth: .infinity)
                                 }
                                 .buttonStyle(.borderedProminent)
+                                .disabled(!viewModel.canStartWorkout)
                             case .paused:
                                 Button {
                                     viewModel.resumeWorkout()

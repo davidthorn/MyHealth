@@ -8,7 +8,7 @@
 import HealthKit
 import Models
 
-public protocol HealthAuthorizationProviding {
+public protocol HealthAuthorizationProviding: Sendable {
     func requestAuthorization(readTypes: Set<HKObjectType>) async -> Bool
     func requestAllAuthorization() async -> Bool
     func requestWorkoutAuthorization() async -> Bool

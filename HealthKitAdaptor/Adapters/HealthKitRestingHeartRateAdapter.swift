@@ -8,7 +8,6 @@
 import Foundation
 import Models
 
-@MainActor
 public final class HealthKitRestingHeartRateAdapter: HealthKitRestingHeartRateAdapterProtocol {
     private let storeAdaptor: HealthStoreAdaptorProtocol
 

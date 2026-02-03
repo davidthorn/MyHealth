@@ -8,10 +8,10 @@
 import Foundation
 import Models
 
-@MainActor
 public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let storeAdaptor: HealthStoreAdaptorProtocol
     private let workouts: HealthKitWorkoutAdapterProtocol
+    public let workoutSession: HealthKitWorkoutSessionManaging
     private let heartRates: HealthKitHeartRateAdapterProtocol
     private let steps: HealthKitStepsAdapterProtocol
     private let flights: HealthKitFlightsAdapterProtocol
@@ -29,6 +29,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     public init(
         storeAdaptor: HealthStoreAdaptorProtocol,
         workouts: HealthKitWorkoutAdapterProtocol,
+        workoutSession: HealthKitWorkoutSessionManaging,
         heartRates: HealthKitHeartRateAdapterProtocol,
         steps: HealthKitStepsAdapterProtocol,
         flights: HealthKitFlightsAdapterProtocol,
@@ -41,6 +42,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     ) {
         self.storeAdaptor = storeAdaptor
         self.workouts = workouts
+        self.workoutSession = workoutSession
         self.heartRates = heartRates
         self.steps = steps
         self.flights = flights
@@ -57,6 +59,10 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         return HealthKitAdapter(
             storeAdaptor: storeAdaptor,
             workouts: HealthKitWorkoutAdapter(storeAdaptor: storeAdaptor),
+            workoutSession: HealthKitWorkoutSession(
+                healthStore: storeAdaptor.healthStore,
+                authorizationProvider: storeAdaptor.authorizationProvider
+            ),
             heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor),
             steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor),
             flights: HealthKitFlightsAdapter(storeAdaptor: storeAdaptor),
@@ -83,22 +89,6 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func deleteWorkout(id: UUID) async throws {
         try await workouts.deleteWorkout(id: id)
-    }
-
-    public func beginWorkout(type: WorkoutType) async throws {
-        try await workouts.beginWorkout(type: type)
-    }
-
-    public func pauseWorkout() async throws {
-        try await workouts.pauseWorkout()
-    }
-
-    public func resumeWorkout() async throws {
-        try await workouts.resumeWorkout()
-    }
-
-    public func endWorkout() async throws {
-        try await workouts.endWorkout()
     }
 
     public func heartRateSummaryStream() -> AsyncStream<HeartRateSummary> {

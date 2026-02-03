@@ -8,7 +8,7 @@
 import Foundation
 import Models
 
-public protocol HealthKitStandHoursAdapterProtocol {
+public protocol HealthKitStandHoursAdapterProtocol: Sendable {
     func requestAuthorization() async -> Bool
     func standHoursSummaryStream(days: Int) -> AsyncStream<StandHoursSummary>
 }

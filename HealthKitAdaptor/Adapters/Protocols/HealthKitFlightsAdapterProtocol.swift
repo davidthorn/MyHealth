@@ -8,7 +8,7 @@
 import Foundation
 import Models
 
-public protocol HealthKitFlightsAdapterProtocol {
+public protocol HealthKitFlightsAdapterProtocol: Sendable {
     func requestAuthorization() async -> Bool
     func flightsSummaryStream(days: Int) -> AsyncStream<FlightsSummary>
 }
