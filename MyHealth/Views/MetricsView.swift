@@ -17,138 +17,157 @@ public struct MetricsView: View {
 
     public var body: some View {
         ScrollView(.vertical) {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Today")
-                        .font(.headline)
-                    if let lastUpdated = viewModel.lastUpdated {
-                        Text("Last updated \(lastUpdated, format: .relative(presentation: .named))")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ForEach(Array(viewModel.summaryCards.enumerated()), id: \.offset) { _, card in
-                        NavigationLink(value: viewModel.route(for: card.category)) {
-                            MetricSummaryCardView(
-                                title: card.category.title,
-                                value: card.value,
-                                subtitle: card.subtitle,
-                                trend: card.trend
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .simultaneousGesture(TapGesture().onEnded {
-                            viewModel.selectMetric(card.category)
-                        })
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 90), spacing: 8)], alignment: .leading, spacing: 8) {
-                        ForEach(viewModel.ranges, id: \.self) { range in
-                            MetricFilterChipView(
-                                title: range.title,
-                                isSelected: viewModel.selectedRange == range
-                            ) {
-                                viewModel.selectRange(range)
-                            }
-                        }
-                    }
-
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 8)], alignment: .leading, spacing: 8) {
-                        ForEach(viewModel.metrics, id: \.self) { metric in
-                            MetricFilterChipView(
-                                title: metric.title,
-                                isSelected: viewModel.selectedMetric == metric
-                            ) {
-                                viewModel.selectMetric(metric)
-                            }
-                        }
-                    }
-                }
-                // codex this is the place I want it.
-                if let latest = viewModel.restingHeartRateSummary?.latest {
-                    MetricsRestingHeartRateLatestCardView(
-                        latest: latest,
-                        chartPoints: viewModel.latestRestingHeartRatePoints()
-                    )
-                } else {
-                    ContentUnavailableView(
-                        "No Resting Heart Rate",
-                        systemImage: "heart",
-                        description: Text("Resting heart rate will appear once recorded.")
-                    )
-                    .frame(maxWidth: .infinity)
-                }
-
-                if let nutritionSummary = viewModel.nutritionSummary {
-                    MetricsNutritionSummaryCardView(
-                        summary: nutritionSummary,
-                        selectedWindow: Binding(
-                            get: { viewModel.nutritionWindow },
-                            set: { viewModel.selectNutritionWindow($0) }
-                        ),
-                        windows: viewModel.nutritionWindows
-                    )
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text(viewModel.selectedMetric.title)
-                                .font(.headline)
-                            Spacer()
-                        NavigationLink("Details", value: viewModel.metricRoute())
-                            .font(.subheadline.weight(.semibold))
-                    }
-
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(Color.secondary.opacity(0.1))
-                        VStack(spacing: 8) {
-                            Image(systemName: "waveform.path.ecg")
-                                .font(.title2)
-                                .foregroundStyle(.secondary)
-                            Text("Chart Placeholder")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .frame(height: 220)
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Key Stats")
-                        .font(.headline)
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        ForEach(Array(viewModel.statItems.enumerated()), id: \.offset) { _, item in
-                            MetricStatTileView(title: item.title, value: item.value)
-                        }
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Insights")
-                        .font(.headline)
-                    VStack(spacing: 12) {
-                        ForEach(Array(viewModel.insights.enumerated()), id: \.offset) { _, insight in
-                            MetricsInsightCardView(title: insight.title, detail: insight.detail)
-                        }
-                    }
-                }
+            LazyVStack(alignment: .leading, spacing: 24) {
+                headerSection
+                highlightsSection
+                restingHeartRateSection
+                nutritionSection
+                allMetricsSection
+                keyStatsSection
+                insightsSection
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
             .padding(.vertical, 20)
         }
         .scrollIndicators(.hidden)
+        .background(backgroundView)
         .task {
             viewModel.start()
         }
         .onDisappear {
             viewModel.stop()
         }
+    }
+}
+
+private extension MetricsView {
+    var headerSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Today")
+                .font(.title2.weight(.bold))
+            if let lastUpdated = viewModel.lastUpdated {
+                Text("Last updated \(lastUpdated, format: .relative(presentation: .named))")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    var highlightsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Highlights")
+                .font(.headline)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(Array(viewModel.highlightCards.enumerated()), id: \.offset) { _, card in
+                    NavigationLink(value: viewModel.route(for: card.category)) {
+                        MetricSummaryCardView(
+                            title: card.category.title,
+                            value: card.value,
+                            subtitle: card.subtitle,
+                            trend: card.trend
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .simultaneousGesture(TapGesture().onEnded {
+                        viewModel.selectMetric(card.category)
+                    })
+                }
+            }
+        }
+    }
+
+    var restingHeartRateSection: some View {
+        Group {
+            if let latest = viewModel.restingHeartRateSummary?.latest {
+                MetricsRestingHeartRateLatestCardView(
+                    latest: latest,
+                    chartPoints: viewModel.latestRestingHeartRatePoints()
+                )
+            } else {
+                ContentUnavailableView(
+                    "No Resting Heart Rate",
+                    systemImage: "heart",
+                    description: Text("Resting heart rate will appear once recorded.")
+                )
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    var nutritionSection: some View {
+        Group {
+            if let nutritionSummary = viewModel.nutritionSummary {
+                MetricsNutritionSummaryCardView(
+                    summary: nutritionSummary,
+                    selectedWindow: Binding(
+                        get: { viewModel.nutritionWindow },
+                        set: { viewModel.selectNutritionWindow($0) }
+                    ),
+                    windows: viewModel.nutritionWindows
+                )
+            }
+        }
+    }
+
+    var allMetricsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("All Metrics")
+                .font(.headline)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(Array(viewModel.otherCards.enumerated()), id: \.offset) { _, card in
+                    NavigationLink(value: viewModel.route(for: card.category)) {
+                        MetricSummaryCardView(
+                            title: card.category.title,
+                            value: card.value,
+                            subtitle: card.subtitle,
+                            trend: card.trend
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .simultaneousGesture(TapGesture().onEnded {
+                        viewModel.selectMetric(card.category)
+                    })
+                }
+            }
+        }
+    }
+
+    var keyStatsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Key Stats")
+                .font(.headline)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(Array(viewModel.statItems.enumerated()), id: \.offset) { _, item in
+                    MetricStatTileView(title: item.title, value: item.value)
+                }
+            }
+        }
+    }
+
+    var insightsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Insights")
+                .font(.headline)
+            VStack(spacing: 12) {
+                ForEach(Array(viewModel.insights.enumerated()), id: \.offset) { _, insight in
+                    MetricsInsightCardView(title: insight.title, detail: insight.detail)
+                }
+            }
+        }
+    }
+
+    var backgroundView: some View {
+        LinearGradient(
+            colors: [
+                Color.orange.opacity(0.12),
+                Color.green.opacity(0.08),
+                Color.clear
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
     }
 }
 

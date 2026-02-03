@@ -29,6 +29,7 @@ public final class MetricsViewModel: ObservableObject {
     public let ranges: [MetricsRange]
     public let metrics: [MetricsCategory]
     public let nutritionWindows: [NutritionWindow]
+    private let highlightCategories: Set<MetricsCategory>
     public init(service: MetricsServiceProtocol) {
         self.service = service
         self.title = "Metrics"
@@ -44,6 +45,7 @@ public final class MetricsViewModel: ObservableObject {
         self.insights = []
         self.nutritionSummary = nil
         self.nutritionWindow = .today
+        self.highlightCategories = [.activityRings, .steps, .calories, .sleep]
     }
 
     public func start() {
@@ -95,6 +97,14 @@ public final class MetricsViewModel: ObservableObject {
     public func latestRestingHeartRatePoints() -> [HeartRateRangePoint] {
         guard let summary = restingHeartRateSummary else { return [] }
         return summary.rangePoints()
+    }
+
+    public var highlightCards: [MetricsSummaryCard] {
+        summaryCards.filter { highlightCategories.contains($0.category) }
+    }
+
+    public var otherCards: [MetricsSummaryCard] {
+        summaryCards.filter { !highlightCategories.contains($0.category) }
     }
 
     private func refreshNutritionSummary() {

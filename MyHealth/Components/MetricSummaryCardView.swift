@@ -22,22 +22,29 @@ public struct MetricSummaryCardView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
+            HStack(alignment: .top) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
                 Spacer()
                 Text(trend)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
             }
             Text(value)
                 .font(.title2.weight(.bold))
             Text(subtitle)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+            Spacer(minLength: 0)
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 10)
+        .padding(.horizontal, 14)
+        .padding(.bottom, 14)
+        .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 150, alignment: .topLeading)
         .background(Color.secondary.opacity(0.12))
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
