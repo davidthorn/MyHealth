@@ -19,6 +19,7 @@ public struct InsightItem: Hashable, Sendable, Identifiable {
     public let recoveryReadiness: RecoveryReadinessInsight?
     public let workoutLoadTrend: WorkoutLoadTrendInsight?
     public let workoutRecoveryBalance: WorkoutRecoveryBalanceInsight?
+    public let cardioFitnessTrend: CardioFitnessTrendInsight?
 
     public var id: InsightType { type }
 
@@ -33,7 +34,8 @@ public struct InsightItem: Hashable, Sendable, Identifiable {
         workoutHighlights: WorkoutHighlightsInsight? = nil,
         recoveryReadiness: RecoveryReadinessInsight? = nil,
         workoutLoadTrend: WorkoutLoadTrendInsight? = nil,
-        workoutRecoveryBalance: WorkoutRecoveryBalanceInsight? = nil
+        workoutRecoveryBalance: WorkoutRecoveryBalanceInsight? = nil,
+        cardioFitnessTrend: CardioFitnessTrendInsight? = nil
     ) {
         self.type = type
         self.title = title
@@ -46,5 +48,6 @@ public struct InsightItem: Hashable, Sendable, Identifiable {
         self.recoveryReadiness = recoveryReadiness
         self.workoutLoadTrend = workoutLoadTrend
         self.workoutRecoveryBalance = workoutRecoveryBalance
+        self.cardioFitnessTrend = cardioFitnessTrend
     }
 }

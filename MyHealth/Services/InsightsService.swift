@@ -23,7 +23,8 @@ public final class InsightsService: InsightsServiceProtocol {
         let heartRate = await healthKitAdapter.authorizationProvider.requestHeartRateAuthorization()
         let resting = await healthKitAdapter.authorizationProvider.requestRestingHeartRateAuthorization()
         let hrv = await healthKitAdapter.authorizationProvider.requestHeartRateVariabilityAuthorization()
-        return activity || workouts || heartRate || resting || hrv
+        let cardio = await healthKitAdapter.authorizationProvider.requestCardioFitnessAuthorization()
+        return activity || workouts || heartRate || resting || hrv || cardio
     }
 
     public func updates() -> AsyncStream<InsightsUpdate> {
@@ -36,7 +37,8 @@ public final class InsightsService: InsightsServiceProtocol {
                 let heartRateAuthorized = await healthKitAdapter.authorizationProvider.requestHeartRateAuthorization()
                 let restingAuthorized = await healthKitAdapter.authorizationProvider.requestRestingHeartRateAuthorization()
                 let hrvAuthorized = await healthKitAdapter.authorizationProvider.requestHeartRateVariabilityAuthorization()
-                let isAuthorized = activityAuthorized || workoutsAuthorized || heartRateAuthorized || restingAuthorized || hrvAuthorized
+                let cardioFitnessAuthorized = await healthKitAdapter.authorizationProvider.requestCardioFitnessAuthorization()
+                let isAuthorized = activityAuthorized || workoutsAuthorized || heartRateAuthorized || restingAuthorized || hrvAuthorized || cardioFitnessAuthorized
                 guard !Task.isCancelled else { return }
                 guard isAuthorized else {
                     continuation.yield(InsightsUpdate(title: "Insights", isAuthorized: false, insights: []))
@@ -90,6 +92,13 @@ public final class InsightsService: InsightsServiceProtocol {
                     )
                     if let balanceInsight {
                         insights.append(balanceInsight)
+                    }
+                }
+
+                if cardioFitnessAuthorized {
+                    let cardioInsight = await buildCardioFitnessTrendInsight()
+                    if let cardioInsight {
+                        insights.append(cardioInsight)
                     }
                 }
 
@@ -259,6 +268,26 @@ public final class InsightsService: InsightsServiceProtocol {
         )
     }
 
+    private func buildCardioFitnessTrendInsight() async -> InsightItem? {
+        let builder = CardioFitnessTrendInsightBuilder(healthKitAdapter: healthKitAdapter)
+        guard let insight = await builder.build() else { return nil }
+
+        let latestText = insight.latestReading.map { "\(formatNumber($0.vo2Max)) ml/kg/min" } ?? "—"
+        let averageText = insight.currentAverage.map { "\(formatNumber($0)) avg" } ?? "No average"
+        let summaryText = "Latest \(latestText) • \(averageText)"
+        let detailText = trendDetailText(current: insight.currentAverage, previous: insight.previousAverage)
+
+        return InsightItem(
+            type: .cardioFitnessTrend,
+            title: InsightType.cardioFitnessTrend.title,
+            summary: summaryText,
+            detail: detailText,
+            status: insight.status.title,
+            icon: "wind",
+            cardioFitnessTrend: insight
+        )
+    }
+
     private func formatNumber(_ value: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -306,6 +335,13 @@ public final class InsightsService: InsightsServiceProtocol {
             parts.append("HRV \(formatNumber(hrv)) ms")
         }
         return parts.isEmpty ? "Recovery signals unavailable" : parts.joined(separator: " • ")
+    }
+
+    private func trendDetailText(current: Double?, previous: Double?) -> String {
+        guard let current, let previous else { return "Trend data unavailable" }
+        let delta = current - previous
+        let direction = delta > 0 ? "Up" : (delta < 0 ? "Down" : "Steady")
+        return "\(direction) \(formatNumber(abs(delta))) vs prior period"
     }
 
 }
