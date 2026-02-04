@@ -22,10 +22,10 @@ public extension MetricsUpdate {
             rangeValue = "—"
         }
         return [
-            ("Average", latestBpm.map { "\(formatNumber($0)) bpm" } ?? "—"),
-            ("Peak", maxBpm.map { "\(formatNumber($0)) bpm" } ?? "—"),
-            ("Resting", restingBpm.map { "\(formatNumber($0)) bpm" } ?? "—"),
-            ("Range", rangeValue)
+            ("Average HR", latestBpm.map { "\(formatNumber($0)) bpm" } ?? "—"),
+            ("Peak HR", maxBpm.map { "\(formatNumber($0)) bpm" } ?? "—"),
+            ("Resting HR", restingBpm.map { "\(formatNumber($0)) bpm" } ?? "—"),
+            ("HR Range", rangeValue)
         ]
     }
 
@@ -67,9 +67,9 @@ public extension MetricsUpdate {
                 category: .cardioFitness,
                 latestValue: cardioFitnessSummary?.latest?.vo2Max,
                 previousValue: cardioFitnessSummary?.previous.first?.vo2Max,
-                unit: nil,
+                unit: "ml/kg/min",
                 subtitle: "Latest",
-                formatter: { "\(formatNumber($0, decimals: 1)) ml/kg/min" }
+                formatter: { formatNumber($0, decimals: 1) }
             )
         )
         cards.append(
@@ -181,7 +181,7 @@ private extension MetricsUpdate {
             if let formatter {
                 value = formatter(latestValue)
             } else if let unit {
-                value = "\(formatNumber(latestValue)) \(unit)"
+                value = formatNumber(latestValue)
             } else {
                 value = formatNumber(latestValue)
             }
@@ -189,7 +189,7 @@ private extension MetricsUpdate {
             value = "—"
         }
         let trend = trendString(latest: latestValue, previous: previousValue, unit: unit)
-        return MetricsSummaryCard(category: category, value: value, subtitle: subtitle, trend: trend)
+        return MetricsSummaryCard(category: category, value: value, unit: unit, subtitle: subtitle, trend: trend)
     }
 
     func summaryCard(
@@ -198,7 +198,7 @@ private extension MetricsUpdate {
         subtitle: String,
         trend: String
     ) -> MetricsSummaryCard {
-        MetricsSummaryCard(category: category, value: value, subtitle: subtitle, trend: trend)
+        MetricsSummaryCard(category: category, value: value, unit: nil, subtitle: subtitle, trend: trend)
     }
 
     func trendString(latest: Double?, previous: Double?, unit: String?) -> String {

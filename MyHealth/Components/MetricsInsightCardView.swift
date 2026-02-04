@@ -21,6 +21,8 @@ public struct MetricsInsightCardView: View {
             HStack(spacing: 10) {
                 Image(systemName: "sparkles")
                     .foregroundStyle(Color.accentColor)
+                    .frame(width: 22, height: 22)
+                    .background(Color.accentColor.opacity(0.15), in: Circle())
                 Text(title)
                     .font(.subheadline.weight(.semibold))
             }
@@ -32,8 +34,7 @@ public struct MetricsInsightCardView: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.secondary.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(Color(UIColor.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 

@@ -31,7 +31,6 @@ public struct MetricsView: View {
             .padding(.vertical, 20)
         }
         .scrollIndicators(.hidden)
-        .background(backgroundView)
         .task {
             viewModel.start()
         }
@@ -62,8 +61,9 @@ private extension MetricsView {
                 ForEach(Array(viewModel.highlightCards.enumerated()), id: \.offset) { _, card in
                     NavigationLink(value: viewModel.route(for: card.category)) {
                         MetricSummaryCardView(
-                            title: card.category.title,
+                            category: card.category,
                             value: card.value,
+                            unit: card.unit,
                             subtitle: card.subtitle,
                             trend: card.trend
                         )
@@ -118,8 +118,9 @@ private extension MetricsView {
                 ForEach(Array(viewModel.otherCards.enumerated()), id: \.offset) { _, card in
                     NavigationLink(value: viewModel.route(for: card.category)) {
                         MetricSummaryCardView(
-                            title: card.category.title,
+                            category: card.category,
                             value: card.value,
+                            unit: card.unit,
                             subtitle: card.subtitle,
                             trend: card.trend
                         )
@@ -157,18 +158,6 @@ private extension MetricsView {
         }
     }
 
-    var backgroundView: some View {
-        LinearGradient(
-            colors: [
-                Color.orange.opacity(0.12),
-                Color.green.opacity(0.08),
-                Color.clear
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .ignoresSafeArea()
-    }
 }
 
 #if DEBUG

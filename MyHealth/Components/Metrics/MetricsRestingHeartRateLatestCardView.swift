@@ -19,30 +19,34 @@ public struct MetricsRestingHeartRateLatestCardView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Latest Resting Heart Rate")
-                .font(.headline)
-            VStack(spacing: 12) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("\(Int(latest.averageBpm.rounded())) bpm")
-                            .font(.title3.weight(.semibold))
-                        Text(latest.date.formatted(date: .abbreviated, time: .omitted))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Image(systemName: "heart.fill")
-                        .foregroundStyle(.red)
-                }
-                RestingHeartRateRangeChartView(
-                    points: chartPoints,
-                    xAxisFormat: .dateTime.month().day(),
-                    desiredXAxisCount: 5
-                )
+            HStack(spacing: 10) {
+                Image(systemName: "heart.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.red)
+                    .frame(width: 26, height: 26)
+                    .background(Color.red.opacity(0.15), in: Circle())
+                Text("Latest Resting Heart Rate")
+                    .font(.headline)
+                Spacer()
             }
-            .padding(12)
-            .background(Color.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("\(Int(latest.averageBpm.rounded())) bpm")
+                        .font(.title3.weight(.semibold))
+                    Text(latest.date.formatted(date: .abbreviated, time: .omitted))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            RestingHeartRateRangeChartView(
+                points: chartPoints,
+                xAxisFormat: .dateTime.month().day(),
+                desiredXAxisCount: 5
+            )
         }
+        .padding(16)
+        .background(Color(UIColor.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 }
 
