@@ -12,6 +12,7 @@ public struct MetricsUpdate: Sendable {
     public let title: String
     public let heartRateSummary: HeartRateSummary?
     public let bloodOxygenSummary: BloodOxygenSummary?
+    public let heartRateVariabilitySummary: HeartRateVariabilitySummary?
     public let restingHeartRateSummary: RestingHeartRateSummary?
     public let stepsSummary: StepsSummary?
     public let flightsSummary: FlightsSummary?
@@ -26,6 +27,7 @@ public struct MetricsUpdate: Sendable {
         title: String,
         heartRateSummary: HeartRateSummary?,
         bloodOxygenSummary: BloodOxygenSummary?,
+        heartRateVariabilitySummary: HeartRateVariabilitySummary?,
         restingHeartRateSummary: RestingHeartRateSummary?,
         stepsSummary: StepsSummary?,
         flightsSummary: FlightsSummary?,
@@ -39,6 +41,7 @@ public struct MetricsUpdate: Sendable {
         self.title = title
         self.heartRateSummary = heartRateSummary
         self.bloodOxygenSummary = bloodOxygenSummary
+        self.heartRateVariabilitySummary = heartRateVariabilitySummary
         self.restingHeartRateSummary = restingHeartRateSummary
         self.stepsSummary = stepsSummary
         self.flightsSummary = flightsSummary

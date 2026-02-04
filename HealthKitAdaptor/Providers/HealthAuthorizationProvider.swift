@@ -26,6 +26,9 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
         if let oxygenType = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation) {
             readTypes.insert(oxygenType)
         }
+        if let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) {
+            readTypes.insert(hrvType)
+        }
         if let restingType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate) {
             readTypes.insert(restingType)
         }
@@ -71,6 +74,11 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
     public func requestBloodOxygenAuthorization() async -> Bool {
         guard let oxygenType = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation) else { return false }
         return await requestAuthorization(readTypes: [oxygenType])
+    }
+
+    public func requestHeartRateVariabilityAuthorization() async -> Bool {
+        guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return false }
+        return await requestAuthorization(readTypes: [hrvType])
     }
 
     public func requestStepsAuthorization() async -> Bool {

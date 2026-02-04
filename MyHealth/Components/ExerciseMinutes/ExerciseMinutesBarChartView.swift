@@ -62,6 +62,8 @@ private extension ExerciseMinutesBarChartView {
             return .automatic(desiredCount: 4)
         case .week, .month, .sixMonths, .year:
             return .automatic(desiredCount: 5)
+        @unknown default:
+            fatalError()
         }
     }
 
@@ -73,6 +75,8 @@ private extension ExerciseMinutesBarChartView {
             return .dateTime.weekday(.abbreviated)
         case .month, .sixMonths, .year:
             return .dateTime.month().day()
+        @unknown default:
+            fatalError()
         }
     }
 }

@@ -11,6 +11,7 @@ import Models
 public protocol HealthKitAdapterProtocol: Sendable {
     var authorizationProvider: HealthAuthorizationProviding { get }
     var workoutSession: HealthKitWorkoutSessionManaging { get }
+    var hrvProvider: HealthKitHRVProviding { get }
     func workoutsStream() -> AsyncStream<[Workout]>
     func workout(id: UUID) async throws -> Workout?
     func workoutRoute(id: UUID) async throws -> [WorkoutRoutePoint]

@@ -25,6 +25,7 @@ public final class MetricsService: MetricsServiceProtocol {
                         title: "Metrics",
                         heartRateSummary: nil,
                         bloodOxygenSummary: nil,
+                        heartRateVariabilitySummary: nil,
                         restingHeartRateSummary: nil,
                         stepsSummary: nil,
                         flightsSummary: nil,
@@ -44,6 +45,7 @@ public final class MetricsService: MetricsServiceProtocol {
                 }
 
                 let heartRateSummary = await firstValue(from: healthKitAdapter.heartRateSummaryStream())
+                let heartRateVariabilitySummary = await firstValue(from: healthKitAdapter.hrvProvider.summaryStream())
                 let bloodOxygenSummary = await firstValue(from: healthKitAdapter.bloodOxygenSummaryStream())
                 let restingHeartRateSummary = await firstValue(from: healthKitAdapter.restingHeartRateSummaryStream(days: 7))
                 let stepsSummary = await firstValue(from: healthKitAdapter.stepsSummaryStream(days: 7))
@@ -65,6 +67,7 @@ public final class MetricsService: MetricsServiceProtocol {
                         title: "Metrics",
                         heartRateSummary: heartRateSummary,
                         bloodOxygenSummary: bloodOxygenSummary,
+                        heartRateVariabilitySummary: heartRateVariabilitySummary,
                         restingHeartRateSummary: restingHeartRateSummary,
                         stepsSummary: stepsSummary,
                         flightsSummary: flightsSummary,

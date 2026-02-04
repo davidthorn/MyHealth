@@ -13,6 +13,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let workouts: HealthKitWorkoutAdapterProtocol
     public let workoutSession: HealthKitWorkoutSessionManaging
     private let heartRates: HealthKitHeartRateAdapterProtocol
+    public let hrvProvider: HealthKitHRVProviding
     private let bloodOxygen: HealthKitBloodOxygenAdapterProtocol
     private let steps: HealthKitStepsAdapterProtocol
     private let flights: HealthKitFlightsAdapterProtocol
@@ -48,6 +49,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         self.workouts = workouts
         self.workoutSession = workoutSession
         self.heartRates = heartRates
+        self.hrvProvider = HealthKitHRVProvider(storeAdaptor: storeAdaptor)
         self.bloodOxygen = bloodOxygen
         self.steps = steps
         self.flights = flights
