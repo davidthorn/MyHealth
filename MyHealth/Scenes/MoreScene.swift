@@ -60,6 +60,8 @@ public struct MoreScene: View {
                         CardioFitnessTrendInsightDetailView(insight: insight)
                     case .sleepTrainingBalance:
                         SleepTrainingBalanceInsightDetailView(insight: insight)
+                    case .workoutIntensityDistribution:
+                        WorkoutIntensityDistributionInsightDetailView(insight: insight)
                     }
                 }
             }

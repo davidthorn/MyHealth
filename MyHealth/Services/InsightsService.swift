@@ -74,6 +74,14 @@ public final class InsightsService: InsightsServiceProtocol {
                     if let loadInsight {
                         insights.append(loadInsight)
                     }
+
+                    let intensityInsight = await buildWorkoutIntensityDistributionInsights(
+                        from: workouts,
+                        includeHeartRate: heartRateAuthorized
+                    )
+                    if let intensityInsight {
+                        insights.append(intensityInsight)
+                    }
                 }
 
                 if restingAuthorized || hrvAuthorized {
@@ -291,6 +299,33 @@ public final class InsightsService: InsightsServiceProtocol {
         )
     }
 
+    private func buildWorkoutIntensityDistributionInsights(
+        from workouts: [Workout],
+        includeHeartRate: Bool
+    ) async -> InsightItem? {
+        let builder = WorkoutIntensityDistributionInsightBuilder(
+            healthKitAdapter: healthKitAdapter,
+            workouts: workouts,
+            includeHeartRate: includeHeartRate
+        )
+        guard let insight = await builder.build() else { return nil }
+
+        let totalMinutes = insight.lowMinutes + insight.moderateMinutes + insight.highMinutes
+        let totalText = totalMinutes > 0 ? "\(formatNumber(totalMinutes)) min" : "—"
+        let summaryText = "\(totalText) • \(insight.workoutCount) workouts"
+        let detailText = intensityDetailText(insight: insight)
+
+        return InsightItem(
+            type: .workoutIntensityDistribution,
+            title: InsightType.workoutIntensityDistribution.title,
+            summary: summaryText,
+            detail: detailText,
+            status: insight.status.title,
+            icon: "speedometer",
+            workoutIntensityDistribution: insight
+        )
+    }
+
     private func buildCardioFitnessTrendInsight() async -> InsightItem? {
         let builder = CardioFitnessTrendInsightBuilder(healthKitAdapter: healthKitAdapter)
         guard let insight = await builder.build() else { return nil }
@@ -401,6 +436,15 @@ public final class InsightsService: InsightsServiceProtocol {
             parts.append("Load \(direction) \(formatNumber(abs(loadDelta))) min")
         }
         return parts.isEmpty ? "Change data unavailable" : parts.joined(separator: " • ")
+    }
+
+    private func intensityDetailText(insight: WorkoutIntensityDistributionInsight) -> String {
+        let total = insight.lowMinutes + insight.moderateMinutes + insight.highMinutes
+        guard total > 0 else { return "Intensity data unavailable" }
+        let lowPct = Int((insight.lowMinutes / total) * 100)
+        let moderatePct = Int((insight.moderateMinutes / total) * 100)
+        let highPct = Int((insight.highMinutes / total) * 100)
+        return "Low \(lowPct)% • Mod \(moderatePct)% • High \(highPct)%"
     }
 
 }
