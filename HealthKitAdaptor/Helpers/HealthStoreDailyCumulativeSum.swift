@@ -19,12 +19,10 @@ internal extension HealthStoreSampleQuerying {
         let calendar = Calendar.current
         let endDate = Date()
         let anchorDate = calendar.startOfDay(for: endDate)
-        guard let startDate = calendar.date(byAdding: .day, value: -(safeDays - 1), to: anchorDate) else {
-            return []
-        }
+        let window = dayRangeWindow(days: safeDays, endingAt: endDate, calendar: calendar)
 
         return await withCheckedContinuation { continuation in
-            let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+            let predicate = window.predicate
             let interval = DateComponents(day: 1)
             let query = HKStatisticsCollectionQuery(
                 quantityType: quantityType,
@@ -36,7 +34,7 @@ internal extension HealthStoreSampleQuerying {
             query.initialResultsHandler = { _, results, _ in
                 var items: [T] = []
                 if let results {
-                    results.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
+                    results.enumerateStatistics(from: window.start, to: window.end) { statistics, _ in
                         let value = statistics.sumQuantity()?.doubleValue(for: unit) ?? 0
                         items.append(mapper(statistics.startDate, value))
                     }

@@ -17,7 +17,7 @@ public protocol HealthStoreWorkoutReading {
 public extension HealthStoreWorkoutReading where Self: HealthStoreSampleQuerying {
     func fetchWorkouts() async -> [Workout] {
         let sampleType = HKObjectType.workoutType()
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        let sortDescriptor = sortByEndDate(ascending: false)
         let samples: [HKWorkout] = await fetchSamples(
             sampleType: sampleType,
             predicate: nil,
@@ -48,7 +48,7 @@ public extension HealthStoreWorkoutReading where Self: HealthStoreSampleQuerying
 
         var points: [WorkoutRoutePoint] = []
         for route in routes {
-            let locations = try await fetchLocations(for: route)
+            let locations = try await fetchWorkoutRouteLocations(route)
             points.append(contentsOf: locations.map {
                 WorkoutRoutePoint(
                     latitude: $0.coordinate.latitude,
@@ -63,41 +63,7 @@ public extension HealthStoreWorkoutReading where Self: HealthStoreSampleQuerying
 
     func deleteWorkout(id: UUID) async throws {
         let workout = try await fetchHealthKitWorkout(id: id)
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            healthStore.delete([workout]) { success, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                if success {
-                    continuation.resume(returning: ())
-                } else {
-                    continuation.resume(throwing: HealthKitAdapterError.deleteFailed)
-                }
-            }
-        }
-    }
-
-    private func fetchLocations(for route: HKWorkoutRoute) async throws -> [CLLocation] {
-        return try await withCheckedThrowingContinuation { continuation in
-            var collected: [CLLocation] = []
-            var didResume = false
-            let query = HKWorkoutRouteQuery(route: route) { _, locations, done, error in
-                if let error, !didResume {
-                    didResume = true
-                    continuation.resume(throwing: error)
-                    return
-                }
-                if let locations {
-                    collected.append(contentsOf: locations)
-                }
-                if done, !didResume {
-                    didResume = true
-                    continuation.resume(returning: collected)
-                }
-            }
-            healthStore.execute(query)
-        }
+        try await deleteSamples([workout])
     }
 
     private func fetchHealthKitWorkout(id: UUID) async throws -> HKWorkout {

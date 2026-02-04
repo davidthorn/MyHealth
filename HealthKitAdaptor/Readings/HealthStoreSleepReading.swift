@@ -16,18 +16,13 @@ public protocol HealthStoreSleepReading {
 public extension HealthStoreSleepReading where Self: HealthStoreSampleQuerying {
     func fetchSleepAnalysis(days: Int) async -> [SleepDay] {
         guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return [] }
-        let safeDays = max(days, 1)
         let calendar = Calendar.current
         let endDate = Date()
-        let anchorDate = calendar.startOfDay(for: endDate)
-        guard let startDate = calendar.date(byAdding: .day, value: -(safeDays - 1), to: anchorDate) else {
-            return []
-        }
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let window = dayRangeWindow(days: days, endingAt: endDate, calendar: calendar)
+        let sortDescriptor = sortByStartDate(ascending: false)
         let sleepSamples = await fetchCategorySamples(
             categoryType: sleepType,
-            predicate: predicate,
+            predicate: window.predicate,
             limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]
         )
@@ -35,32 +30,30 @@ public extension HealthStoreSleepReading where Self: HealthStoreSampleQuerying {
         for sample in sleepSamples {
             let category = HKCategoryValueSleepAnalysis(rawValue: sample.value)
             guard category == .asleepUnspecified || category == .asleepCore || category == .asleepDeep || category == .asleepREM else { continue }
-            let day = calendar.startOfDay(for: sample.startDate)
+            let day = startOfDay(for: sample.startDate, calendar: calendar)
             durations[day, default: 0] += sample.endDate.timeIntervalSince(sample.startDate)
         }
-        var days: [SleepDay] = []
+        var sleepDays: [SleepDay] = []
+        let safeDays = max(days, 1)
+        let anchorDate = startOfDay(for: endDate, calendar: calendar)
         let dayRange = (0..<safeDays).compactMap { calendar.date(byAdding: .day, value: -$0, to: anchorDate) }
         for day in dayRange {
             let duration = durations[day] ?? 0
-            days.append(SleepDay(date: day, durationSeconds: duration))
+            sleepDays.append(SleepDay(date: day, durationSeconds: duration))
         }
-        return days.sorted { $0.date > $1.date }
+        return sleepDays.sorted { $0.date > $1.date }
     }
     
     func fetchSleepAnalysisDay(date: Date) async -> SleepDay {
         guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else {
-            return SleepDay(date: Calendar.current.startOfDay(for: date), durationSeconds: 0)
+            return SleepDay(date: startOfDay(for: date), durationSeconds: 0)
         }
         let calendar = Calendar.current
-        let startDate = calendar.startOfDay(for: date)
-        guard let endDate = calendar.date(byAdding: .day, value: 1, to: startDate) else {
-            return SleepDay(date: startDate, durationSeconds: 0)
-        }
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let window = dayWindow(for: date, calendar: calendar)
+        let sortDescriptor = sortByStartDate(ascending: false)
         let sleepSamples = await fetchCategorySamples(
             categoryType: sleepType,
-            predicate: predicate,
+            predicate: window.predicate,
             limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]
         )
@@ -70,6 +63,6 @@ public extension HealthStoreSleepReading where Self: HealthStoreSampleQuerying {
             guard category == .asleepUnspecified || category == .asleepCore || category == .asleepDeep || category == .asleepREM else { continue }
             duration += sample.endDate.timeIntervalSince(sample.startDate)
         }
-        return SleepDay(date: startDate, durationSeconds: duration)
+        return SleepDay(date: window.start, durationSeconds: duration)
     }
 }

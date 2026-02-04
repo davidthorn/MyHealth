@@ -53,19 +53,7 @@ public extension HealthStoreNutritionWriting {
             id: id,
             errorOnMissing: HealthKitAdapterError.nutritionSampleNotFound
         )
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            healthStore.delete([sample]) { success, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                if success {
-                    continuation.resume(returning: ())
-                } else {
-                    continuation.resume(throwing: HealthKitAdapterError.deleteFailed)
-                }
-            }
-        }
+        try await deleteSamples([sample])
         notifyNutritionChanged()
     }
 }

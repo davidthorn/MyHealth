@@ -16,7 +16,7 @@ public protocol HealthStoreHeartRateVariabilityReading {
 public extension HealthStoreHeartRateVariabilityReading where Self: HealthStoreSampleQuerying {
     func fetchHeartRateVariabilityReadings(limit: Int) async -> [HeartRateVariabilityReading] {
         guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return [] }
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        let sortDescriptor = sortByEndDate(ascending: false)
         let samples = await fetchQuantitySamples(
             quantityType: hrvType,
             predicate: nil,
@@ -29,16 +29,17 @@ public extension HealthStoreHeartRateVariabilityReading where Self: HealthStoreS
     func fetchHeartRateVariabilityDailyStats(days: Int) async -> [HeartRateVariabilityDayStats] {
         guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return [] }
         let unit = HKUnit.secondUnit(with: .milli)
-        return await fetchDailyDiscreteStats(
+        let stats = await fetchDailyDiscreteStats(
             quantityType: hrvType,
             unit: unit,
             days: days
-        ) { date, avg, min, max in
+        )
+        return stats.map {
             HeartRateVariabilityDayStats(
-                date: date,
-                averageMilliseconds: avg,
-                minMilliseconds: min,
-                maxMilliseconds: max
+                date: $0.date,
+                averageMilliseconds: $0.average,
+                minMilliseconds: $0.minimum,
+                maxMilliseconds: $0.maximum
             )
         }
     }
@@ -57,8 +58,8 @@ public extension HealthStoreHeartRateVariabilityReading where Self: HealthStoreS
 
     func fetchHeartRateVariabilityReadings(start: Date, end: Date) async -> [HeartRateVariabilityReading] {
         guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return [] }
-        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: true)
+        let predicate = rangePredicate(start: start, end: end)
+        let sortDescriptor = sortByEndDate(ascending: true)
         let samples = await fetchQuantitySamples(
             quantityType: hrvType,
             predicate: predicate,

@@ -19,21 +19,18 @@ public extension HealthStoreStandHoursReading where Self: HealthStoreSampleQuery
         let safeDays = max(days, 1)
         let calendar = Calendar.current
         let endDate = Date()
-        let anchorDate = calendar.startOfDay(for: endDate)
-        guard let startDate = calendar.date(byAdding: .day, value: -(safeDays - 1), to: anchorDate) else {
-            return []
-        }
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-        let standSamples: [HKCategorySample] = await fetchSamples(
-            sampleType: standType,
-            predicate: predicate,
+        let anchorDate = startOfDay(for: endDate, calendar: calendar)
+        let window = dayRangeWindow(days: safeDays, endingAt: endDate, calendar: calendar)
+        let sortDescriptor = sortByStartDate(ascending: false)
+        let standSamples = await fetchCategorySamples(
+            categoryType: standType,
+            predicate: window.predicate,
             limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]
         )
         var counts: [Date: Int] = [:]
         for sample in standSamples where sample.value == HKCategoryValueAppleStandHour.stood.rawValue {
-            let day = calendar.startOfDay(for: sample.startDate)
+            let day = startOfDay(for: sample.startDate, calendar: calendar)
             counts[day, default: 0] += 1
         }
         var days: [StandHourDay] = []

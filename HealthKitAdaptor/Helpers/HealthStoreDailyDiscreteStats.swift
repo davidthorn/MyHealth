@@ -8,6 +8,13 @@
 import Foundation
 import HealthKit
 
+struct DailyDiscreteStats {
+    let date: Date
+    let average: Double?
+    let minimum: Double?
+    let maximum: Double?
+}
+
 internal extension HealthStoreSampleQuerying {
     func fetchDailyDiscreteStats<T>(
         quantityType: HKQuantityType,
@@ -19,12 +26,10 @@ internal extension HealthStoreSampleQuerying {
         let calendar = Calendar.current
         let endDate = Date()
         let anchorDate = calendar.startOfDay(for: endDate)
-        guard let startDate = calendar.date(byAdding: .day, value: -(safeDays - 1), to: anchorDate) else {
-            return []
-        }
+        let window = dayRangeWindow(days: safeDays, endingAt: endDate, calendar: calendar)
 
         return await withCheckedContinuation { continuation in
-            let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+            let predicate = window.predicate
             let interval = DateComponents(day: 1)
             let query = HKStatisticsCollectionQuery(
                 quantityType: quantityType,
@@ -39,7 +44,7 @@ internal extension HealthStoreSampleQuerying {
                     return
                 }
                 var items: [T] = []
-                collection.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
+                collection.enumerateStatistics(from: window.start, to: window.end) { statistics, _ in
                     let avg = statistics.averageQuantity()?.doubleValue(for: unit)
                     let min = statistics.minimumQuantity()?.doubleValue(for: unit)
                     let max = statistics.maximumQuantity()?.doubleValue(for: unit)
@@ -48,6 +53,20 @@ internal extension HealthStoreSampleQuerying {
                 continuation.resume(returning: items)
             }
             healthStore.execute(query)
+        }
+    }
+
+    func fetchDailyDiscreteStats(
+        quantityType: HKQuantityType,
+        unit: HKUnit,
+        days: Int
+    ) async -> [DailyDiscreteStats] {
+        await fetchDailyDiscreteStats(
+            quantityType: quantityType,
+            unit: unit,
+            days: days
+        ) { date, avg, min, max in
+            DailyDiscreteStats(date: date, average: avg, minimum: min, maximum: max)
         }
     }
 }

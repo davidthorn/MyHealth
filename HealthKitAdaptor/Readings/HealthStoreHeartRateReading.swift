@@ -16,7 +16,7 @@ public protocol HealthStoreHeartRateReading {
 public extension HealthStoreHeartRateReading where Self: HealthStoreSampleQuerying {
     func fetchHeartRateReadings(limit: Int) async -> [HeartRateReading] {
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return [] }
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        let sortDescriptor = sortByEndDate(ascending: false)
         let samples = await fetchQuantitySamples(
             quantityType: heartRateType,
             predicate: nil,
@@ -40,8 +40,8 @@ public extension HealthStoreHeartRateReading where Self: HealthStoreSampleQueryi
 
     func fetchHeartRateReadings(start: Date, end: Date) async -> [HeartRateReading] {
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return [] }
-        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: true)
+        let predicate = rangePredicate(start: start, end: end)
+        let sortDescriptor = sortByEndDate(ascending: true)
         let samples = await fetchQuantitySamples(
             quantityType: heartRateType,
             predicate: predicate,

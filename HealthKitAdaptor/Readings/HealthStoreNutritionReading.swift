@@ -19,7 +19,7 @@ public extension HealthStoreNutritionReading where Self: HealthStoreSampleQueryi
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             return []
         }
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        let sortDescriptor = sortByEndDate(ascending: false)
         let queryLimit = limit > 0 ? limit : HKObjectQueryNoLimit
         let unit = type.quantityUnit
         let unitLabel = type.unit
@@ -46,8 +46,8 @@ public extension HealthStoreNutritionReading where Self: HealthStoreSampleQueryi
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             return []
         }
-        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        let predicate = rangePredicate(start: start, end: end)
+        let sortDescriptor = sortByEndDate(ascending: false)
         let unit = type.quantityUnit
         let unitLabel = type.unit
         let sampleType = type
@@ -73,7 +73,7 @@ public extension HealthStoreNutritionReading where Self: HealthStoreSampleQueryi
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             return nil
         }
-        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        let predicate = rangePredicate(start: start, end: end)
         let unit = type.quantityUnit
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(

@@ -16,7 +16,7 @@ public protocol HealthStoreBloodOxygenReading {
 public extension HealthStoreBloodOxygenReading where Self: HealthStoreSampleQuerying {
     func fetchBloodOxygenReadings(limit: Int) async -> [BloodOxygenReading] {
         guard let oxygenType = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation) else { return [] }
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        let sortDescriptor = sortByEndDate(ascending: false)
         let samples = await fetchQuantitySamples(
             quantityType: oxygenType,
             predicate: nil,
@@ -40,8 +40,8 @@ public extension HealthStoreBloodOxygenReading where Self: HealthStoreSampleQuer
 
     func fetchBloodOxygenReadings(start: Date, end: Date) async -> [BloodOxygenReading] {
         guard let oxygenType = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation) else { return [] }
-        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: true)
+        let predicate = rangePredicate(start: start, end: end)
+        let sortDescriptor = sortByEndDate(ascending: true)
         let samples = await fetchQuantitySamples(
             quantityType: oxygenType,
             predicate: predicate,
