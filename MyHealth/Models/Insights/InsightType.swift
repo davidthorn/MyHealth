@@ -10,6 +10,7 @@ import Foundation
 public enum InsightType: String, Hashable, CaseIterable, Sendable, Identifiable {
     case activityHighlights
     case workoutHighlights
+    case recoveryReadiness
 
     public var id: String { rawValue }
 
@@ -19,6 +20,8 @@ public enum InsightType: String, Hashable, CaseIterable, Sendable, Identifiable 
             return "Activity Highlights"
         case .workoutHighlights:
             return "Workout Highlights"
+        case .recoveryReadiness:
+            return "Recovery Readiness"
         }
     }
 }

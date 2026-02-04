@@ -50,6 +50,8 @@ public struct MoreScene: View {
                         ActivityHighlightsInsightDetailView(insight: insight)
                     case .workoutHighlights:
                         WorkoutHighlightsInsightDetailView(insight: insight)
+                    case .recoveryReadiness:
+                        RecoveryReadinessInsightDetailView(insight: insight)
                     }
                 }
             }

@@ -54,6 +54,8 @@ private extension InsightCardView {
             return .blue
         case .workoutHighlights:
             return .pink
+        case .recoveryReadiness:
+            return .green
         }
     }
 }

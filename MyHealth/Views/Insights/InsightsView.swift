@@ -36,6 +36,8 @@ public struct InsightsView: View {
                                             ActivityHighlightsInsightCardView(insight: insight)
                                         case .workoutHighlights:
                                             WorkoutHighlightsInsightCardView(insight: insight)
+                                        case .recoveryReadiness:
+                                            RecoveryReadinessInsightCardView(insight: insight)
                                         }
                                     }
                                     .buttonStyle(.plain)
@@ -74,7 +76,7 @@ public struct InsightsView: View {
 private extension InsightsView {
     var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Insights from the last 7 days.")
+            Text("Insights from the last 7–14 days.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
