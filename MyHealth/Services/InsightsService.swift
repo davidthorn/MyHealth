@@ -24,7 +24,8 @@ public final class InsightsService: InsightsServiceProtocol {
         let resting = await healthKitAdapter.authorizationProvider.requestRestingHeartRateAuthorization()
         let hrv = await healthKitAdapter.authorizationProvider.requestHeartRateVariabilityAuthorization()
         let cardio = await healthKitAdapter.authorizationProvider.requestCardioFitnessAuthorization()
-        return activity || workouts || heartRate || resting || hrv || cardio
+        let sleep = await healthKitAdapter.authorizationProvider.requestSleepAnalysisAuthorization()
+        return activity || workouts || heartRate || resting || hrv || cardio || sleep
     }
 
     public func updates() -> AsyncStream<InsightsUpdate> {
@@ -38,7 +39,8 @@ public final class InsightsService: InsightsServiceProtocol {
                 let restingAuthorized = await healthKitAdapter.authorizationProvider.requestRestingHeartRateAuthorization()
                 let hrvAuthorized = await healthKitAdapter.authorizationProvider.requestHeartRateVariabilityAuthorization()
                 let cardioFitnessAuthorized = await healthKitAdapter.authorizationProvider.requestCardioFitnessAuthorization()
-                let isAuthorized = activityAuthorized || workoutsAuthorized || heartRateAuthorized || restingAuthorized || hrvAuthorized || cardioFitnessAuthorized
+                let sleepAuthorized = await healthKitAdapter.authorizationProvider.requestSleepAnalysisAuthorization()
+                let isAuthorized = activityAuthorized || workoutsAuthorized || heartRateAuthorized || restingAuthorized || hrvAuthorized || cardioFitnessAuthorized || sleepAuthorized
                 guard !Task.isCancelled else { return }
                 guard isAuthorized else {
                     continuation.yield(InsightsUpdate(title: "Insights", isAuthorized: false, insights: []))
@@ -48,6 +50,7 @@ public final class InsightsService: InsightsServiceProtocol {
 
                 var insights: [InsightItem] = []
                 var workoutsCache: [Workout] = []
+                var sleepDaysCache: [SleepDay] = []
 
                 if activityAuthorized {
                     let summary = await firstValue(from: healthKitAdapter.activitySummaryStream(days: 7))
@@ -99,6 +102,26 @@ public final class InsightsService: InsightsServiceProtocol {
                     let cardioInsight = await buildCardioFitnessTrendInsight()
                     if let cardioInsight {
                         insights.append(cardioInsight)
+                    }
+                }
+
+                if sleepAuthorized {
+                    let sleepSummary = await firstValue(from: healthKitAdapter.sleepAnalysisSummaryStream(days: 14))
+                    if let sleepSummary {
+                        if let latest = sleepSummary.latest {
+                            sleepDaysCache.append(latest)
+                        }
+                        sleepDaysCache.append(contentsOf: sleepSummary.previous)
+                    }
+                }
+
+                if sleepAuthorized, workoutsAuthorized, !sleepDaysCache.isEmpty {
+                    let sleepBalance = buildSleepTrainingBalanceInsights(
+                        sleepDays: sleepDaysCache,
+                        workouts: workoutsCache
+                    )
+                    if let sleepBalance {
+                        insights.append(sleepBalance)
                     }
                 }
 
@@ -288,6 +311,29 @@ public final class InsightsService: InsightsServiceProtocol {
         )
     }
 
+    private func buildSleepTrainingBalanceInsights(
+        sleepDays: [SleepDay],
+        workouts: [Workout]
+    ) -> InsightItem? {
+        let builder = SleepTrainingBalanceInsightBuilder(workouts: workouts, sleepDays: sleepDays)
+        guard let insight = builder.build() else { return nil }
+
+        let sleepText = insight.currentSleepHours.map { "\(formatNumber($0)) hr avg" } ?? "Sleep unavailable"
+        let loadText = insight.currentLoadMinutes.map { "\(formatNumber($0)) min load" } ?? "Load unavailable"
+        let summaryText = "\(sleepText) • \(loadText)"
+        let detailText = sleepBalanceDetail(insight: insight)
+
+        return InsightItem(
+            type: .sleepTrainingBalance,
+            title: InsightType.sleepTrainingBalance.title,
+            summary: summaryText,
+            detail: detailText,
+            status: insight.status.title,
+            icon: "bed.double.fill",
+            sleepTrainingBalance: insight
+        )
+    }
+
     private func formatNumber(_ value: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -342,6 +388,19 @@ public final class InsightsService: InsightsServiceProtocol {
         let delta = current - previous
         let direction = delta > 0 ? "Up" : (delta < 0 ? "Down" : "Steady")
         return "\(direction) \(formatNumber(abs(delta))) vs prior period"
+    }
+
+    private func sleepBalanceDetail(insight: SleepTrainingBalanceInsight) -> String {
+        var parts: [String] = []
+        if let sleepDelta = insight.sleepDeltaHours {
+            let direction = sleepDelta >= 0 ? "Up" : "Down"
+            parts.append("Sleep \(direction) \(formatNumber(abs(sleepDelta))) hr")
+        }
+        if let loadDelta = insight.loadDeltaMinutes {
+            let direction = loadDelta >= 0 ? "Up" : "Down"
+            parts.append("Load \(direction) \(formatNumber(abs(loadDelta))) min")
+        }
+        return parts.isEmpty ? "Change data unavailable" : parts.joined(separator: " • ")
     }
 
 }

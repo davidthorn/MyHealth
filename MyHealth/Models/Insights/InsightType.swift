@@ -14,6 +14,7 @@ public enum InsightType: String, Hashable, CaseIterable, Sendable, Identifiable 
     case workoutLoadTrend
     case workoutRecoveryBalance
     case cardioFitnessTrend
+    case sleepTrainingBalance
 
     public var id: String { rawValue }
 
@@ -31,6 +32,8 @@ public enum InsightType: String, Hashable, CaseIterable, Sendable, Identifiable 
             return "Workout Recovery Balance"
         case .cardioFitnessTrend:
             return "VO₂ Max Trend"
+        case .sleepTrainingBalance:
+            return "Sleep vs Training"
         }
     }
 }

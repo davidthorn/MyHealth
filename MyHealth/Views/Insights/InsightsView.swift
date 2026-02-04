@@ -44,6 +44,8 @@ public struct InsightsView: View {
                                             WorkoutRecoveryBalanceInsightCardView(insight: insight)
                                         case .cardioFitnessTrend:
                                             CardioFitnessTrendInsightCardView(insight: insight)
+                                        case .sleepTrainingBalance:
+                                            SleepTrainingBalanceInsightCardView(insight: insight)
                                         }
                                     }
                                     .buttonStyle(.plain)

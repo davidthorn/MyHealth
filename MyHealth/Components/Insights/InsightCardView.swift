@@ -62,6 +62,8 @@ private extension InsightCardView {
             return .orange
         case .cardioFitnessTrend:
             return .teal
+        case .sleepTrainingBalance:
+            return .indigo
         }
     }
 }
