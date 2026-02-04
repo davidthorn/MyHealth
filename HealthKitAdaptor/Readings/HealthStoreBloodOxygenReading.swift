@@ -9,69 +9,46 @@ import Foundation
 import HealthKit
 import Models
 
-internal protocol HealthStoreBloodOxygenReading {
+public protocol HealthStoreBloodOxygenReading {
     var healthStore: HKHealthStore { get }
 }
 
-extension HealthStoreBloodOxygenReading {
+extension HealthStoreBloodOxygenReading where Self: HealthStoreSampleQuerying {
     public func fetchBloodOxygenReadings(limit: Int) async -> [BloodOxygenReading] {
         guard let oxygenType = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation) else { return [] }
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-        return await withCheckedContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: oxygenType,
-                predicate: nil,
-                limit: limit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let readings: [BloodOxygenReading] = (samples as? [HKQuantitySample])?.map(BloodOxygenReading.init) ?? []
-                continuation.resume(returning: readings)
-            }
-            healthStore.execute(query)
-        }
+        let samples: [HKQuantitySample] = await fetchSamples(
+            sampleType: oxygenType,
+            predicate: nil,
+            limit: limit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return samples.map(BloodOxygenReading.init)
     }
 
     public func fetchBloodOxygenReading(id: UUID) async throws -> BloodOxygenReading {
         guard let oxygenType = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation) else {
             throw HealthKitAdapterError.bloodOxygenReadingNotFound
         }
-        return try await withCheckedThrowingContinuation { continuation in
-            let predicate = HKQuery.predicateForObject(with: id)
-            let query = HKSampleQuery(
-                sampleType: oxygenType,
-                predicate: predicate,
-                limit: 1,
-                sortDescriptors: nil
-            ) { _, samples, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                guard let sample = (samples as? [HKQuantitySample])?.first else {
-                    continuation.resume(throwing: HealthKitAdapterError.bloodOxygenReadingNotFound)
-                    return
-                }
-                continuation.resume(returning: BloodOxygenReading(sample: sample))
-            }
-            healthStore.execute(query)
-        }
+        let predicate = HKQuery.predicateForObject(with: id)
+        let sample: HKQuantitySample = try await fetchSample(
+            sampleType: oxygenType,
+            predicate: predicate,
+            errorOnMissing: HealthKitAdapterError.bloodOxygenReadingNotFound
+        )
+        return BloodOxygenReading(sample: sample)
     }
 
     public func fetchBloodOxygenReadings(start: Date, end: Date) async -> [BloodOxygenReading] {
         guard let oxygenType = HKQuantityType.quantityType(forIdentifier: .oxygenSaturation) else { return [] }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: true)
-        return await withCheckedContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: oxygenType,
-                predicate: predicate,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let readings: [BloodOxygenReading] = (samples as? [HKQuantitySample])?.map(BloodOxygenReading.init) ?? []
-                continuation.resume(returning: readings)
-            }
-            healthStore.execute(query)
-        }
+        let samples: [HKQuantitySample] = await fetchSamples(
+            sampleType: oxygenType,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return samples.map(BloodOxygenReading.init)
     }
 }

@@ -9,12 +9,12 @@ import Foundation
 import HealthKit
 import Models
 
-internal protocol HealthStoreActivitySummaryReading {
+public protocol HealthStoreActivitySummaryReading {
     var healthStore: HKHealthStore { get }
 }
 
-extension HealthStoreActivitySummaryReading {
-    public func fetchActivitySummaries(days: Int) async -> [ActivityRingsDay] {
+public extension HealthStoreActivitySummaryReading {
+    func fetchActivitySummaries(days: Int) async -> [ActivityRingsDay] {
         let safeDays = max(days, 1)
         let calendar = Calendar.current
         let endDate = Date()
@@ -33,7 +33,7 @@ extension HealthStoreActivitySummaryReading {
         }
     }
     
-    public func fetchActivitySummaryDay(date: Date) async -> ActivityRingsDay {
+    func fetchActivitySummaryDay(date: Date) async -> ActivityRingsDay {
         let calendar = Calendar.current
         let startDate = calendar.startOfDay(for: date)
         var components = calendar.dateComponents([.year, .month, .day], from: startDate)

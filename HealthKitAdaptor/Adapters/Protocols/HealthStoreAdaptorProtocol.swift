@@ -9,7 +9,7 @@ import Foundation
 import HealthKit
 import Models
 
-public protocol HealthStoreAdaptorProtocol: Sendable {
+public protocol HealthStoreAdaptorProtocol: Sendable, HealthStoreSampleQuerying {
     var healthStore: HKHealthStore { get }
     var authorizationProvider: HealthAuthorizationProviding { get }
     func fetchWorkouts() async -> [Workout]

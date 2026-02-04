@@ -9,12 +9,12 @@ import Foundation
 import HealthKit
 import Models
 
-internal protocol HealthStoreNutritionReading {
+public protocol HealthStoreNutritionReading {
     var healthStore: HKHealthStore { get }
 }
 
-extension HealthStoreNutritionReading {
-    public func fetchNutritionSamples(type: NutritionType, limit: Int) async -> [NutritionSample] {
+public extension HealthStoreNutritionReading where Self: HealthStoreSampleQuerying {
+    func fetchNutritionSamples(type: NutritionType, limit: Int) async -> [NutritionSample] {
         guard let identifier = type.quantityIdentifier,
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             return []
@@ -24,29 +24,24 @@ extension HealthStoreNutritionReading {
         let unit = type.quantityUnit
         let unitLabel = type.unit
         let sampleType = type
-        return await withCheckedContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: quantityType,
-                predicate: nil,
-                limit: queryLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let items: [NutritionSample] = (samples as? [HKQuantitySample])?.map { sample in
-                    NutritionSample(
-                        id: sample.uuid,
-                        type: sampleType,
-                        date: sample.endDate,
-                        value: sample.quantity.doubleValue(for: unit),
-                        unit: unitLabel
-                    )
-                } ?? []
-                continuation.resume(returning: items)
-            }
-            healthStore.execute(query)
+        let samples: [HKQuantitySample] = await fetchSamples(
+            sampleType: quantityType,
+            predicate: nil,
+            limit: queryLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return samples.map { sample in
+            NutritionSample(
+                id: sample.uuid,
+                type: sampleType,
+                date: sample.endDate,
+                value: sample.quantity.doubleValue(for: unit),
+                unit: unitLabel
+            )
         }
     }
 
-    public func fetchNutritionSamples(type: NutritionType, start: Date, end: Date) async -> [NutritionSample] {
+    func fetchNutritionSamples(type: NutritionType, start: Date, end: Date) async -> [NutritionSample] {
         guard let identifier = type.quantityIdentifier,
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             return []
@@ -56,29 +51,24 @@ extension HealthStoreNutritionReading {
         let unit = type.quantityUnit
         let unitLabel = type.unit
         let sampleType = type
-        return await withCheckedContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: quantityType,
-                predicate: predicate,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let items: [NutritionSample] = (samples as? [HKQuantitySample])?.map { sample in
-                    NutritionSample(
-                        id: sample.uuid,
-                        type: sampleType,
-                        date: sample.endDate,
-                        value: sample.quantity.doubleValue(for: unit),
-                        unit: unitLabel
-                    )
-                } ?? []
-                continuation.resume(returning: items)
-            }
-            healthStore.execute(query)
+        let samples: [HKQuantitySample] = await fetchSamples(
+            sampleType: quantityType,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return samples.map { sample in
+            NutritionSample(
+                id: sample.uuid,
+                type: sampleType,
+                date: sample.endDate,
+                value: sample.quantity.doubleValue(for: unit),
+                unit: unitLabel
+            )
         }
     }
 
-    public func fetchNutritionTotal(type: NutritionType, start: Date, end: Date) async -> Double? {
+    func fetchNutritionTotal(type: NutritionType, start: Date, end: Date) async -> Double? {
         guard let identifier = type.quantityIdentifier,
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             return nil

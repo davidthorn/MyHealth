@@ -9,70 +9,46 @@ import Foundation
 import HealthKit
 import Models
 
-internal protocol HealthStoreHeartRateReading {
+public protocol HealthStoreHeartRateReading {
     var healthStore: HKHealthStore { get }
 }
 
-extension HealthStoreHeartRateReading {
-    public func fetchHeartRateReadings(limit: Int) async -> [HeartRateReading] {
+public extension HealthStoreHeartRateReading where Self: HealthStoreSampleQuerying {
+    func fetchHeartRateReadings(limit: Int) async -> [HeartRateReading] {
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return [] }
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-        return await withCheckedContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: heartRateType,
-                predicate: nil,
-                limit: limit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let readings: [HeartRateReading] = (samples as? [HKQuantitySample])?.map(HeartRateReading.init) ?? []
-                continuation.resume(returning: readings)
-            }
-            healthStore.execute(query)
-        }
+        let samples: [HKQuantitySample] = await fetchSamples(
+            sampleType: heartRateType,
+            predicate: nil,
+            limit: limit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return samples.map(HeartRateReading.init)
     }
 
-    public func fetchHeartRateReading(id: UUID) async throws -> HeartRateReading {
+    func fetchHeartRateReading(id: UUID) async throws -> HeartRateReading {
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else {
             throw HealthKitAdapterError.heartRateReadingNotFound
         }
-        return try await withCheckedThrowingContinuation { continuation in
-            let predicate = HKQuery.predicateForObject(with: id)
-            let query = HKSampleQuery(
-                sampleType: heartRateType,
-                predicate: predicate,
-                limit: 1,
-                sortDescriptors: nil
-            ) { _, samples, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                guard let sample = (samples as? [HKQuantitySample])?.first else {
-                    continuation.resume(throwing: HealthKitAdapterError.heartRateReadingNotFound)
-                    return
-                }
-                let reading = HeartRateReading(sample: sample)
-                continuation.resume(returning: reading)
-            }
-            healthStore.execute(query)
-        }
+        let predicate = HKQuery.predicateForObject(with: id)
+        let sample: HKQuantitySample = try await fetchSample(
+            sampleType: heartRateType,
+            predicate: predicate,
+            errorOnMissing: HealthKitAdapterError.heartRateReadingNotFound
+        )
+        return HeartRateReading(sample: sample)
     }
 
-    public func fetchHeartRateReadings(start: Date, end: Date) async -> [HeartRateReading] {
+    func fetchHeartRateReadings(start: Date, end: Date) async -> [HeartRateReading] {
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return [] }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: true)
-        return await withCheckedContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: heartRateType,
-                predicate: predicate,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let readings: [HeartRateReading] = (samples as? [HKQuantitySample])?.map(HeartRateReading.init) ?? []
-                continuation.resume(returning: readings)
-            }
-            healthStore.execute(query)
-        }
+        let samples: [HKQuantitySample] = await fetchSamples(
+            sampleType: heartRateType,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return samples.map(HeartRateReading.init)
     }
 }

@@ -9,13 +9,12 @@ import Foundation
 import HealthKit
 import Models
 
-internal protocol HealthStoreNutritionWriting {
-    var healthStore: HKHealthStore { get }
+public protocol HealthStoreNutritionWriting: HealthStoreSampleQuerying {
     func notifyNutritionChanged()
 }
 
-extension HealthStoreNutritionWriting {
-    public func saveNutritionSample(_ sample: NutritionSample) async throws {
+public extension HealthStoreNutritionWriting {
+    func saveNutritionSample(_ sample: NutritionSample) async throws {
         guard let identifier = sample.type.quantityIdentifier,
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             throw HealthKitAdapterError.unsupportedNutritionType
@@ -44,31 +43,17 @@ extension HealthStoreNutritionWriting {
         notifyNutritionChanged()
     }
 
-    public func deleteNutritionSample(id: UUID, type: NutritionType) async throws {
+    func deleteNutritionSample(id: UUID, type: NutritionType) async throws {
         guard let identifier = type.quantityIdentifier,
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             throw HealthKitAdapterError.unsupportedNutritionType
         }
-        let sample = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<HKQuantitySample, Error>) in
-            let predicate = HKQuery.predicateForObject(with: id)
-            let query = HKSampleQuery(
-                sampleType: quantityType,
-                predicate: predicate,
-                limit: 1,
-                sortDescriptors: nil
-            ) { _, samples, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                guard let sample = (samples as? [HKQuantitySample])?.first else {
-                    continuation.resume(throwing: HealthKitAdapterError.nutritionSampleNotFound)
-                    return
-                }
-                continuation.resume(returning: sample)
-            }
-            healthStore.execute(query)
-        }
+        let predicate = HKQuery.predicateForObject(with: id)
+        let sample: HKQuantitySample = try await fetchSample(
+            sampleType: quantityType,
+            predicate: predicate,
+            errorOnMissing: HealthKitAdapterError.nutritionSampleNotFound
+        )
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             healthStore.delete([sample]) { success, error in
                 if let error {

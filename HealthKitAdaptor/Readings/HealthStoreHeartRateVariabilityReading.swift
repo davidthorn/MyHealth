@@ -9,111 +9,63 @@ import Foundation
 import HealthKit
 import Models
 
-internal protocol HealthStoreHeartRateVariabilityReading {
+public protocol HealthStoreHeartRateVariabilityReading {
     var healthStore: HKHealthStore { get }
 }
 
-extension HealthStoreHeartRateVariabilityReading {
-    public func fetchHeartRateVariabilityReadings(limit: Int) async -> [HeartRateVariabilityReading] {
+public extension HealthStoreHeartRateVariabilityReading where Self: HealthStoreSampleQuerying {
+    func fetchHeartRateVariabilityReadings(limit: Int) async -> [HeartRateVariabilityReading] {
         guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return [] }
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-        return await withCheckedContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: hrvType,
-                predicate: nil,
-                limit: limit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let readings: [HeartRateVariabilityReading] = (samples as? [HKQuantitySample])?.map(HeartRateVariabilityReading.init) ?? []
-                continuation.resume(returning: readings)
-            }
-            healthStore.execute(query)
-        }
+        let samples: [HKQuantitySample] = await fetchSamples(
+            sampleType: hrvType,
+            predicate: nil,
+            limit: limit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return samples.map(HeartRateVariabilityReading.init)
     }
 
-    public func fetchHeartRateVariabilityDailyStats(days: Int) async -> [HeartRateVariabilityDayStats] {
+    func fetchHeartRateVariabilityDailyStats(days: Int) async -> [HeartRateVariabilityDayStats] {
         guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return [] }
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let startDate = calendar.date(byAdding: .day, value: -(days - 1), to: today) ?? today
-
-        return await withCheckedContinuation { continuation in
-            let predicate = HKQuery.predicateForSamples(withStart: startDate, end: today, options: .strictStartDate)
-            let interval = DateComponents(day: 1)
-            let query = HKStatisticsCollectionQuery(
-                quantityType: hrvType,
-                quantitySamplePredicate: predicate,
-                options: [.discreteAverage, .discreteMin, .discreteMax],
-                anchorDate: today,
-                intervalComponents: interval
+        let unit = HKUnit.secondUnit(with: .milli)
+        return await fetchDailyDiscreteStats(
+            quantityType: hrvType,
+            unit: unit,
+            days: days
+        ) { date, avg, min, max in
+            HeartRateVariabilityDayStats(
+                date: date,
+                averageMilliseconds: avg,
+                minMilliseconds: min,
+                maxMilliseconds: max
             )
-            query.initialResultsHandler = { _, collection, _ in
-                guard let collection else {
-                    continuation.resume(returning: [])
-                    return
-                }
-                var days: [HeartRateVariabilityDayStats] = []
-                let unit = HKUnit.secondUnit(with: .milli)
-                collection.enumerateStatistics(from: startDate, to: today) { statistics, _ in
-                    let avg = statistics.averageQuantity()?.doubleValue(for: unit)
-                    let min = statistics.minimumQuantity()?.doubleValue(for: unit)
-                    let max = statistics.maximumQuantity()?.doubleValue(for: unit)
-                    days.append(
-                        HeartRateVariabilityDayStats(
-                            date: statistics.startDate,
-                            averageMilliseconds: avg,
-                            minMilliseconds: min,
-                            maxMilliseconds: max
-                        )
-                    )
-                }
-                continuation.resume(returning: days)
-            }
-            healthStore.execute(query)
         }
     }
 
-    public func fetchHeartRateVariabilityReading(id: UUID) async throws -> HeartRateVariabilityReading {
+    func fetchHeartRateVariabilityReading(id: UUID) async throws -> HeartRateVariabilityReading {
         guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else {
             throw HealthKitAdapterError.heartRateVariabilityReadingNotFound
         }
-        return try await withCheckedThrowingContinuation { continuation in
-            let predicate = HKQuery.predicateForObject(with: id)
-            let query = HKSampleQuery(
-                sampleType: hrvType,
-                predicate: predicate,
-                limit: 1,
-                sortDescriptors: nil
-            ) { _, samples, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                    return
-                }
-                guard let sample = (samples as? [HKQuantitySample])?.first else {
-                    continuation.resume(throwing: HealthKitAdapterError.heartRateVariabilityReadingNotFound)
-                    return
-                }
-                continuation.resume(returning: HeartRateVariabilityReading(sample: sample))
-            }
-            healthStore.execute(query)
-        }
+        let predicate = HKQuery.predicateForObject(with: id)
+        let sample: HKQuantitySample = try await fetchSample(
+            sampleType: hrvType,
+            predicate: predicate,
+            errorOnMissing: HealthKitAdapterError.heartRateVariabilityReadingNotFound
+        )
+        return HeartRateVariabilityReading(sample: sample)
     }
 
-    public func fetchHeartRateVariabilityReadings(start: Date, end: Date) async -> [HeartRateVariabilityReading] {
+    func fetchHeartRateVariabilityReadings(start: Date, end: Date) async -> [HeartRateVariabilityReading] {
         guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return [] }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: true)
-        return await withCheckedContinuation { continuation in
-            let query = HKSampleQuery(
-                sampleType: hrvType,
-                predicate: predicate,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let readings: [HeartRateVariabilityReading] = (samples as? [HKQuantitySample])?.map(HeartRateVariabilityReading.init) ?? []
-                continuation.resume(returning: readings)
-            }
-            healthStore.execute(query)
-        }
+        let samples: [HKQuantitySample] = await fetchSamples(
+            sampleType: hrvType,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return samples.map(HeartRateVariabilityReading.init)
     }
 }

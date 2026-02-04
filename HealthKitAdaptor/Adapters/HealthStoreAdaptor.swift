@@ -48,7 +48,7 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol,
         }
     }
 
-    internal func notifyNutritionChanged() {
+    public func notifyNutritionChanged() {
         nutritionChangesSubject.send(())
     }
 }

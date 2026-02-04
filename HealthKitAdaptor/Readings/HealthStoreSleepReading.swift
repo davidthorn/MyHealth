@@ -9,12 +9,12 @@ import Foundation
 import HealthKit
 import Models
 
-internal protocol HealthStoreSleepReading {
+public protocol HealthStoreSleepReading {
     var healthStore: HKHealthStore { get }
 }
 
-extension HealthStoreSleepReading {
-    public func fetchSleepAnalysis(days: Int) async -> [SleepDay] {
+public extension HealthStoreSleepReading where Self: HealthStoreSampleQuerying {
+    func fetchSleepAnalysis(days: Int) async -> [SleepDay] {
         guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return [] }
         let safeDays = max(days, 1)
         let calendar = Calendar.current
@@ -24,36 +24,30 @@ extension HealthStoreSleepReading {
             return []
         }
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-        return await withCheckedContinuation { continuation in
-            let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-            let query = HKSampleQuery(
-                sampleType: sleepType,
-                predicate: predicate,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let sleepSamples = (samples as? [HKCategorySample]) ?? []
-                var durations: [Date: TimeInterval] = [:]
-                for sample in sleepSamples {
-                    let category = HKCategoryValueSleepAnalysis(rawValue: sample.value)
-                    guard category == .asleepUnspecified || category == .asleepCore || category == .asleepDeep || category == .asleepREM else { continue }
-                    let day = calendar.startOfDay(for: sample.startDate)
-                    durations[day, default: 0] += sample.endDate.timeIntervalSince(sample.startDate)
-                }
-                var days: [SleepDay] = []
-                let dayRange = (0..<safeDays).compactMap { calendar.date(byAdding: .day, value: -$0, to: anchorDate) }
-                for day in dayRange {
-                    let duration = durations[day] ?? 0
-                    days.append(SleepDay(date: day, durationSeconds: duration))
-                }
-                let sorted = days.sorted { $0.date > $1.date }
-                continuation.resume(returning: sorted)
-            }
-            healthStore.execute(query)
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let sleepSamples: [HKCategorySample] = await fetchSamples(
+            sampleType: sleepType,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        var durations: [Date: TimeInterval] = [:]
+        for sample in sleepSamples {
+            let category = HKCategoryValueSleepAnalysis(rawValue: sample.value)
+            guard category == .asleepUnspecified || category == .asleepCore || category == .asleepDeep || category == .asleepREM else { continue }
+            let day = calendar.startOfDay(for: sample.startDate)
+            durations[day, default: 0] += sample.endDate.timeIntervalSince(sample.startDate)
         }
+        var days: [SleepDay] = []
+        let dayRange = (0..<safeDays).compactMap { calendar.date(byAdding: .day, value: -$0, to: anchorDate) }
+        for day in dayRange {
+            let duration = durations[day] ?? 0
+            days.append(SleepDay(date: day, durationSeconds: duration))
+        }
+        return days.sorted { $0.date > $1.date }
     }
     
-    public func fetchSleepAnalysisDay(date: Date) async -> SleepDay {
+    func fetchSleepAnalysisDay(date: Date) async -> SleepDay {
         guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else {
             return SleepDay(date: Calendar.current.startOfDay(for: date), durationSeconds: 0)
         }
@@ -63,24 +57,19 @@ extension HealthStoreSleepReading {
             return SleepDay(date: startDate, durationSeconds: 0)
         }
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-        return await withCheckedContinuation { continuation in
-            let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-            let query = HKSampleQuery(
-                sampleType: sleepType,
-                predicate: predicate,
-                limit: HKObjectQueryNoLimit,
-                sortDescriptors: [sortDescriptor]
-            ) { _, samples, _ in
-                let sleepSamples = (samples as? [HKCategorySample]) ?? []
-                var duration: TimeInterval = 0
-                for sample in sleepSamples {
-                    let category = HKCategoryValueSleepAnalysis(rawValue: sample.value)
-                    guard category == .asleepUnspecified || category == .asleepCore || category == .asleepDeep || category == .asleepREM else { continue }
-                    duration += sample.endDate.timeIntervalSince(sample.startDate)
-                }
-                continuation.resume(returning: SleepDay(date: startDate, durationSeconds: duration))
-            }
-            healthStore.execute(query)
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let sleepSamples: [HKCategorySample] = await fetchSamples(
+            sampleType: sleepType,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        var duration: TimeInterval = 0
+        for sample in sleepSamples {
+            let category = HKCategoryValueSleepAnalysis(rawValue: sample.value)
+            guard category == .asleepUnspecified || category == .asleepCore || category == .asleepDeep || category == .asleepREM else { continue }
+            duration += sample.endDate.timeIntervalSince(sample.startDate)
         }
+        return SleepDay(date: startDate, durationSeconds: duration)
     }
 }
