@@ -11,7 +11,8 @@ import Foundation
 @MainActor
 public final class InsightsViewModel: ObservableObject {
     @Published public private(set) var title: String
-    @Published public var path: [InsightsRoute]
+    @Published public private(set) var insights: [InsightItem]
+    @Published public private(set) var isAuthorized: Bool
 
     private let service: InsightsServiceProtocol
     private var task: Task<Void, Never>?
@@ -19,8 +20,8 @@ public final class InsightsViewModel: ObservableObject {
     public init(service: InsightsServiceProtocol) {
         self.service = service
         self.title = "Insights"
-        self.path = []
-
+        self.insights = []
+        self.isAuthorized = false
     }
 
     public func start() {
@@ -30,6 +31,8 @@ public final class InsightsViewModel: ObservableObject {
             for await update in service.updates() {
                 guard let self, !Task.isCancelled else { break }
                 self.title = update.title
+                self.isAuthorized = update.isAuthorized
+                self.insights = update.insights
             }
         }
     }
@@ -37,5 +40,19 @@ public final class InsightsViewModel: ObservableObject {
     public func stop() {
         task?.cancel()
         task = nil
+    }
+
+    public func requestAuthorization() {
+        task?.cancel()
+        task = Task { [weak self] in
+            guard let service = self?.service else { return }
+            let isAuthorized = await service.requestAuthorization()
+            guard let self, !Task.isCancelled else { return }
+            self.isAuthorized = isAuthorized
+            if isAuthorized {
+                self.stop()
+                self.start()
+            }
+        }
     }
 }

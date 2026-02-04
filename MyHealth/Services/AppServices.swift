@@ -175,7 +175,7 @@ public struct AppServices: AppServicesProviding {
             nutritionService: NutritionService(healthKitAdapter: healthKitAdapter),
             nutritionTypeListService: NutritionTypeListService(healthKitAdapter: healthKitAdapter),
             nutritionEntryDetailService: NutritionEntryDetailService(healthKitAdapter: healthKitAdapter),
-            insightsService: InsightsService(),
+            insightsService: InsightsService(healthKitAdapter: healthKitAdapter),
             settingsService: SettingsService()
         )
     }

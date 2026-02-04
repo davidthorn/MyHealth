@@ -8,9 +8,10 @@
 import Foundation
 
 public enum InsightsRoute: Hashable {
-    case insight(String)
+    case main
+    case insight(InsightItem)
 
-    public init(insight: String) {
+    public init(insight: InsightItem) {
         self = .insight(insight)
     }
 }

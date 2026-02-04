@@ -61,8 +61,10 @@ public struct ContentView: View {
                 locationService: viewModel.locationService,
                 workoutLocationManager: viewModel.workoutLocationManager
             )
-            InsightsScene(service: viewModel.insightsService)
-            SettingsScene(service: viewModel.settingsService)
+            MoreScene(
+                insightsService: viewModel.insightsService,
+                settingsService: viewModel.settingsService
+            )
         }
     }
 }

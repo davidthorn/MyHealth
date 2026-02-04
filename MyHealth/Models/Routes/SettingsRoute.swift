@@ -8,6 +8,7 @@
 import Foundation
 
 public enum SettingsRoute: Hashable {
+    case main
     case section(String)
 
     public init(section: String) {

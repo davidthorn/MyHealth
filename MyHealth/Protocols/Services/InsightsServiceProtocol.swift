@@ -8,5 +8,6 @@
 import Foundation
 
 public protocol InsightsServiceProtocol {
+    func requestAuthorization() async -> Bool
     func updates() -> AsyncStream<InsightsUpdate>
 }
