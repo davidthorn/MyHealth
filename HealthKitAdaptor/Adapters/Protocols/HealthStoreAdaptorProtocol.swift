@@ -26,6 +26,10 @@ public protocol HealthStoreAdaptorProtocol: Sendable, HealthStoreSampleQuerying 
     func fetchBloodOxygenReadings(limit: Int) async -> [BloodOxygenReading]
     func fetchBloodOxygenReading(id: UUID) async throws -> BloodOxygenReading
     func fetchBloodOxygenReadings(start: Date, end: Date) async -> [BloodOxygenReading]
+    func fetchCardioFitnessReadings(limit: Int) async -> [CardioFitnessReading]
+    func fetchCardioFitnessReading(id: UUID) async throws -> CardioFitnessReading
+    func fetchCardioFitnessReadings(start: Date, end: Date) async -> [CardioFitnessReading]
+    func fetchCardioFitnessDailyStats(days: Int) async -> [CardioFitnessDayStats]
     func fetchStepCounts(days: Int) async -> [StepsDay]
     func fetchFlightCounts(days: Int) async -> [FlightsDay]
     func fetchStandHourCounts(days: Int) async -> [StandHourDay]

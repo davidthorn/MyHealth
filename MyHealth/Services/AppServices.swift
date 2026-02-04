@@ -16,6 +16,7 @@ public struct AppServices: AppServicesProviding {
     public let metricsService: MetricsServiceProtocol
     public let heartRateSummaryService: HeartRateSummaryServiceProtocol
     public let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
+    public let cardioFitnessDetailService: CardioFitnessDetailServiceProtocol
     public let bloodOxygenDetailService: BloodOxygenDetailServiceProtocol
     public let exerciseMinutesDetailService: ExerciseMinutesDetailServiceProtocol
     public let heartRateVariabilityDetailService: HeartRateVariabilityDetailServiceProtocol
@@ -56,6 +57,7 @@ public struct AppServices: AppServicesProviding {
         metricsService: MetricsServiceProtocol,
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
+        cardioFitnessDetailService: CardioFitnessDetailServiceProtocol,
         bloodOxygenDetailService: BloodOxygenDetailServiceProtocol,
         exerciseMinutesDetailService: ExerciseMinutesDetailServiceProtocol,
         heartRateVariabilityDetailService: HeartRateVariabilityDetailServiceProtocol,
@@ -95,6 +97,7 @@ public struct AppServices: AppServicesProviding {
         self.metricsService = metricsService
         self.heartRateSummaryService = heartRateSummaryService
         self.heartRateReadingDetailService = heartRateReadingDetailService
+        self.cardioFitnessDetailService = cardioFitnessDetailService
         self.bloodOxygenDetailService = bloodOxygenDetailService
         self.exerciseMinutesDetailService = exerciseMinutesDetailService
         self.heartRateVariabilityDetailService = heartRateVariabilityDetailService
@@ -141,6 +144,7 @@ public struct AppServices: AppServicesProviding {
             metricsService: MetricsService(healthKitAdapter: healthKitAdapter),
             heartRateSummaryService: HeartRateSummaryService(healthKitAdapter: healthKitAdapter),
             heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),
+            cardioFitnessDetailService: CardioFitnessDetailService(healthKitAdapter: healthKitAdapter),
             bloodOxygenDetailService: BloodOxygenDetailService(healthKitAdapter: healthKitAdapter),
             exerciseMinutesDetailService: ExerciseMinutesDetailService(healthKitAdapter: healthKitAdapter),
             heartRateVariabilityDetailService: HeartRateVariabilityDetailService(healthKitAdapter: healthKitAdapter),

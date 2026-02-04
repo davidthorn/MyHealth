@@ -45,7 +45,7 @@ public final class MetricsViewModel: ObservableObject {
         self.insights = []
         self.nutritionSummary = nil
         self.nutritionWindow = .today
-        self.highlightCategories = [.activityRings, .steps, .calories, .sleep]
+        self.highlightCategories = [.activityRings, .steps, .calories, .sleep, .cardioFitness]
     }
 
     public func start() {

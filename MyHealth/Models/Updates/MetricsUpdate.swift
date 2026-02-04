@@ -11,6 +11,7 @@ import Models
 public struct MetricsUpdate: Sendable {
     public let title: String
     public let heartRateSummary: HeartRateSummary?
+    public let cardioFitnessSummary: CardioFitnessSummary?
     public let bloodOxygenSummary: BloodOxygenSummary?
     public let heartRateVariabilitySummary: HeartRateVariabilitySummary?
     public let restingHeartRateSummary: RestingHeartRateSummary?
@@ -26,6 +27,7 @@ public struct MetricsUpdate: Sendable {
     public init(
         title: String,
         heartRateSummary: HeartRateSummary?,
+        cardioFitnessSummary: CardioFitnessSummary?,
         bloodOxygenSummary: BloodOxygenSummary?,
         heartRateVariabilitySummary: HeartRateVariabilitySummary?,
         restingHeartRateSummary: RestingHeartRateSummary?,
@@ -40,6 +42,7 @@ public struct MetricsUpdate: Sendable {
     ) {
         self.title = title
         self.heartRateSummary = heartRateSummary
+        self.cardioFitnessSummary = cardioFitnessSummary
         self.bloodOxygenSummary = bloodOxygenSummary
         self.heartRateVariabilitySummary = heartRateVariabilitySummary
         self.restingHeartRateSummary = restingHeartRateSummary

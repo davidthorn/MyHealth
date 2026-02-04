@@ -12,6 +12,7 @@ public struct MetricsScene: View {
     private let service: MetricsServiceProtocol
     private let heartRateSummaryService: HeartRateSummaryServiceProtocol
     private let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
+    private let cardioFitnessDetailService: CardioFitnessDetailServiceProtocol
     private let bloodOxygenDetailService: BloodOxygenDetailServiceProtocol
     private let exerciseMinutesDetailService: ExerciseMinutesDetailServiceProtocol
     private let heartRateVariabilityDetailService: HeartRateVariabilityDetailServiceProtocol
@@ -38,6 +39,7 @@ public struct MetricsScene: View {
         service: MetricsServiceProtocol,
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
+        cardioFitnessDetailService: CardioFitnessDetailServiceProtocol,
         bloodOxygenDetailService: BloodOxygenDetailServiceProtocol,
         exerciseMinutesDetailService: ExerciseMinutesDetailServiceProtocol,
         heartRateVariabilityDetailService: HeartRateVariabilityDetailServiceProtocol,
@@ -63,6 +65,7 @@ public struct MetricsScene: View {
         self.service = service
         self.heartRateSummaryService = heartRateSummaryService
         self.heartRateReadingDetailService = heartRateReadingDetailService
+        self.cardioFitnessDetailService = cardioFitnessDetailService
         self.bloodOxygenDetailService = bloodOxygenDetailService
         self.exerciseMinutesDetailService = exerciseMinutesDetailService
         self.heartRateVariabilityDetailService = heartRateVariabilityDetailService
@@ -97,6 +100,8 @@ public struct MetricsScene: View {
                         switch category {
                         case .heartRate:
                             HeartRateSummaryView(service: heartRateSummaryService)
+                        case .cardioFitness:
+                            CardioFitnessDetailView(service: cardioFitnessDetailService)
                         case .bloodOxygen:
                             BloodOxygenDetailView(service: bloodOxygenDetailService)
                         case .exerciseMinutes:
@@ -201,6 +206,7 @@ public struct MetricsScene: View {
         service: AppServices.shared.metricsService,
         heartRateSummaryService: AppServices.shared.heartRateSummaryService,
         heartRateReadingDetailService: AppServices.shared.heartRateReadingDetailService,
+        cardioFitnessDetailService: AppServices.shared.cardioFitnessDetailService,
         bloodOxygenDetailService: AppServices.shared.bloodOxygenDetailService,
         exerciseMinutesDetailService: AppServices.shared.exerciseMinutesDetailService,
         heartRateVariabilityDetailService: AppServices.shared.heartRateVariabilityDetailService,

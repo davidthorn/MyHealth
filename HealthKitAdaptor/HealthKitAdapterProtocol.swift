@@ -22,6 +22,10 @@ public protocol HealthKitAdapterProtocol: Sendable {
     func bloodOxygenSummaryStream() -> AsyncStream<BloodOxygenSummary>
     func bloodOxygenReading(id: UUID) async throws -> BloodOxygenReading
     func bloodOxygenReadings(from start: Date, to end: Date) async -> [BloodOxygenReading]
+    func cardioFitnessSummaryStream() -> AsyncStream<CardioFitnessSummary>
+    func cardioFitnessReading(id: UUID) async throws -> CardioFitnessReading
+    func cardioFitnessReadings(from start: Date, to end: Date) async -> [CardioFitnessReading]
+    func cardioFitnessDailyStats(days: Int) async -> [CardioFitnessDayStats]
     func stepsSummaryStream(days: Int) -> AsyncStream<StepsSummary>
     func flightsSummaryStream(days: Int) -> AsyncStream<FlightsSummary>
     func standHoursSummaryStream(days: Int) -> AsyncStream<StandHoursSummary>

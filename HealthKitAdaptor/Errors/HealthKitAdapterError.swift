@@ -14,6 +14,7 @@ public enum HealthKitAdapterError: Error {
     case heartRateReadingNotFound
     case bloodOxygenReadingNotFound
     case heartRateVariabilityReadingNotFound
+    case cardioFitnessReadingNotFound
     case unsupportedNutritionType
     case nutritionSampleNotFound
 }

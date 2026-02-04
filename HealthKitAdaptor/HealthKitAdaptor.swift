@@ -15,6 +15,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
     private let heartRates: HealthKitHeartRateAdapterProtocol
     public let hrvProvider: HealthKitHRVProviding
     private let bloodOxygen: HealthKitBloodOxygenAdapterProtocol
+    private let cardioFitness: HealthKitCardioFitnessAdapterProtocol
     private let steps: HealthKitStepsAdapterProtocol
     private let flights: HealthKitFlightsAdapterProtocol
     private let standHours: HealthKitStandHoursAdapterProtocol
@@ -35,6 +36,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         workoutSession: HealthKitWorkoutSessionManaging,
         heartRates: HealthKitHeartRateAdapterProtocol,
         bloodOxygen: HealthKitBloodOxygenAdapterProtocol,
+        cardioFitness: HealthKitCardioFitnessAdapterProtocol,
         steps: HealthKitStepsAdapterProtocol,
         flights: HealthKitFlightsAdapterProtocol,
         standHours: HealthKitStandHoursAdapterProtocol,
@@ -51,6 +53,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         self.heartRates = heartRates
         self.hrvProvider = HealthKitHRVProvider(storeAdaptor: storeAdaptor)
         self.bloodOxygen = bloodOxygen
+        self.cardioFitness = cardioFitness
         self.steps = steps
         self.flights = flights
         self.standHours = standHours
@@ -73,6 +76,7 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
             ),
             heartRates: HealthKitHeartRateAdapter(storeAdaptor: storeAdaptor),
             bloodOxygen: HealthKitBloodOxygenAdapter(storeAdaptor: storeAdaptor),
+            cardioFitness: HealthKitCardioFitnessAdapter(storeAdaptor: storeAdaptor),
             steps: HealthKitStepsAdapter(storeAdaptor: storeAdaptor),
             flights: HealthKitFlightsAdapter(storeAdaptor: storeAdaptor),
             standHours: HealthKitStandHoursAdapter(storeAdaptor: storeAdaptor),
@@ -123,6 +127,22 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
 
     public func bloodOxygenReadings(from start: Date, to end: Date) async -> [BloodOxygenReading] {
         await bloodOxygen.bloodOxygenReadings(start: start, end: end)
+    }
+
+    public func cardioFitnessSummaryStream() -> AsyncStream<CardioFitnessSummary> {
+        cardioFitness.cardioFitnessSummaryStream()
+    }
+
+    public func cardioFitnessReading(id: UUID) async throws -> CardioFitnessReading {
+        try await cardioFitness.cardioFitnessReading(id: id)
+    }
+
+    public func cardioFitnessReadings(from start: Date, to end: Date) async -> [CardioFitnessReading] {
+        await cardioFitness.cardioFitnessReadings(start: start, end: end)
+    }
+
+    public func cardioFitnessDailyStats(days: Int) async -> [CardioFitnessDayStats] {
+        await cardioFitness.cardioFitnessDailyStats(days: days)
     }
 
     public func stepsSummaryStream(days: Int) -> AsyncStream<StepsSummary> {

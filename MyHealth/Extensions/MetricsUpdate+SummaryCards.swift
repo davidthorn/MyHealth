@@ -64,6 +64,16 @@ public extension MetricsUpdate {
         )
         cards.append(
             summaryCard(
+                category: .cardioFitness,
+                latestValue: cardioFitnessSummary?.latest?.vo2Max,
+                previousValue: cardioFitnessSummary?.previous.first?.vo2Max,
+                unit: nil,
+                subtitle: "Latest",
+                formatter: { "\(formatNumber($0, decimals: 1)) ml/kg/min" }
+            )
+        )
+        cards.append(
+            summaryCard(
                 category: .heartRateVariability,
                 latestValue: heartRateVariabilitySummary?.latest?.milliseconds,
                 previousValue: heartRateVariabilitySummary?.previous.first?.milliseconds,
@@ -204,10 +214,15 @@ private extension MetricsUpdate {
     }
 
     func formatNumber(_ value: Double) -> String {
+        formatNumber(value, decimals: 0)
+    }
+
+    func formatNumber(_ value: Double, decimals: Int) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: value.rounded())) ?? "\(Int(value.rounded()))"
+        formatter.maximumFractionDigits = decimals
+        let rounded = Double(round(pow(10, Double(decimals)) * value) / pow(10, Double(decimals)))
+        return formatter.string(from: NSNumber(value: rounded)) ?? "\(rounded)"
     }
 
     func formatDuration(_ seconds: Double) -> String {
