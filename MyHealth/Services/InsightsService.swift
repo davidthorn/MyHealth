@@ -59,6 +59,14 @@ public final class InsightsService: InsightsServiceProtocol {
                     if let workoutInsight {
                         insights.append(workoutInsight)
                     }
+
+                    let loadInsight = await buildWorkoutLoadTrendInsights(
+                        from: workouts,
+                        includeHeartRate: heartRateAuthorized
+                    )
+                    if let loadInsight {
+                        insights.append(loadInsight)
+                    }
                 }
 
                 if restingAuthorized || hrvAuthorized {
@@ -138,6 +146,34 @@ public final class InsightsService: InsightsServiceProtocol {
         )
     }
 
+    private func buildWorkoutLoadTrendInsights(
+        from workouts: [Workout],
+        includeHeartRate: Bool
+    ) async -> InsightItem? {
+        let builder = WorkoutLoadTrendInsightBuilder(
+            healthKitAdapter: healthKitAdapter,
+            workouts: workouts,
+            includeHeartRate: includeHeartRate
+        )
+        guard let insight = await builder.build() else { return nil }
+
+        let summaryText = "This week \(formatNumber(insight.currentMinutes)) min • Last week \(formatNumber(insight.previousMinutes)) min"
+        let detailText = loadDetailText(
+            currentLoad: insight.currentLoad,
+            previousLoad: insight.previousLoad
+        )
+
+        return InsightItem(
+            type: .workoutLoadTrend,
+            title: InsightType.workoutLoadTrend.title,
+            summary: summaryText,
+            detail: detailText,
+            status: insight.status.title,
+            icon: "chart.line.uptrend.xyaxis",
+            workoutLoadTrend: insight
+        )
+    }
+
     private func buildWorkoutDetailText(averageHeartRate: Double?, peakHeartRate: Double?) -> String {
         var parts: [String] = []
         if let averageHeartRate {
@@ -204,6 +240,11 @@ public final class InsightsService: InsightsServiceProtocol {
         hrvTrend: RecoveryReadinessTrend
     ) -> String {
         "7-day trend: RHR \(restingTrend.label) • HRV \(hrvTrend.label)"
+    }
+
+    private func loadDetailText(currentLoad: Double?, previousLoad: Double?) -> String {
+        guard let currentLoad, let previousLoad else { return "Load data unavailable" }
+        return "Load \(formatNumber(currentLoad)) vs \(formatNumber(previousLoad))"
     }
 
 }
