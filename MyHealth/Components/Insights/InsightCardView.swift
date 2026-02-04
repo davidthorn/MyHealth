@@ -50,8 +50,8 @@ public struct InsightCardView: View {
 private extension InsightCardView {
     var accentColor: Color {
         switch insight.type {
-        case .activityConsistency:
-            return .green
+        case .activityHighlights:
+            return .blue
         }
     }
 }
@@ -60,11 +60,11 @@ private extension InsightCardView {
 #Preview {
     InsightCardView(
         insight: InsightItem(
-            type: .activityConsistency,
-            title: "Activity Consistency",
-            summary: "Closed all rings 4/7 days",
-            detail: "Move goal met 5 days • Exercise goal met 4 days • Stand goal met 6 days",
-            status: "Steady",
+            type: .activityHighlights,
+            title: "Activity Highlights",
+            summary: "Move 3,420 kcal • Exercise 220 min",
+            detail: "Active 5/7 days • Stand 62 hr",
+            status: "Strong",
             icon: "figure.walk"
         )
     )

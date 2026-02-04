@@ -31,7 +31,11 @@ public struct InsightsView: View {
                             LazyVStack(spacing: 12) {
                                 ForEach(viewModel.insights) { insight in
                                     NavigationLink(value: InsightsRoute(insight: insight)) {
-                                        InsightCardView(insight: insight)
+                                        if insight.type == .activityHighlights {
+                                            ActivityHighlightsInsightCardView(insight: insight)
+                                        } else {
+                                            InsightCardView(insight: insight)
+                                        }
                                     }
                                     .buttonStyle(.plain)
                                 }

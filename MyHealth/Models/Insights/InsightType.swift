@@ -8,14 +8,14 @@
 import Foundation
 
 public enum InsightType: String, Hashable, CaseIterable, Sendable, Identifiable {
-    case activityConsistency
+    case activityHighlights
 
     public var id: String { rawValue }
 
     public var title: String {
         switch self {
-        case .activityConsistency:
-            return "Activity Consistency"
+        case .activityHighlights:
+            return "Activity Highlights"
         }
     }
 }

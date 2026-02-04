@@ -61,31 +61,88 @@ public final class InsightsService: InsightsServiceProtocol {
         }
         days.append(contentsOf: summary.previous)
 
-        let recentDays = Array(days.sorted { $0.date > $1.date }.prefix(7))
+        let sortedDays = days.sorted { $0.date > $1.date }
+        let recentDays = Array(sortedDays.prefix(7))
+        let previousDays = Array(sortedDays.dropFirst(7).prefix(7))
         guard !recentDays.isEmpty else { return [] }
 
         let totalDays = recentDays.count
-        let closedAll = recentDays.filter { $0.closedRingsCount == 3 }.count
-        let moveMet = recentDays.filter { $0.moveGoal > 0 && $0.moveValue >= $0.moveGoal }.count
-        let exerciseMet = recentDays.filter { $0.exerciseGoal > 0 && $0.exerciseMinutes >= $0.exerciseGoal }.count
-        let standMet = recentDays.filter { $0.standGoal > 0 && $0.standHours >= $0.standGoal }.count
+        let totalMove = recentDays.map(\.moveValue).reduce(0, +)
+        let totalExercise = recentDays.map(\.exerciseMinutes).reduce(0, +)
+        let totalStand = recentDays.map(\.standHours).reduce(0, +)
+        let activeDays = recentDays.filter { $0.exerciseMinutes > 0 }.count
+        let daysWithRingClosed = recentDays.filter { $0.closedRingsCount > 0 }.count
 
-        let averageClosed = recentDays.map { Double($0.closedRingsCount) }.reduce(0, +) / Double(totalDays)
-        let score = Int((averageClosed / 3.0) * 100.0)
+        let bestDay = recentDays.max { $0.moveValue < $1.moveValue }
+        let bestDayMove = bestDay?.moveValue ?? 0
+        let worstDay = recentDays.min { $0.moveValue < $1.moveValue }
+        let worstDayMove = worstDay?.moveValue ?? 0
 
-        let summaryText = "Closed all rings \(closedAll)/\(totalDays) days"
-        let detailText = "Move goal met \(moveMet) days • Exercise goal met \(exerciseMet) days • Stand goal met \(standMet) days"
-        let statusText = score >= 80 ? "Strong" : (score >= 50 ? "Steady" : "Needs Work")
+        let averageMove = totalMove / Double(totalDays)
+        let averageExercise = totalExercise / Double(totalDays)
+        let averageStand = totalStand / Double(totalDays)
+        let averageMoveGoal = averageGoal(for: recentDays, metric: .move)
+        let averageExerciseGoal = averageGoal(for: recentDays, metric: .exercise)
+        let averageStandGoal = averageGoal(for: recentDays, metric: .stand)
+
+        let summaryText = "Move \(formatNumber(totalMove)) kcal • Exercise \(formatNumber(totalExercise)) min"
+        let detailText = "Active \(activeDays)/\(totalDays) days • Stand \(formatNumber(totalStand)) stand hrs"
+        let statusText = activeDays >= 5 ? "Strong" : (activeDays >= 3 ? "Steady" : "Fresh Start")
 
         return [
             InsightItem(
-                type: .activityConsistency,
-                title: InsightType.activityConsistency.title,
+                type: .activityHighlights,
+                title: InsightType.activityHighlights.title,
                 summary: summaryText,
                 detail: detailText,
                 status: statusText,
-                icon: "figure.walk"
+                icon: "figure.walk",
+                activityHighlights: ActivityHighlightsInsight(
+                    recentDays: recentDays,
+                    previousDays: previousDays,
+                    totalMove: totalMove,
+                    totalExerciseMinutes: totalExercise,
+                    totalStandHours: totalStand,
+                    activeDays: activeDays,
+                    daysWithRingClosed: daysWithRingClosed,
+                    bestDayDate: bestDay?.date,
+                    bestDayMove: bestDayMove,
+                    worstDayDate: worstDay?.date,
+                    worstDayMove: worstDayMove,
+                    averageMove: averageMove,
+                    averageExercise: averageExercise,
+                    averageStand: averageStand,
+                    averageMoveGoal: averageMoveGoal,
+                    averageExerciseGoal: averageExerciseGoal,
+                    averageStandGoal: averageStandGoal
+                )
             )
         ]
+    }
+
+    private func formatNumber(_ value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: value)) ?? "\(Int(value.rounded()))"
+    }
+
+    private func averageGoal(for days: [ActivityRingsDay], metric: ActivityRingsMetric) -> Double {
+        guard !days.isEmpty else { return 0 }
+        let values = days.compactMap { day -> Double? in
+            switch metric {
+            case .move:
+                guard day.moveGoal > 0 else { return nil }
+                return day.moveGoal
+            case .exercise:
+                guard day.exerciseGoal > 0 else { return nil }
+                return day.exerciseGoal
+            case .stand:
+                guard day.standGoal > 0 else { return nil }
+                return day.standGoal
+            }
+        }
+        guard !values.isEmpty else { return 0 }
+        return values.reduce(0, +) / Double(values.count)
     }
 }
