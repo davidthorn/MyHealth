@@ -52,6 +52,8 @@ private extension InsightCardView {
         switch insight.type {
         case .activityHighlights:
             return .blue
+        case .workoutHighlights:
+            return .pink
         }
     }
 }

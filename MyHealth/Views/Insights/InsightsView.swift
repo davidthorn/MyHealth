@@ -31,10 +31,11 @@ public struct InsightsView: View {
                             LazyVStack(spacing: 12) {
                                 ForEach(viewModel.insights) { insight in
                                     NavigationLink(value: InsightsRoute(insight: insight)) {
-                                        if insight.type == .activityHighlights {
+                                        switch insight.type {
+                                        case .activityHighlights:
                                             ActivityHighlightsInsightCardView(insight: insight)
-                                        } else {
-                                            InsightCardView(insight: insight)
+                                        case .workoutHighlights:
+                                            WorkoutHighlightsInsightCardView(insight: insight)
                                         }
                                     }
                                     .buttonStyle(.plain)
@@ -73,7 +74,7 @@ public struct InsightsView: View {
 private extension InsightsView {
     var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Activity patterns from the last 7 days.")
+            Text("Insights from the last 7 days.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }

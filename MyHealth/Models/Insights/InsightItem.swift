@@ -15,6 +15,7 @@ public struct InsightItem: Hashable, Sendable, Identifiable {
     public let status: String
     public let icon: String
     public let activityHighlights: ActivityHighlightsInsight?
+    public let workoutHighlights: WorkoutHighlightsInsight?
 
     public var id: InsightType { type }
 
@@ -25,7 +26,8 @@ public struct InsightItem: Hashable, Sendable, Identifiable {
         detail: String,
         status: String,
         icon: String,
-        activityHighlights: ActivityHighlightsInsight? = nil
+        activityHighlights: ActivityHighlightsInsight? = nil,
+        workoutHighlights: WorkoutHighlightsInsight? = nil
     ) {
         self.type = type
         self.title = title
@@ -34,5 +36,6 @@ public struct InsightItem: Hashable, Sendable, Identifiable {
         self.status = status
         self.icon = icon
         self.activityHighlights = activityHighlights
+        self.workoutHighlights = workoutHighlights
     }
 }

@@ -45,7 +45,12 @@ public struct MoreScene: View {
                 case .main:
                     InsightsScene(service: insightsService)
                 case .insight(let insight):
-                    ActivityHighlightsInsightDetailView(insight: insight)
+                    switch insight.type {
+                    case .activityHighlights:
+                        ActivityHighlightsInsightDetailView(insight: insight)
+                    case .workoutHighlights:
+                        WorkoutHighlightsInsightDetailView(insight: insight)
+                    }
                 }
             }
         }
