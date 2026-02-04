@@ -54,6 +54,8 @@ public struct MoreScene: View {
                         RecoveryReadinessInsightDetailView(insight: insight)
                     case .workoutLoadTrend:
                         WorkoutLoadTrendInsightDetailView(insight: insight)
+                    case .workoutRecoveryBalance:
+                        WorkoutRecoveryBalanceInsightDetailView(insight: insight)
                     }
                 }
             }

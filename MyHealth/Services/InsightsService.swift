@@ -45,6 +45,7 @@ public final class InsightsService: InsightsServiceProtocol {
                 }
 
                 var insights: [InsightItem] = []
+                var workoutsCache: [Workout] = []
 
                 if activityAuthorized {
                     let summary = await firstValue(from: healthKitAdapter.activitySummaryStream(days: 7))
@@ -54,6 +55,7 @@ public final class InsightsService: InsightsServiceProtocol {
 
                 if workoutsAuthorized {
                     let workouts = await firstValue(from: healthKitAdapter.workoutsStream()) ?? []
+                    workoutsCache = workouts
                     guard !Task.isCancelled else { return }
                     let workoutInsight = await buildWorkoutInsights(from: workouts, includeHeartRate: heartRateAuthorized)
                     if let workoutInsight {
@@ -76,6 +78,18 @@ public final class InsightsService: InsightsServiceProtocol {
                     )
                     if let recoveryInsight {
                         insights.append(recoveryInsight)
+                    }
+                }
+
+                if workoutsAuthorized, (restingAuthorized || hrvAuthorized), !workoutsCache.isEmpty {
+                    let balanceInsight = await buildWorkoutRecoveryBalanceInsights(
+                        from: workoutsCache,
+                        includeHeartRate: heartRateAuthorized,
+                        includeResting: restingAuthorized,
+                        includeHrv: hrvAuthorized
+                    )
+                    if let balanceInsight {
+                        insights.append(balanceInsight)
                     }
                 }
 
@@ -216,6 +230,35 @@ public final class InsightsService: InsightsServiceProtocol {
         )
     }
 
+    private func buildWorkoutRecoveryBalanceInsights(
+        from workouts: [Workout],
+        includeHeartRate: Bool,
+        includeResting: Bool,
+        includeHrv: Bool
+    ) async -> InsightItem? {
+        let builder = WorkoutRecoveryBalanceInsightBuilder(
+            healthKitAdapter: healthKitAdapter,
+            workouts: workouts,
+            includeHeartRate: includeHeartRate,
+            includeResting: includeResting,
+            includeHrv: includeHrv
+        )
+        guard let insight = await builder.build() else { return nil }
+
+        let summaryText = buildRecoveryBalanceSummary(insight: insight)
+        let detailText = buildRecoveryBalanceDetail(insight: insight)
+
+        return InsightItem(
+            type: .workoutRecoveryBalance,
+            title: InsightType.workoutRecoveryBalance.title,
+            summary: summaryText,
+            detail: detailText,
+            status: insight.status.title,
+            icon: "bolt.heart",
+            workoutRecoveryBalance: insight
+        )
+    }
+
     private func formatNumber(_ value: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -245,6 +288,24 @@ public final class InsightsService: InsightsServiceProtocol {
     private func loadDetailText(currentLoad: Double?, previousLoad: Double?) -> String {
         guard let currentLoad, let previousLoad else { return "Load data unavailable" }
         return "Load \(formatNumber(currentLoad)) vs \(formatNumber(previousLoad))"
+    }
+
+    private func buildRecoveryBalanceSummary(insight: WorkoutRecoveryBalanceInsight) -> String {
+        let minutesText = insight.loadMinutes.map { "\(formatNumber($0)) min" } ?? "—"
+        let workoutText = "\(insight.workoutCount) workouts"
+        let recoveryText = insight.recoveryStatus?.title ?? "Recovery unknown"
+        return "\(minutesText) • \(workoutText) • \(recoveryText)"
+    }
+
+    private func buildRecoveryBalanceDetail(insight: WorkoutRecoveryBalanceInsight) -> String {
+        var parts: [String] = []
+        if let resting = insight.latestRestingBpm {
+            parts.append("RHR \(formatNumber(resting)) bpm")
+        }
+        if let hrv = insight.latestHrvMilliseconds {
+            parts.append("HRV \(formatNumber(hrv)) ms")
+        }
+        return parts.isEmpty ? "Recovery signals unavailable" : parts.joined(separator: " • ")
     }
 
 }
