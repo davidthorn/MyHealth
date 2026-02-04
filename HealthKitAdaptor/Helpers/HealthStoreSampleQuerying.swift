@@ -58,4 +58,45 @@ public extension HealthStoreSampleQuerying {
             healthStore.execute(query)
         }
     }
+
+    func fetchSample<T: HKSample>(
+        sampleType: HKSampleType,
+        id: UUID,
+        errorOnMissing: Error
+    ) async throws -> T {
+        let predicate = HKQuery.predicateForObject(with: id)
+        return try await fetchSample(
+            sampleType: sampleType,
+            predicate: predicate,
+            errorOnMissing: errorOnMissing
+        )
+    }
+
+    func fetchQuantitySamples(
+        quantityType: HKQuantityType,
+        predicate: NSPredicate?,
+        limit: Int,
+        sortDescriptors: [NSSortDescriptor]?
+    ) async -> [HKQuantitySample] {
+        await fetchSamples(
+            sampleType: quantityType,
+            predicate: predicate,
+            limit: limit,
+            sortDescriptors: sortDescriptors
+        )
+    }
+
+    func fetchCategorySamples(
+        categoryType: HKCategoryType,
+        predicate: NSPredicate?,
+        limit: Int,
+        sortDescriptors: [NSSortDescriptor]?
+    ) async -> [HKCategorySample] {
+        await fetchSamples(
+            sampleType: categoryType,
+            predicate: predicate,
+            limit: limit,
+            sortDescriptors: sortDescriptors
+        )
+    }
 }

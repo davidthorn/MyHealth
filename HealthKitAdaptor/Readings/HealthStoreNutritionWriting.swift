@@ -48,10 +48,9 @@ public extension HealthStoreNutritionWriting {
               let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else {
             throw HealthKitAdapterError.unsupportedNutritionType
         }
-        let predicate = HKQuery.predicateForObject(with: id)
         let sample: HKQuantitySample = try await fetchSample(
             sampleType: quantityType,
-            predicate: predicate,
+            id: id,
             errorOnMissing: HealthKitAdapterError.nutritionSampleNotFound
         )
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in

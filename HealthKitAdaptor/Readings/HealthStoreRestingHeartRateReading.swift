@@ -34,8 +34,8 @@ public extension HealthStoreRestingHeartRateReading where Self: HealthStoreSampl
         guard let endDate = calendar.date(byAdding: .day, value: 1, to: startDate) else { return [] }
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-        let samples: [HKQuantitySample] = await fetchSamples(
-            sampleType: restingType,
+        let samples = await fetchQuantitySamples(
+            quantityType: restingType,
             predicate: predicate,
             limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]

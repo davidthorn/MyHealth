@@ -102,10 +102,9 @@ public extension HealthStoreWorkoutReading where Self: HealthStoreSampleQuerying
 
     private func fetchHealthKitWorkout(id: UUID) async throws -> HKWorkout {
         let sampleType = HKObjectType.workoutType()
-        let predicate = HKQuery.predicateForObject(with: id)
         return try await fetchSample(
             sampleType: sampleType,
-            predicate: predicate,
+            id: id,
             errorOnMissing: HealthKitAdapterError.workoutNotFound
         )
     }

@@ -25,8 +25,8 @@ public extension HealthStoreSleepReading where Self: HealthStoreSampleQuerying {
         }
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-        let sleepSamples: [HKCategorySample] = await fetchSamples(
-            sampleType: sleepType,
+        let sleepSamples = await fetchCategorySamples(
+            categoryType: sleepType,
             predicate: predicate,
             limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]
@@ -58,8 +58,8 @@ public extension HealthStoreSleepReading where Self: HealthStoreSampleQuerying {
         }
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-        let sleepSamples: [HKCategorySample] = await fetchSamples(
-            sampleType: sleepType,
+        let sleepSamples = await fetchCategorySamples(
+            categoryType: sleepType,
             predicate: predicate,
             limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]

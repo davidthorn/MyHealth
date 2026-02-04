@@ -17,8 +17,8 @@ public extension HealthStoreHeartRateReading where Self: HealthStoreSampleQueryi
     func fetchHeartRateReadings(limit: Int) async -> [HeartRateReading] {
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return [] }
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-        let samples: [HKQuantitySample] = await fetchSamples(
-            sampleType: heartRateType,
+        let samples = await fetchQuantitySamples(
+            quantityType: heartRateType,
             predicate: nil,
             limit: limit,
             sortDescriptors: [sortDescriptor]
@@ -30,10 +30,9 @@ public extension HealthStoreHeartRateReading where Self: HealthStoreSampleQueryi
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else {
             throw HealthKitAdapterError.heartRateReadingNotFound
         }
-        let predicate = HKQuery.predicateForObject(with: id)
         let sample: HKQuantitySample = try await fetchSample(
             sampleType: heartRateType,
-            predicate: predicate,
+            id: id,
             errorOnMissing: HealthKitAdapterError.heartRateReadingNotFound
         )
         return HeartRateReading(sample: sample)
@@ -43,8 +42,8 @@ public extension HealthStoreHeartRateReading where Self: HealthStoreSampleQueryi
         guard let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate) else { return [] }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: true)
-        let samples: [HKQuantitySample] = await fetchSamples(
-            sampleType: heartRateType,
+        let samples = await fetchQuantitySamples(
+            quantityType: heartRateType,
             predicate: predicate,
             limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]

@@ -24,8 +24,8 @@ public extension HealthStoreNutritionReading where Self: HealthStoreSampleQueryi
         let unit = type.quantityUnit
         let unitLabel = type.unit
         let sampleType = type
-        let samples: [HKQuantitySample] = await fetchSamples(
-            sampleType: quantityType,
+        let samples = await fetchQuantitySamples(
+            quantityType: quantityType,
             predicate: nil,
             limit: queryLimit,
             sortDescriptors: [sortDescriptor]
@@ -51,8 +51,8 @@ public extension HealthStoreNutritionReading where Self: HealthStoreSampleQueryi
         let unit = type.quantityUnit
         let unitLabel = type.unit
         let sampleType = type
-        let samples: [HKQuantitySample] = await fetchSamples(
-            sampleType: quantityType,
+        let samples = await fetchQuantitySamples(
+            quantityType: quantityType,
             predicate: predicate,
             limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]
