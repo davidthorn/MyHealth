@@ -28,7 +28,7 @@ public struct NutritionView: View {
                         windows: viewModel.windows
                     )
                 }
-                ForEach(viewModel.types, id: \.self) { type in
+                ForEach(viewModel.filteredTypes, id: \.self) { type in
                     NavigationLink(value: viewModel.route(for: type)) {
                         NutritionTypeRowView(type: type)
                     }
@@ -39,6 +39,7 @@ public struct NutritionView: View {
             .padding(.vertical, 20)
         }
         .scrollIndicators(.hidden)  
+        .searchable(text: $viewModel.searchQuery, placement: .navigationBarDrawer(displayMode: .always))
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink(value: NutritionRoute.newEntry) {

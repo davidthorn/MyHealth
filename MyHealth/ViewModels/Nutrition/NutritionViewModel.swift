@@ -14,6 +14,7 @@ public final class NutritionViewModel: ObservableObject {
     @Published public private(set) var types: [NutritionType]
     @Published public private(set) var summary: NutritionWindowSummary?
     @Published public var window: NutritionWindow
+    @Published public var searchQuery: String
 
     private let service: NutritionServiceProtocol
     private var task: Task<Void, Never>?
@@ -25,6 +26,7 @@ public final class NutritionViewModel: ObservableObject {
         self.types = []
         self.summary = nil
         self.window = .today
+        self.searchQuery = ""
         self.windows = NutritionWindow.allCases
     }
 
@@ -34,7 +36,7 @@ public final class NutritionViewModel: ObservableObject {
             guard let service = self?.service else { return }
             for await update in service.updates() {
                 guard let self, !Task.isCancelled else { break }
-                self.types = update.types
+                self.types = Self.sortedTypes(update.types)
                 self.summary = update.summary
             }
         }
@@ -66,5 +68,17 @@ public final class NutritionViewModel: ObservableObject {
 
     public func route(for type: NutritionType) -> NutritionRoute {
         .type(type)
+    }
+
+    public var filteredTypes: [NutritionType] {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return types }
+        return types.filter { type in
+            type.title.localizedCaseInsensitiveContains(query)
+        }
+    }
+
+    private static func sortedTypes(_ types: [NutritionType]) -> [NutritionType] {
+        types.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
     }
 }
