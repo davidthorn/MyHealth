@@ -9,6 +9,8 @@ import Foundation
 
 public protocol AppServicesProviding {
     var todayService: TodayServiceProtocol { get }
+    var hydrationService: HydrationOverviewServiceProtocol { get }
+    var hydrationEntryService: HydrationEntryServiceProtocol { get }
     var metricsService: MetricsServiceProtocol { get }
     var heartRateSummaryService: HeartRateSummaryServiceProtocol { get }
     var heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol { get }

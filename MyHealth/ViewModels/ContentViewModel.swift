@@ -17,6 +17,8 @@ public final class ContentViewModel: ObservableObject {
     }
 
     public var todayService: TodayServiceProtocol { services.todayService }
+    public var hydrationService: HydrationOverviewServiceProtocol { services.hydrationService }
+    public var hydrationEntryService: HydrationEntryServiceProtocol { services.hydrationEntryService }
     public var metricsService: MetricsServiceProtocol { services.metricsService }
     public var heartRateSummaryService: HeartRateSummaryServiceProtocol { services.heartRateSummaryService }
     public var heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol {

@@ -12,6 +12,7 @@ public enum TodayRoute: Hashable {
     case activityRingsSummary
     case activityRingsDay(Date)
     case activityRingsMetric(ActivityRingsMetric, Date)
+    case hydrationOverview
 
     public init(detail: String) {
         self = .detail(detail)

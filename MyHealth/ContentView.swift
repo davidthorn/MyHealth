@@ -20,7 +20,9 @@ public struct ContentView: View {
                 service: viewModel.todayService,
                 activityRingsSummaryService: viewModel.activityRingsSummaryService,
                 activityRingsDayDetailService: viewModel.activityRingsDayDetailService,
-                activityRingsMetricDayDetailService: viewModel.activityRingsMetricDayDetailService
+                activityRingsMetricDayDetailService: viewModel.activityRingsMetricDayDetailService,
+                hydrationService: viewModel.hydrationService,
+                hydrationEntryService: viewModel.hydrationEntryService
             )
             MetricsScene(
                 service: viewModel.metricsService,

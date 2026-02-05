@@ -161,6 +161,7 @@ public final class CurrentWorkoutViewModel: ObservableObject {
     }
 
     public func requestLocationAuthorization() {
+        guard locationAuthorizationStatus == .notDetermined else { return }
         locationService.requestAlwaysAuthorization()
     }
     

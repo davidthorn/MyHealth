@@ -65,7 +65,10 @@ public struct TodayView: View {
 
                 TodayVitalsCardView(latestHeartRate: viewModel.latestHeartRateText)
 
-                TodayHydrationCardView(hydrationText: viewModel.hydrationText)
+                NavigationLink(value: TodayRoute.hydrationOverview) {
+                    TodayHydrationCardView(hydrationText: viewModel.hydrationText)
+                }
+                .buttonStyle(.plain)
 
                 TodayActivityStatsCardView(
                     steps: viewModel.stepsText,

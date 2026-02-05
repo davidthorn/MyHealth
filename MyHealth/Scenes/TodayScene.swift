@@ -14,17 +14,23 @@ public struct TodayScene: View {
     private let activityRingsSummaryService: ActivityRingsSummaryServiceProtocol
     private let activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol
     private let activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol
+    private let hydrationService: HydrationOverviewServiceProtocol
+    private let hydrationEntryService: HydrationEntryServiceProtocol
 
     public init(
         service: TodayServiceProtocol,
         activityRingsSummaryService: ActivityRingsSummaryServiceProtocol,
         activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol,
-        activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol
+        activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol,
+        hydrationService: HydrationOverviewServiceProtocol,
+        hydrationEntryService: HydrationEntryServiceProtocol
     ) {
         self.service = service
         self.activityRingsSummaryService = activityRingsSummaryService
         self.activityRingsDayDetailService = activityRingsDayDetailService
         self.activityRingsMetricDayDetailService = activityRingsMetricDayDetailService
+        self.hydrationService = hydrationService
+        self.hydrationEntryService = hydrationEntryService
         self._path = State(initialValue: NavigationPath())
     }
 
@@ -46,6 +52,11 @@ public struct TodayScene: View {
                         service: activityRingsMetricDayDetailService,
                         metric: metric,
                         date: date
+                    )
+                case .hydrationOverview:
+                    HydrationOverviewView(
+                        service: hydrationService,
+                        entryService: hydrationEntryService
                     )
                 }
             }
