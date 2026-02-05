@@ -30,6 +30,7 @@ public struct AppServices: AppServicesProviding {
     public let standHoursDetailService: StandHoursDetailServiceProtocol
     public let caloriesSummaryService: CaloriesSummaryServiceProtocol
     public let caloriesDetailService: CaloriesDetailServiceProtocol
+    public let sleepEntryService: SleepEntryServiceProtocol
     public let sleepSummaryService: SleepSummaryServiceProtocol
     public let sleepDetailService: SleepDetailServiceProtocol
     public let sleepReadingDetailService: SleepReadingDetailServiceProtocol
@@ -73,6 +74,7 @@ public struct AppServices: AppServicesProviding {
         standHoursDetailService: StandHoursDetailServiceProtocol,
         caloriesSummaryService: CaloriesSummaryServiceProtocol,
         caloriesDetailService: CaloriesDetailServiceProtocol,
+        sleepEntryService: SleepEntryServiceProtocol,
         sleepSummaryService: SleepSummaryServiceProtocol,
         sleepDetailService: SleepDetailServiceProtocol,
         sleepReadingDetailService: SleepReadingDetailServiceProtocol,
@@ -115,6 +117,7 @@ public struct AppServices: AppServicesProviding {
         self.standHoursDetailService = standHoursDetailService
         self.caloriesSummaryService = caloriesSummaryService
         self.caloriesDetailService = caloriesDetailService
+        self.sleepEntryService = sleepEntryService
         self.sleepSummaryService = sleepSummaryService
         self.sleepDetailService = sleepDetailService
         self.sleepReadingDetailService = sleepReadingDetailService
@@ -165,6 +168,7 @@ public struct AppServices: AppServicesProviding {
             standHoursDetailService: StandHoursDetailService(healthKitAdapter: healthKitAdapter),
             caloriesSummaryService: CaloriesSummaryService(healthKitAdapter: healthKitAdapter),
             caloriesDetailService: CaloriesDetailService(healthKitAdapter: healthKitAdapter),
+            sleepEntryService: SleepEntryService(healthKitAdapter: healthKitAdapter),
             sleepSummaryService: SleepSummaryService(healthKitAdapter: healthKitAdapter),
             sleepDetailService: SleepDetailService(healthKitAdapter: healthKitAdapter),
             sleepReadingDetailService: SleepReadingDetailService(healthKitAdapter: healthKitAdapter),

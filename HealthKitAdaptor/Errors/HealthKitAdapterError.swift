@@ -17,4 +17,5 @@ public enum HealthKitAdapterError: Error {
     case cardioFitnessReadingNotFound
     case unsupportedNutritionType
     case nutritionSampleNotFound
+    case sleepEntrySaveFailed
 }

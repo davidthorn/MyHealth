@@ -29,6 +29,7 @@ public protocol AppServicesProviding {
     var sleepSummaryService: SleepSummaryServiceProtocol { get }
     var sleepDetailService: SleepDetailServiceProtocol { get }
     var sleepReadingDetailService: SleepReadingDetailServiceProtocol { get }
+    var sleepEntryService: SleepEntryServiceProtocol { get }
     var activityRingsSummaryService: ActivityRingsSummaryServiceProtocol { get }
     var activityRingsDetailService: ActivityRingsDetailServiceProtocol { get }
     var activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol { get }

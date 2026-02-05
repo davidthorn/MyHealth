@@ -40,6 +40,11 @@ public final class SleepSummaryViewModel: ObservableObject {
         task = nil
     }
 
+    public func refresh() {
+        stop()
+        start()
+    }
+
     public func requestAuthorization() {
         Task { [weak self] in
             guard let service = self?.service, !Task.isCancelled else { return }

@@ -119,6 +119,11 @@ public final class HealthAuthorizationProvider: HealthAuthorizationProviding {
         return await requestAuthorization(readTypes: [sleepType])
     }
 
+    public func requestSleepAnalysisWriteAuthorization() async -> Bool {
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return false }
+        return await requestAuthorization(readTypes: [sleepType], shareTypes: [sleepType])
+    }
+
     public func requestActivitySummaryAuthorization() async -> Bool {
         let summaryType = HKObjectType.activitySummaryType()
         return await requestAuthorization(readTypes: [summaryType])

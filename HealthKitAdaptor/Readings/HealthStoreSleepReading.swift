@@ -65,4 +65,63 @@ public extension HealthStoreSleepReading where Self: HealthStoreSampleQuerying {
         }
         return SleepDay(date: window.start, durationSeconds: duration)
     }
+
+    func fetchSleepEntries(days: Int) async -> [SleepEntry] {
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return [] }
+        let calendar = Calendar.current
+        let endDate = Date()
+        let window = dayRangeWindow(days: days, endingAt: endDate, calendar: calendar)
+        let sortDescriptor = sortByStartDate(ascending: false)
+        let sleepSamples = await fetchCategorySamples(
+            categoryType: sleepType,
+            predicate: window.predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return sleepSamples.compactMap { sample in
+            let categoryValue = HKCategoryValueSleepAnalysis(rawValue: sample.value)
+            guard let category = categoryValue.flatMap(SleepEntryCategory.init(healthKitValue:)) else {
+                return nil
+            }
+            let isUserEntered = (sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool) ?? false
+            return SleepEntry(
+                id: sample.uuid,
+                startDate: sample.startDate,
+                endDate: sample.endDate,
+                category: category,
+                isUserEntered: isUserEntered,
+                sourceName: sample.sourceRevision.source.name,
+                deviceName: sample.device?.name
+            )
+        }
+    }
+
+    func fetchSleepEntries(on date: Date) async -> [SleepEntry] {
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return [] }
+        let calendar = Calendar.current
+        let window = dayWindow(for: date, calendar: calendar)
+        let sortDescriptor = sortByStartDate(ascending: false)
+        let sleepSamples = await fetchCategorySamples(
+            categoryType: sleepType,
+            predicate: window.predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: [sortDescriptor]
+        )
+        return sleepSamples.compactMap { sample in
+            let categoryValue = HKCategoryValueSleepAnalysis(rawValue: sample.value)
+            guard let category = categoryValue.flatMap(SleepEntryCategory.init(healthKitValue:)) else {
+                return nil
+            }
+            let isUserEntered = (sample.metadata?[HKMetadataKeyWasUserEntered] as? Bool) ?? false
+            return SleepEntry(
+                id: sample.uuid,
+                startDate: sample.startDate,
+                endDate: sample.endDate,
+                category: category,
+                isUserEntered: isUserEntered,
+                sourceName: sample.sourceRevision.source.name,
+                deviceName: sample.device?.name
+            )
+        }
+    }
 }

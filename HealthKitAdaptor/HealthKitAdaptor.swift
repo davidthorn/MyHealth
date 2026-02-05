@@ -185,6 +185,18 @@ public final class HealthKitAdapter: HealthKitAdapterProtocol {
         await sleepAnalysis.sleepAnalysisDay(date: date)
     }
 
+    public func sleepEntries(days: Int) async -> [SleepEntry] {
+        await sleepAnalysis.sleepEntries(days: days)
+    }
+
+    public func sleepEntries(on date: Date) async -> [SleepEntry] {
+        await sleepAnalysis.sleepEntries(on: date)
+    }
+
+    public func saveSleepEntry(_ entry: SleepEntry) async throws {
+        try await sleepAnalysis.saveSleepEntry(entry)
+    }
+
     public func activitySummaryDay(date: Date) async -> ActivityRingsDay {
         await activitySummary.activitySummaryDay(date: date)
     }

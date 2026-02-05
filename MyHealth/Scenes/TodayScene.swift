@@ -16,6 +16,10 @@ public struct TodayScene: View {
     private let activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol
     private let hydrationService: HydrationOverviewServiceProtocol
     private let hydrationEntryService: HydrationEntryServiceProtocol
+    private let sleepSummaryService: SleepSummaryServiceProtocol
+    private let sleepEntryService: SleepEntryServiceProtocol
+    private let sleepDetailService: SleepDetailServiceProtocol
+    private let sleepReadingDetailService: SleepReadingDetailServiceProtocol
 
     public init(
         service: TodayServiceProtocol,
@@ -23,7 +27,11 @@ public struct TodayScene: View {
         activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol,
         activityRingsMetricDayDetailService: ActivityRingsMetricDayDetailServiceProtocol,
         hydrationService: HydrationOverviewServiceProtocol,
-        hydrationEntryService: HydrationEntryServiceProtocol
+        hydrationEntryService: HydrationEntryServiceProtocol,
+        sleepSummaryService: SleepSummaryServiceProtocol,
+        sleepEntryService: SleepEntryServiceProtocol,
+        sleepDetailService: SleepDetailServiceProtocol,
+        sleepReadingDetailService: SleepReadingDetailServiceProtocol
     ) {
         self.service = service
         self.activityRingsSummaryService = activityRingsSummaryService
@@ -31,6 +39,10 @@ public struct TodayScene: View {
         self.activityRingsMetricDayDetailService = activityRingsMetricDayDetailService
         self.hydrationService = hydrationService
         self.hydrationEntryService = hydrationEntryService
+        self.sleepSummaryService = sleepSummaryService
+        self.sleepEntryService = sleepEntryService
+        self.sleepDetailService = sleepDetailService
+        self.sleepReadingDetailService = sleepReadingDetailService
         self._path = State(initialValue: NavigationPath())
     }
 
@@ -58,6 +70,19 @@ public struct TodayScene: View {
                         service: hydrationService,
                         entryService: hydrationEntryService
                     )
+                case .sleepSummary:
+                    SleepSummaryView(
+                        service: sleepSummaryService,
+                        entryService: sleepEntryService
+                    )
+                }
+            }
+            .navigationDestination(for: SleepRoute.self) { route in
+                switch route {
+                case .detail:
+                    SleepDetailView(service: sleepDetailService)
+                case .reading(let date):
+                    SleepReadingDetailView(service: sleepReadingDetailService, date: date)
                 }
             }
         }

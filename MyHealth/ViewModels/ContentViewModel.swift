@@ -47,6 +47,7 @@ public final class ContentViewModel: ObservableObject {
     public var sleepSummaryService: SleepSummaryServiceProtocol { services.sleepSummaryService }
     public var sleepDetailService: SleepDetailServiceProtocol { services.sleepDetailService }
     public var sleepReadingDetailService: SleepReadingDetailServiceProtocol { services.sleepReadingDetailService }
+    public var sleepEntryService: SleepEntryServiceProtocol { services.sleepEntryService }
     public var activityRingsSummaryService: ActivityRingsSummaryServiceProtocol { services.activityRingsSummaryService }
     public var activityRingsDetailService: ActivityRingsDetailServiceProtocol { services.activityRingsDetailService }
     public var activityRingsDayDetailService: ActivityRingsDayDetailServiceProtocol { services.activityRingsDayDetailService }

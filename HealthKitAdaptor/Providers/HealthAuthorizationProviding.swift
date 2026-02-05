@@ -23,6 +23,7 @@ public protocol HealthAuthorizationProviding: Sendable {
     func requestExerciseMinutesAuthorization() async -> Bool
     func requestActiveEnergyAuthorization() async -> Bool
     func requestSleepAnalysisAuthorization() async -> Bool
+    func requestSleepAnalysisWriteAuthorization() async -> Bool
     func requestActivitySummaryAuthorization() async -> Bool
     func requestRestingHeartRateAuthorization() async -> Bool
     func requestNutritionReadAuthorization(type: NutritionType) async -> Bool

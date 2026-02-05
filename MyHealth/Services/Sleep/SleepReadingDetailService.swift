@@ -25,8 +25,9 @@ public final class SleepReadingDetailService: SleepReadingDetailServiceProtocol 
         AsyncStream { continuation in
             let task = Task { [healthKitAdapter] in
                 let day = await healthKitAdapter.sleepAnalysisDay(date: date)
+                let entries = await healthKitAdapter.sleepEntries(on: date)
                 guard !Task.isCancelled else { return }
-                continuation.yield(SleepReadingDetailUpdate(day: day))
+                continuation.yield(SleepReadingDetailUpdate(day: day, entries: entries))
                 continuation.finish()
             }
             continuation.onTermination = { _ in

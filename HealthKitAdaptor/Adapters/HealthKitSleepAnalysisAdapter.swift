@@ -43,4 +43,16 @@ public final class HealthKitSleepAnalysisAdapter: HealthKitSleepAnalysisAdapterP
     public func sleepAnalysisDay(date: Date) async -> SleepDay {
         await storeAdaptor.fetchSleepAnalysisDay(date: date)
     }
+
+    public func sleepEntries(days: Int) async -> [SleepEntry] {
+        await storeAdaptor.fetchSleepEntries(days: days)
+    }
+
+    public func sleepEntries(on date: Date) async -> [SleepEntry] {
+        await storeAdaptor.fetchSleepEntries(on: date)
+    }
+
+    public func saveSleepEntry(_ entry: SleepEntry) async throws {
+        try await storeAdaptor.saveSleepEntry(entry)
+    }
 }

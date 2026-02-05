@@ -24,6 +24,7 @@ public struct MetricsScene: View {
     private let standHoursDetailService: StandHoursDetailServiceProtocol
     private let caloriesSummaryService: CaloriesSummaryServiceProtocol
     private let caloriesDetailService: CaloriesDetailServiceProtocol
+    private let sleepEntryService: SleepEntryServiceProtocol
     private let sleepSummaryService: SleepSummaryServiceProtocol
     private let sleepDetailService: SleepDetailServiceProtocol
     private let sleepReadingDetailService: SleepReadingDetailServiceProtocol
@@ -51,6 +52,7 @@ public struct MetricsScene: View {
         standHoursDetailService: StandHoursDetailServiceProtocol,
         caloriesSummaryService: CaloriesSummaryServiceProtocol,
         caloriesDetailService: CaloriesDetailServiceProtocol,
+        sleepEntryService: SleepEntryServiceProtocol,
         sleepSummaryService: SleepSummaryServiceProtocol,
         sleepDetailService: SleepDetailServiceProtocol,
         sleepReadingDetailService: SleepReadingDetailServiceProtocol,
@@ -77,6 +79,7 @@ public struct MetricsScene: View {
         self.standHoursDetailService = standHoursDetailService
         self.caloriesSummaryService = caloriesSummaryService
         self.caloriesDetailService = caloriesDetailService
+        self.sleepEntryService = sleepEntryService
         self.sleepSummaryService = sleepSummaryService
         self.sleepDetailService = sleepDetailService
         self.sleepReadingDetailService = sleepReadingDetailService
@@ -117,7 +120,7 @@ public struct MetricsScene: View {
                         case .calories:
                             CaloriesSummaryView(service: caloriesSummaryService)
                         case .sleep:
-                            SleepSummaryView(service: sleepSummaryService)
+                            SleepSummaryView(service: sleepSummaryService, entryService: sleepEntryService)
                         case .activityRings:
                             ActivityRingsSummaryView(service: activityRingsSummaryService)
                         case .restingHeartRate:
@@ -218,6 +221,7 @@ public struct MetricsScene: View {
         standHoursDetailService: AppServices.shared.standHoursDetailService,
         caloriesSummaryService: AppServices.shared.caloriesSummaryService,
         caloriesDetailService: AppServices.shared.caloriesDetailService,
+        sleepEntryService: AppServices.shared.sleepEntryService,
         sleepSummaryService: AppServices.shared.sleepSummaryService,
         sleepDetailService: AppServices.shared.sleepDetailService,
         sleepReadingDetailService: AppServices.shared.sleepReadingDetailService,

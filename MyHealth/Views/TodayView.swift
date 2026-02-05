@@ -40,13 +40,19 @@ public struct TodayView: View {
                 }
 
                 if let sleepDay = viewModel.sleepDay {
-                    TodaySleepCardView(day: sleepDay, formattedDuration: viewModel.sleepDurationText)
+                    NavigationLink(value: TodayRoute.sleepSummary) {
+                        TodaySleepCardView(day: sleepDay, formattedDuration: viewModel.sleepDurationText)
+                    }
+                    .buttonStyle(.plain)
                 } else {
-                    ContentUnavailableView(
-                        "No Sleep Data",
-                        systemImage: "bed.double.fill",
-                        description: Text("Sleep data will appear once recorded.")
-                    )
+                    NavigationLink(value: TodayRoute.sleepSummary) {
+                        ContentUnavailableView(
+                            "No Sleep Data",
+                            systemImage: "bed.double.fill",
+                            description: Text("Sleep data will appear once recorded.")
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
 
                 if let restingDay = viewModel.restingHeartRateLatest {

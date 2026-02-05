@@ -36,6 +36,9 @@ public protocol HealthKitAdapterProtocol: Sendable {
     func activitySummaryStream(days: Int) -> AsyncStream<ActivityRingsSummary>
     func sleepAnalysisSummaryStream(days: Int) -> AsyncStream<SleepSummary>
     func sleepAnalysisDay(date: Date) async -> SleepDay
+    func sleepEntries(days: Int) async -> [SleepEntry]
+    func sleepEntries(on date: Date) async -> [SleepEntry]
+    func saveSleepEntry(_ entry: SleepEntry) async throws
     func activitySummaryDay(date: Date) async -> ActivityRingsDay
     func nutritionTypes() -> [NutritionType]
     func nutritionSamples(type: NutritionType, limit: Int) async -> [NutritionSample]

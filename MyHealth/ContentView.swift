@@ -22,7 +22,11 @@ public struct ContentView: View {
                 activityRingsDayDetailService: viewModel.activityRingsDayDetailService,
                 activityRingsMetricDayDetailService: viewModel.activityRingsMetricDayDetailService,
                 hydrationService: viewModel.hydrationService,
-                hydrationEntryService: viewModel.hydrationEntryService
+                hydrationEntryService: viewModel.hydrationEntryService,
+                sleepSummaryService: viewModel.sleepSummaryService,
+                sleepEntryService: viewModel.sleepEntryService,
+                sleepDetailService: viewModel.sleepDetailService,
+                sleepReadingDetailService: viewModel.sleepReadingDetailService
             )
             MetricsScene(
                 service: viewModel.metricsService,
@@ -40,6 +44,7 @@ public struct ContentView: View {
                 standHoursDetailService: viewModel.standHoursDetailService,
                 caloriesSummaryService: viewModel.caloriesSummaryService,
                 caloriesDetailService: viewModel.caloriesDetailService,
+                sleepEntryService: viewModel.sleepEntryService,
                 sleepSummaryService: viewModel.sleepSummaryService,
                 sleepDetailService: viewModel.sleepDetailService,
                 sleepReadingDetailService: viewModel.sleepReadingDetailService,

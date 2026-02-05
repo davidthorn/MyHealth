@@ -24,7 +24,8 @@ public final class HealthStoreAdaptor: HealthStoreAdaptorProtocol,
                                        HealthStoreActivitySummaryReading,
                                        HealthStoreSleepReading,
                                        HealthStoreNutritionReading,
-                                       HealthStoreNutritionWriting {
+                                       HealthStoreNutritionWriting,
+                                       HealthStoreSleepWriting {
     
     public let healthStore: HKHealthStore
     public let authorizationProvider: HealthAuthorizationProviding
