@@ -110,6 +110,8 @@ public struct TodayLatestWorkoutCardView: View {
             return "figure.cooldown"
         case .other:
             return "figure.mixed.cardio"
+        @unknown default:
+            fatalError()
         }
     }
 
@@ -129,6 +131,8 @@ public struct TodayLatestWorkoutCardView: View {
             return .purple
         case .other:
             return .gray
+        @unknown default:
+            fatalError()
         }
     }
 

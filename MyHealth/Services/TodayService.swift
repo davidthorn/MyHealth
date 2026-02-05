@@ -20,10 +20,33 @@ public final class TodayService: TodayServiceProtocol {
     public func updates() -> AsyncStream<TodayUpdate> {
         AsyncStream { continuation in
             let task = Task { [healthKitAdapter] in
-                continuation.yield(TodayUpdate(title: "Today", latestWorkout: nil, activityRingsDay: nil))
+                continuation.yield(
+                    TodayUpdate(
+                        title: "Today",
+                        latestWorkout: nil,
+                        activityRingsDay: nil,
+                        sleepDay: nil,
+                        restingHeartRateSummary: nil,
+                        heartRateVariabilitySummary: nil,
+                        heartRateSummary: nil,
+                        stepsSummary: nil,
+                        caloriesSummary: nil,
+                        exerciseMinutesSummary: nil,
+                        standHoursSummary: nil,
+                        hydrationMilliliters: nil
+                    )
+                )
                 let activityAuthorized = await healthKitAdapter.authorizationProvider.requestActivitySummaryAuthorization()
                 let workoutAuthorized = await healthKitAdapter.authorizationProvider.requestWorkoutAuthorization()
                 let heartRateAuthorized = await healthKitAdapter.authorizationProvider.requestHeartRateAuthorization()
+                let sleepAuthorized = await healthKitAdapter.authorizationProvider.requestSleepAnalysisAuthorization()
+                let restingAuthorized = await healthKitAdapter.authorizationProvider.requestRestingHeartRateAuthorization()
+                let hrvAuthorized = await healthKitAdapter.authorizationProvider.requestHeartRateVariabilityAuthorization()
+                let stepsAuthorized = await healthKitAdapter.authorizationProvider.requestStepsAuthorization()
+                let caloriesAuthorized = await healthKitAdapter.authorizationProvider.requestActiveEnergyAuthorization()
+                let exerciseAuthorized = await healthKitAdapter.authorizationProvider.requestExerciseMinutesAuthorization()
+                let standAuthorized = await healthKitAdapter.authorizationProvider.requestStandHoursAuthorization()
+                let hydrationAuthorized = await healthKitAdapter.authorizationProvider.requestNutritionReadAuthorization(type: .water)
                 guard !Task.isCancelled else {
                     continuation.finish()
                     return
@@ -36,6 +59,37 @@ public final class TodayService: TodayServiceProtocol {
                     ? await healthKitAdapter.activitySummaryDay(date: Date())
                     : nil
                 let activityDay = selectActivityDay(today: todaySummary, summary: activitySummary)
+
+                let sleepSummary = sleepAuthorized
+                    ? await firstValue(from: healthKitAdapter.sleepAnalysisSummaryStream(days: 7))
+                    : nil
+                let sleepDay = sleepSummary?.latest ?? sleepSummary?.previous.first
+
+                let restingSummary = restingAuthorized
+                    ? await firstValue(from: healthKitAdapter.restingHeartRateSummaryStream(days: 7))
+                    : nil
+                let hrvSummary = hrvAuthorized
+                    ? await firstValue(from: healthKitAdapter.hrvProvider.summaryStream())
+                    : nil
+                let heartRateSummary = heartRateAuthorized
+                    ? await firstValue(from: healthKitAdapter.heartRateSummaryStream())
+                    : nil
+
+                let stepsSummary = stepsAuthorized
+                    ? await firstValue(from: healthKitAdapter.stepsSummaryStream(days: 1))
+                    : nil
+                let caloriesSummary = caloriesAuthorized
+                    ? await firstValue(from: healthKitAdapter.activeEnergySummaryStream(days: 1))
+                    : nil
+                let exerciseSummary = exerciseAuthorized
+                    ? await firstValue(from: healthKitAdapter.exerciseMinutesSummaryStream(days: 1))
+                    : nil
+                let standSummary = standAuthorized
+                    ? await firstValue(from: healthKitAdapter.standHoursSummaryStream(days: 1))
+                    : nil
+                let hydrationTotal = hydrationAuthorized
+                    ? await hydrationTotalForToday()
+                    : nil
 
                 let workouts = workoutAuthorized
                     ? (await firstValue(from: healthKitAdapter.workoutsStream()) ?? [])
@@ -65,7 +119,16 @@ public final class TodayService: TodayServiceProtocol {
                     TodayUpdate(
                         title: "Today",
                         latestWorkout: latestSnapshot,
-                        activityRingsDay: activityDay
+                        activityRingsDay: activityDay,
+                        sleepDay: sleepDay,
+                        restingHeartRateSummary: restingSummary,
+                        heartRateVariabilitySummary: hrvSummary,
+                        heartRateSummary: heartRateSummary,
+                        stepsSummary: stepsSummary,
+                        caloriesSummary: caloriesSummary,
+                        exerciseMinutesSummary: exerciseSummary,
+                        standHoursSummary: standSummary,
+                        hydrationMilliliters: hydrationTotal
                     )
                 )
                 continuation.finish()
@@ -91,5 +154,12 @@ public final class TodayService: TodayServiceProtocol {
             return today
         }
         return summary?.latest ?? summary?.previous.first
+    }
+
+    private func hydrationTotalForToday() async -> Double? {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: Date())
+        guard let end = calendar.date(byAdding: .day, value: 1, to: start) else { return nil }
+        return await healthKitAdapter.nutritionTotal(type: .water, start: start, end: end)
     }
 }

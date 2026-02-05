@@ -95,6 +95,8 @@ public struct WorkoutIntensityDistributionInsightBuilder {
             return .high
         case .cycling, .swimming, .strength, .other:
             return .moderate
+        @unknown default:
+            fatalError()
         }
     }
 

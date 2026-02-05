@@ -39,6 +39,41 @@ public struct TodayView: View {
                     .buttonStyle(.plain)
                 }
 
+                if let sleepDay = viewModel.sleepDay {
+                    TodaySleepCardView(day: sleepDay, formattedDuration: viewModel.sleepDurationText)
+                } else {
+                    ContentUnavailableView(
+                        "No Sleep Data",
+                        systemImage: "bed.double.fill",
+                        description: Text("Sleep data will appear once recorded.")
+                    )
+                }
+
+                if let restingDay = viewModel.restingHeartRateLatest {
+                    TodayRecoveryCardView(
+                        restingDay: restingDay,
+                        restingChartPoints: viewModel.restingHeartRateChartPoints,
+                        hrvReading: viewModel.heartRateVariabilityLatest
+                    )
+                } else {
+                    ContentUnavailableView(
+                        "No Recovery Data",
+                        systemImage: "heart.fill",
+                        description: Text("Resting HR and HRV will appear once recorded.")
+                    )
+                }
+
+                TodayVitalsCardView(latestHeartRate: viewModel.latestHeartRateText)
+
+                TodayHydrationCardView(hydrationText: viewModel.hydrationText)
+
+                TodayActivityStatsCardView(
+                    steps: viewModel.stepsText,
+                    activeEnergy: viewModel.caloriesText,
+                    exerciseMinutes: viewModel.exerciseMinutesText,
+                    standHours: viewModel.standHoursText
+                )
+
                 if let latestWorkout = viewModel.latestWorkout {
                     TodayLatestWorkoutCardView(snapshot: latestWorkout)
                 } else {

@@ -64,6 +64,8 @@ private extension CardioFitnessReadingRowView {
         case .average: return .green
         case .aboveAverage: return .mint
         case .high: return .blue
+        @unknown default:
+            fatalError()
         }
     }
 
@@ -74,6 +76,8 @@ private extension CardioFitnessReadingRowView {
         case .average: return "arrow.right"
         case .aboveAverage: return "arrow.up.right"
         case .high: return "arrow.up"
+        @unknown default:
+            fatalError()
         }
     }
 }
