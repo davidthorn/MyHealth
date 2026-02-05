@@ -1,5 +1,5 @@
 //
-//  DashboardLatestWorkout.swift
+//  TodayLatestWorkout.swift
 //  Models
 //
 //  Created by Codex.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DashboardLatestWorkout: Codable, Hashable, Sendable {
+public struct TodayLatestWorkout: Codable, Hashable, Sendable {
     public let workout: Workout
     public let routePoints: [WorkoutRoutePoint]
     public let heartRatePoints: [HeartRateRangePoint]

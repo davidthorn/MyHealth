@@ -1,5 +1,5 @@
 //
-//  DashboardRoute.swift
+//  TodayRoute.swift
 //  MyHealth
 //
 //  Created by Codex.
@@ -7,8 +7,9 @@
 
 import Foundation
 
-public enum DashboardRoute: Hashable {
+public enum TodayRoute: Hashable {
     case detail(String)
+    case activityRingsSummary
     case activityRingsDay(Date)
     case activityRingsMetric(ActivityRingsMetric, Date)
 

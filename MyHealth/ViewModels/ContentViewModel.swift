@@ -16,7 +16,7 @@ public final class ContentViewModel: ObservableObject {
         self.services = services
     }
 
-    public var dashboardService: DashboardServiceProtocol { services.dashboardService }
+    public var todayService: TodayServiceProtocol { services.todayService }
     public var metricsService: MetricsServiceProtocol { services.metricsService }
     public var heartRateSummaryService: HeartRateSummaryServiceProtocol { services.heartRateSummaryService }
     public var heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol {

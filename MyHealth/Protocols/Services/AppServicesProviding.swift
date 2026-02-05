@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol AppServicesProviding {
-    var dashboardService: DashboardServiceProtocol { get }
+    var todayService: TodayServiceProtocol { get }
     var metricsService: MetricsServiceProtocol { get }
     var heartRateSummaryService: HeartRateSummaryServiceProtocol { get }
     var heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol { get }

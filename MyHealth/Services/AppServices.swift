@@ -12,7 +12,7 @@ import HealthKitAdaptor
 public struct AppServices: AppServicesProviding {
     private let healthKitAdapter: HealthKitAdapterProtocol
     private let workoutStore: WorkoutStoreProtocol
-    public let dashboardService: DashboardServiceProtocol
+    public let todayService: TodayServiceProtocol
     public let metricsService: MetricsServiceProtocol
     public let heartRateSummaryService: HeartRateSummaryServiceProtocol
     public let heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol
@@ -53,7 +53,7 @@ public struct AppServices: AppServicesProviding {
     public init(
         healthKitAdapter: HealthKitAdapterProtocol,
         workoutStore: WorkoutStoreProtocol,
-        dashboardService: DashboardServiceProtocol,
+        todayService: TodayServiceProtocol,
         metricsService: MetricsServiceProtocol,
         heartRateSummaryService: HeartRateSummaryServiceProtocol,
         heartRateReadingDetailService: HeartRateReadingDetailServiceProtocol,
@@ -93,7 +93,7 @@ public struct AppServices: AppServicesProviding {
     ) {
         self.healthKitAdapter = healthKitAdapter
         self.workoutStore = workoutStore
-        self.dashboardService = dashboardService
+        self.todayService = todayService
         self.metricsService = metricsService
         self.heartRateSummaryService = heartRateSummaryService
         self.heartRateReadingDetailService = heartRateReadingDetailService
@@ -140,7 +140,7 @@ public struct AppServices: AppServicesProviding {
         return AppServices(
             healthKitAdapter: healthKitAdapter,
             workoutStore: workoutStore,
-            dashboardService: DashboardService(healthKitAdapter: healthKitAdapter),
+            todayService: TodayService(healthKitAdapter: healthKitAdapter),
             metricsService: MetricsService(healthKitAdapter: healthKitAdapter),
             heartRateSummaryService: HeartRateSummaryService(healthKitAdapter: healthKitAdapter),
             heartRateReadingDetailService: HeartRateReadingDetailService(healthKitAdapter: healthKitAdapter),

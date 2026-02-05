@@ -16,8 +16,9 @@ public struct ContentView: View {
 
     public var body: some View {
         TabView {
-            DashboardScene(
-                service: viewModel.dashboardService,
+            TodayScene(
+                service: viewModel.todayService,
+                activityRingsSummaryService: viewModel.activityRingsSummaryService,
                 activityRingsDayDetailService: viewModel.activityRingsDayDetailService,
                 activityRingsMetricDayDetailService: viewModel.activityRingsMetricDayDetailService
             )

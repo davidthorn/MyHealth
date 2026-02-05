@@ -1,5 +1,5 @@
 //
-//  DashboardViewModel.swift
+//  TodayViewModel.swift
 //  MyHealth
 //
 //  Created by Codex.
@@ -10,18 +10,18 @@ import Foundation
 import Models
 
 @MainActor
-public final class DashboardViewModel: ObservableObject {
+public final class TodayViewModel: ObservableObject {
     @Published public private(set) var title: String
-    @Published public var path: [DashboardRoute]
-    @Published public private(set) var latestWorkout: DashboardLatestWorkout?
+    @Published public var path: [TodayRoute]
+    @Published public private(set) var latestWorkout: TodayLatestWorkout?
     @Published public private(set) var activityRingsDay: ActivityRingsDay?
 
-    private let service: DashboardServiceProtocol
+    private let service: TodayServiceProtocol
     private var task: Task<Void, Never>?
 
-    public init(service: DashboardServiceProtocol) {
+    public init(service: TodayServiceProtocol) {
         self.service = service
-        self.title = "Dashboard"
+        self.title = "Today"
         self.path = []
         self.latestWorkout = nil
         self.activityRingsDay = nil
